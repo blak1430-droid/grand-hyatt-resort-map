@@ -5,8 +5,9 @@
 <title>Grand Hyatt Resort Experience Map</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#071b1d;color:#fff;font-family:Arial,sans-serif}
-header{padding:14px 18px;background:#0b292b;display:flex;justify-content:space-between;gap:10px;align-items:center}
-h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.demo{background:#f2c85b;color:#242018;padding:7px 10px;border-radius:99px;font:bold 11px Arial}
+header{padding:14px 18px;background:#0b292b;display:flex;justify-content:space-between;gap:12px;align-items:center}
+h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.headright{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}.demo{background:#f2c85b;color:#242018;padding:7px 10px;border-radius:99px;font:bold 11px Arial}
+.clock{background:#071b1d;border:1px solid #ffffff2e;border-radius:12px;padding:7px 10px;text-align:right;min-width:116px}.clock small{display:block;color:#92abad;font-size:9px;letter-spacing:.08em}.clock b{font-size:18px;font-variant-numeric:tabular-nums}
 .filters{padding:10px 12px;background:#0d3638;display:flex;gap:8px;flex-wrap:wrap}
 .filters button{border:1px solid #ffffff26;background:#0a2527;color:#fff;border-radius:99px;padding:8px 12px;cursor:pointer}
 .filters button.on{background:#fff;color:#0a2527}
@@ -15,37 +16,89 @@ h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.dem
 .map img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .loading{position:absolute;inset:0;display:grid;place-items:center;color:#d3e6e6;font-weight:700}
 .pin{position:absolute;transform:translate(-50%,-50%);width:36px;height:36px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;cursor:pointer;z-index:2;box-shadow:0 4px 12px #0008}
-.live{background:#ff7146;animation:p 1.7s infinite}.chill{background:#4fcd98}.soon{background:#f2c85b;color:#222}.closed{background:#8fa3b5}.activity{background:#51457c;border-radius:12px;width:43px}
+.live{background:#ff7146;animation:p 1.7s infinite}.chill,.open{background:#4fcd98}.soon{background:#f2c85b;color:#222}.closed{background:#8fa3b5}.activity{background:#51457c;border-radius:12px;width:43px}
 @keyframes p{70%{box-shadow:0 0 0 13px #ff714600,0 4px 12px #0008}}
-.panel{position:fixed;right:15px;bottom:15px;width:min(370px,calc(100vw - 30px));background:#061d1fee;border:1px solid #ffffff24;border-radius:18px;padding:16px;z-index:5;display:none}.panel.open{display:block}
-.close{float:right;border:0;background:none;color:white;font-size:23px}.panel h2{margin:8px 0}.panel p{color:#bad0d1;font-size:13px;line-height:1.4}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#ffffff10;border-radius:12px;padding:10px}.card small{display:block;color:#93abad}
-@media(max-width:700px){h1{font-size:16px}.map{min-width:900px}}
+.panel{position:fixed;right:15px;bottom:15px;width:min(390px,calc(100vw - 30px));background:#061d1ff2;border:1px solid #ffffff24;border-radius:18px;padding:16px;z-index:5;display:none}.panel.open{display:block}
+.close{float:right;border:0;background:none;color:white;font-size:23px}.panel h2{margin:8px 0}.panel p{color:#bad0d1;font-size:13px;line-height:1.4}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#ffffff10;border-radius:12px;padding:10px}.card small{display:block;color:#93abad;margin-bottom:3px}.status-open{color:#65e2ad}.status-soon{color:#f2c85b}.status-closed{color:#a8bac8}
+.schedule-note{margin-top:9px;font-size:11px;color:#8ea8aa}
+@media(max-width:700px){h1{font-size:16px}.map{min-width:900px}.clock b{font-size:16px}}
 </style></head>
 <body>
-<header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="demo">DEMO DATA</div></header>
-<div class="filters"><button class="on" data-f="all">All</button><button data-f="live">🔥 Live now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button></div>
+<header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
+<div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button></div>
 <main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"></div></main>
-<aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Concept information only. Real venue names, opening hours and activity schedules will be added next.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div><div class="card"><small>Walking</small><b>Route coming later</b></div></div></aside>
+<aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Demo schedule for concept testing. Replace with confirmed operating hours when available.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Status</small><b id="venueStatus"></b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div></div><div class="schedule-note">Restaurant hours shown here are demo data for the prototype.</div></aside>
 <script>
 const P=[
-['1','Amalfi Club','restaurant',23.3,20.2,'chill','Relaxed dining','Dinner'],
-['2','Amber','restaurant',32.8,16.8,'live','Live now','Music & dinner'],
-['3','Cafe Mood','restaurant',54.3,28.1,'soon','Starting soon','Evening'],
-['4','2 AM Restaurant','restaurant',44.8,37.4,'live','Live experience','Dinner'],
-['5','Drift','restaurant',50.6,35.1,'closed','Closed','Lunch'],
-['6','Akira Barbeque','restaurant',50.6,43.8,'chill','Chill','Sunset'],
-['7','El Tacoy','restaurant',47.9,45.7,'live','Live now','Families'],
-['8','Havana Social','restaurant',54.5,35.1,'chill','Chill','Families'],
-['9','Drift','restaurant',22.3,78.2,'soon','Starting soon','Recreation / Drift'],
-['🧒','Camp Hyatt','family',20.8,81,'live','Kids activities','Ages 4–12'],
-['🎧','Hideaway','family',24.4,84,'chill','Teen activities','Ages 12–17'],
-['🏊','Family Pool','family',22.1,85.6,'chill','Open swim','Families'],
-['💦','Kids Pool & Splash','family',27.3,86,'live','Splash activity','Children'],
-['🛶','Wama Water Activities','water',19,73.7,'soon','Kayaking / water activities','Adventure']
+['1','Amalfi Club','restaurant',23.3,20.2,'Relaxed dining','Dinner','12:00','23:00'],
+['2','Amber','restaurant',32.8,16.8,'Music & dinner','Evening','17:00','00:00'],
+['3','Cafe Mood','restaurant',54.3,28.1,'Cafe / lounge','All day','07:00','23:00'],
+['4','2 AM Restaurant','restaurant',44.8,37.4,'Late-night dining','Night','18:00','02:00'],
+['5','Charcoal','restaurant',50.6,35.1,'Grill dining','Dinner','18:00','23:30'],
+['6','Akira Barbeque','restaurant',50.6,43.8,'Japanese barbecue','Sunset','17:30','23:30'],
+['7','El Tacoy','restaurant',47.9,45.7,'Casual dining','Families','12:00','23:00'],
+['8','Havana Social','restaurant',54.5,35.1,'Social dining','Evening','17:00','01:00'],
+['9','Drift','restaurant',22.3,78.2,'Recreation dining','Recreation / Drift','10:00','19:00'],
+['🧒','Camp Hyatt','family',20.8,81,'Kids activities','Ages 4–12',null,null,'live'],
+['🎧','Hideaway','family',24.4,84,'Teen activities','Ages 12–17',null,null,'chill'],
+['🏊','Family Pool','family',22.1,85.6,'Open swim','Families',null,null,'chill'],
+['💦','Kids Pool & Splash','family',27.3,86,'Splash activity','Children',null,null,'live'],
+['🛶','Wama Water Activities','water',19,73.7,'Kayaking / water activities','Adventure',null,null,'soon']
 ];
 const m=document.getElementById('map'),pan=document.getElementById('panel');
-P.forEach((p,i)=>{let b=document.createElement('button');b.className='pin '+p[5]+(p[2]=='restaurant'?'':' activity');b.dataset.t=p[2];b.dataset.s=p[5];b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];b.onclick=()=>{ttl.textContent=p[1];act.textContent=p[6];best.textContent=p[7];state.textContent=p[5]=='live'?'🔥 Live now':p[5]=='soon'?'◐ Starting soon':p[5]=='chill'?'● Chill / available':'○ Closed';pan.classList.add('open')};m.appendChild(b)});
+function riyadhParts(){
+  const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Riyadh',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(new Date());
+  return Object.fromEntries(parts.map(p=>[p.type,p.value]));
+}
+function mins(t){const [h,m]=t.split(':').map(Number);return h*60+m}
+function venueState(open,close){
+  const z=riyadhParts(),now=Number(z.hour)*60+Number(z.minute),o=mins(open),c=mins(close);
+  let isOpen,remaining;
+  if(c<=o){
+    isOpen=now>=o||now<c;
+    remaining=now>=o?(1440-now)+c:c-now;
+  }else{
+    isOpen=now>=o&&now<c;
+    remaining=c-now;
+  }
+  if(!isOpen)return {key:'closed',label:'Closed',cls:'status-closed'};
+  if(remaining<=60)return {key:'soon',label:'Closing soon',cls:'status-soon'};
+  return {key:'open',label:'Open now',cls:'status-open'};
+}
+const pins=[];
+P.forEach((p,i)=>{
+  let b=document.createElement('button'),state=p[2]=='restaurant'?venueState(p[7],p[8]):{key:p[9]||'chill',label:p[9]||'Available'};
+  b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity');
+  b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];
+  b.onclick=()=>{
+    const s=p[2]=='restaurant'?venueState(p[7],p[8]):state;
+    ttl.textContent=p[1];act.textContent=p[5];best.textContent=p[6];
+    if(p[2]=='restaurant'){
+      hrs.textContent=p[7]+' – '+p[8];
+      venueStatus.textContent=s.label;venueStatus.className=s.cls;
+      stateEl.textContent=s.key=='open'?'● Open now':s.key=='soon'?'◐ Closing soon':'○ Closed';
+    } else {
+      hrs.textContent='Demo schedule';venueStatus.textContent='Activity venue';venueStatus.className='';
+      stateEl.textContent=s.key=='live'?'🔥 Live now':s.key=='soon'?'◐ Starting soon':'● Available';
+    }
+    pan.classList.add('open')
+  };
+  m.appendChild(b);pins.push({b,p})
+});
+const stateEl=document.getElementById('state');
+function refresh(){
+  const z=riyadhParts();clock.textContent=z.hour+':'+z.minute+':'+z.second;
+  pins.forEach(({b,p})=>{
+    if(p[2]!='restaurant')return;
+    const s=venueState(p[7],p[8]);
+    b.classList.remove('open','soon','closed');b.classList.add(s.key);b.dataset.s=s.key;
+  });
+}
+refresh();setInterval(refresh,1000);
 x.onclick=()=>pan.classList.remove('open');
-document.querySelectorAll('.filters button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.filters button').forEach(q=>q.classList.remove('on'));b.classList.add('on');let f=b.dataset.f;document.querySelectorAll('.pin').forEach(q=>q.style.display=f=='all'||(f=='live'&&q.dataset.s=='live')||q.dataset.t==f?'grid':'none')});
+document.querySelectorAll('.filters button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.filters button').forEach(q=>q.classList.remove('on'));b.classList.add('on');
+  let f=b.dataset.f;document.querySelectorAll('.pin').forEach(q=>q.style.display=f=='all'||(f=='open'&&q.dataset.s=='open')||q.dataset.t==f?'grid':'none')
+});
 mapimg.onerror=()=>{const d=document.createElement('div');d.className='loading';d.textContent='Map failed to load. Please refresh.';m.prepend(d)};
 </script></body></html>
