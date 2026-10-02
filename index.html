@@ -11,7 +11,7 @@ h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.hea
 .filters{padding:10px 12px;background:#0d3638;display:flex;gap:8px;flex-wrap:wrap}
 .filters button{border:1px solid #ffffff26;background:#0a2527;color:#fff;border-radius:99px;padding:8px 12px;cursor:pointer}
 .filters button.on{background:#fff;color:#0a2527}.demo-dj{background:#7b1d16!important;border-color:#ff8a66!important}.demo-dj.active{background:#ff5c35!important;color:#fff!important;box-shadow:0 0 0 3px #ff5c3533}.demo-cigar{background:#3a3130!important;border-color:#bda99d!important}.demo-cigar.active{background:#6b5750!important;color:#fff!important;box-shadow:0 0 0 3px #c8b5aa33}.demo-national{background:#075f3a!important;border-color:#6ce0aa!important}.demo-national.active{background:#0a8b55!important;box-shadow:0 0 0 3px #0a8b5533}.demo-xmas{background:#6e1d27!important;border-color:#eab6bc!important}.demo-xmas.active{background:#a52b3a!important;box-shadow:0 0 0 3px #a52b3a33}.demo-chef{background:#6f5417!important;border-color:#f1d679!important}.demo-chef.active{background:#9a7622!important;color:#fff!important;box-shadow:0 0 0 3px #f1d67933}
-.stage{overflow:auto;background:#0b575a;min-height:calc(100vh - 112px)}
+.stage{overflow:auto;background:#0b575a;min-height:calc(100vh - 112px);-webkit-overflow-scrolling:touch}
 .map{position:relative;width:min(1200px,100%);min-width:850px;aspect-ratio:1487/1058;margin:auto;background:#164e50}
 .map img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .grand-club-pin{background:#9a7622!important;border-color:#ffe6a3!important;color:#fff6d8!important;box-shadow:0 0 0 2px #f7d77b44,0 4px 12px #0008;width:30px!important;height:30px!important;font-size:13px!important}.chef-live{background:#b88a25!important;animation:chefPulse 1.5s infinite;z-index:4}.chef-live::after{content:'LIVE';position:absolute;left:42px;top:7px;background:#9a7622;color:#fff;border:1px solid #ffe6a3;border-radius:7px;padding:3px 6px;font:800 9px Arial;letter-spacing:.06em;box-shadow:0 2px 8px #0008}
@@ -22,7 +22,30 @@ h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.hea
 .panel{position:fixed;right:15px;bottom:15px;width:min(390px,calc(100vw - 30px));background:#061d1ff2;border:1px solid #ffffff24;border-radius:18px;padding:16px;z-index:5;display:none}.panel.open{display:block}
 .close{float:right;border:0;background:none;color:white;font-size:23px}.panel h2{margin:8px 0}.panel p{color:#bad0d1;font-size:13px;line-height:1.4}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#ffffff10;border-radius:12px;padding:10px}.card small{display:block;color:#93abad;margin-bottom:3px}.status-open{color:#65e2ad}.status-soon{color:#f2c85b}.status-closed{color:#a8bac8}
 .schedule-note{margin-top:9px;font-size:11px;color:#8ea8aa}
-@media(max-width:700px){h1{font-size:16px}.map{min-width:900px}.clock b{font-size:16px}}
+@media(max-width:700px){
+body{overflow-x:hidden}
+header{padding:10px 12px;align-items:flex-start}
+h1{font-size:15px;line-height:1.2}.sub{font-size:10px;max-width:220px;line-height:1.3}
+.headright{gap:6px;flex-direction:column;align-items:flex-end}.demo{font-size:9px;padding:5px 8px}
+.clock{min-width:102px;padding:6px 8px}.clock small{font-size:8px}.clock b{font-size:15px}
+.filters{flex-wrap:nowrap;overflow-x:auto;padding:8px 10px;gap:7px;scrollbar-width:none;-webkit-overflow-scrolling:touch;position:sticky;top:0;z-index:8}
+.filters::-webkit-scrollbar{display:none}.filters button{flex:0 0 auto;min-height:40px;padding:9px 12px;font-size:12px;touch-action:manipulation}
+.stage{min-height:0;overflow:hidden;padding:0}
+.map{width:100%;min-width:0;max-width:none;aspect-ratio:1487/1058;margin:0}
+.pin{width:32px;height:32px;font-size:12px;border-width:2px;touch-action:manipulation}.activity{width:38px}.grand-club-pin{width:28px!important;height:28px!important}
+.panel{left:8px;right:8px;bottom:8px;width:auto;max-height:64vh;overflow-y:auto;border-radius:20px 20px 14px 14px;padding:14px 14px 16px;z-index:20;box-shadow:0 -10px 36px #0007}
+.panel h2{font-size:20px;margin:7px 0}.panel p{font-size:12px}.close{font-size:28px;min-width:42px;min-height:42px;line-height:1;cursor:pointer}
+.grid{grid-template-columns:1fr 1fr;gap:7px}.card{padding:9px;font-size:12px}.card b{font-size:12px}
+.dj-live::before,.cigar-live::before,.national-live::before,.xmas-live::before{transform:translate(-50%,-50%) scale(.78)}
+.dj-live::after,.cigar-live::after,.national-live::after,.xmas-live::after,.chef-live::after{left:34px;top:4px}
+}
+@media(max-width:420px){
+header{gap:8px}.sub{display:none}.demo{display:none}
+.map{width:100%}
+.pin{width:30px;height:30px;font-size:11px}.activity{width:36px}
+.panel{left:6px;right:6px;bottom:6px;max-height:68vh}
+.grid{grid-template-columns:1fr 1fr}
+}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
