@@ -14,7 +14,7 @@ h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.hea
 .stage{overflow:auto;background:#0b575a;min-height:calc(100vh - 112px);-webkit-overflow-scrolling:touch}
 .map{position:relative;width:min(1200px,100%);min-width:850px;aspect-ratio:1487/1058;margin:auto;background:#164e50}
 .map img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.route-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}.buggy-route{fill:none;stroke:#1769ff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px #001b55aa)}
+.route-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:0;transition:opacity .25s ease}.route-overlay.show{opacity:1}.buggy-route{fill:none;stroke:#1769ff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px #001b55aa)}
 .grand-club-pin{background:#9a7622!important;border-color:#ffe6a3!important;color:#fff6d8!important;box-shadow:0 0 0 2px #f7d77b44,0 4px 12px #0008;width:30px!important;height:30px!important;font-size:13px!important}.chef-live{background:#b88a25!important;animation:chefPulse 1.5s infinite;z-index:4}.chef-live::after{content:'LIVE';position:absolute;left:42px;top:7px;background:#9a7622;color:#fff;border:1px solid #ffe6a3;border-radius:7px;padding:3px 6px;font:800 9px Arial;letter-spacing:.06em;box-shadow:0 2px 8px #0008}
 .loading{position:absolute;inset:0;display:grid;place-items:center;color:#d3e6e6;font-weight:700}
 .pin{position:absolute;transform:translate(-50%,-50%);width:36px;height:36px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;cursor:pointer;z-index:2;box-shadow:0 4px 12px #0008;transition:opacity .32s ease,filter .32s ease,box-shadow .32s ease}.pin.focus-hidden{opacity:0;filter:blur(1px);pointer-events:none}.pin.focus-selected{z-index:6}
@@ -51,7 +51,7 @@ header{gap:8px}.sub{display:none}.demo{display:none}
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 <div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button data-f="amenity">Amenities</button><button data-f="event">Events</button><button id="djDemoBtn" class="demo-dj">🔥 DJ Demo</button><button id="cigarDemoBtn" class="demo-cigar">💨 Cigar Demo</button><button id="nationalDemoBtn" class="demo-national">🇸🇦 National Day</button><button id="xmasDemoBtn" class="demo-xmas">🎄 Christmas</button><button id="chefDemoBtn" class="demo-chef">✨ Chef Selection Demo</button></div>
-<main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Buggy Assembly Point to Ember route"><polyline class="buggy-route" points="449,568 425,568 398,560 368,543 333,520 300,490 268,458 238,421 219,384 215,347 218,303 225,260 236,220 249,180 266,140 284,105 306,76 325,57 347,43 365,39 328,120"/></svg></div></main>
+<main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="emberRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Buggy Assembly Point to Ember route"><polyline class="buggy-route" points="449,568 425,568 398,560 368,543 333,520 300,490 268,458 238,421 219,384 215,347 218,303 225,260 236,220 249,180 266,140 284,105 306,76 325,57 347,43 365,39 328,120"/></svg></div></main>
 <aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Demo schedule for concept testing. Replace with confirmed operating hours when available.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Status</small><b id="venueStatus"></b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div></div><div class="schedule-note">Restaurant hours shown here are demo data for the prototype.</div></aside>
 <script>
 const P=[
@@ -79,7 +79,7 @@ const P=[
 ['🛺','Buggy Assembly Point','amenity',44.9,79.8,'Buggy assembly / staging point','Guest transport',null,null,'chill'],
 ['🚗','Car Meetup','event',69.0,77.6,'Car meetup / automotive gathering','Special event',null,null,'chill']
 ];
-const m=document.getElementById('map'),pan=document.getElementById('panel');let djDemo=false,cigarDemo=false,eventTheme=null,focusedPin=null,chefDemo=false;
+const m=document.getElementById('map'),pan=document.getElementById('panel'),emberRoute=document.getElementById('emberRoute');let djDemo=false,cigarDemo=false,eventTheme=null,focusedPin=null,chefDemo=false;
 function riyadhParts(){
   const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Riyadh',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(new Date());
   return Object.fromEntries(parts.map(p=>[p.type,p.value]));
@@ -109,9 +109,11 @@ P.forEach((p,i)=>{
   b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];
   b.onclick=()=>{
     focusOnPin(b);
+    emberRoute.classList.toggle('show',p[0]=='2'||p[1]=='Buggy Assembly Point');
     const s=p[2]=='restaurant'||p[1]=='Kids Pool & Splash'?venueState(p[7],p[8]):state;
     ttl.textContent=p[1];act.textContent=p[5];best.textContent=p[6];
-    if(p[0]=='2'){act.textContent=isEmberDjLive()?'🔥 LIVE DJ • 22:00–00:00':isEmberDjSoon()?'DJ starts at 22:00':'DJ • 22:00–00:00';best.textContent='Music & dinner'}
+    if(p[0]=='2'){act.textContent=isEmberDjLive()?'🔥 LIVE DJ • 22:00–00:00':isEmberDjSoon()?'DJ starts at 22:00':'DJ • 22:00–00:00';best.textContent='🛺 Approx. 4 min by buggy • distance pending GPS measurement'}
+    if(p[1]=='Buggy Assembly Point'){act.textContent='Route to Ember';best.textContent='🛺 Approx. 4 min • distance pending GPS measurement'}
     if(p[0]=='8'&&cigarDemo){act.textContent='💨 LIVE CIGAR EVENT';best.textContent='Havana Social'}
     if(p[1]=='Seasonal Fruit Corner'&&eventTheme==='national'){ttl.textContent='Saudi National Day Corner';act.textContent='🇸🇦 NATIONAL DAY ACTIVITY';best.textContent='Celebration & gathering'}
     if(p[1]=='Seasonal Fruit Corner'&&eventTheme==='christmas'){ttl.textContent='Christmas Corner';act.textContent='🎄 CHRISTMAS ACTIVITY';best.textContent='Seasonal gathering'}
@@ -163,7 +165,7 @@ function refresh(){
   });
 }
 refresh();setInterval(refresh,1000);
-x.onclick=()=>{pan.classList.remove('open');clearPinFocus()};
+x.onclick=()=>{pan.classList.remove('open');clearPinFocus();emberRoute.classList.remove('show')};
 document.querySelectorAll('.filters button[data-f]').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.filters button[data-f]').forEach(q=>q.classList.remove('on'));b.classList.add('on');
   let f=b.dataset.f;document.querySelectorAll('.pin').forEach(q=>{const show=f=='all'||(f=='open'&&(q.dataset.s=='open'||q.dataset.s=='live'))||(f=='restaurant'&&q.dataset.t=='restaurant'&&(q.dataset.s=='open'||q.dataset.s=='live'))||(f!='restaurant'&&q.dataset.t==f);q.style.display=show?'grid':'none'})
