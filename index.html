@@ -157,7 +157,7 @@ refresh();setInterval(refresh,1000);
 x.onclick=()=>{pan.classList.remove('open');clearPinFocus()};
 document.querySelectorAll('.filters button[data-f]').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.filters button[data-f]').forEach(q=>q.classList.remove('on'));b.classList.add('on');
-  let f=b.dataset.f;document.querySelectorAll('.pin').forEach(q=>q.style.display=f=='all'||(f=='open'&&(q.dataset.s=='open'||q.dataset.s=='live'))||q.dataset.t==f?'grid':'none')
+  let f=b.dataset.f;document.querySelectorAll('.pin').forEach(q=>{const show=f=='all'||(f=='open'&&(q.dataset.s=='open'||q.dataset.s=='live'))||(f=='restaurant'&&q.dataset.t=='restaurant'&&(q.dataset.s=='open'||q.dataset.s=='live'))||(f!='restaurant'&&q.dataset.t==f);q.style.display=show?'grid':'none'})
 });
 djDemoBtn.onclick=()=>{djDemo=!djDemo;djDemoBtn.classList.toggle('active',djDemo);djDemoBtn.textContent=djDemo?'🔥 DJ Demo ON':'🔥 DJ Demo';refresh();const ember=pins.find(x=>x.p[0]=='2');if(ember&&djDemo){ember.b.click()}};
 cigarDemoBtn.onclick=()=>{cigarDemo=!cigarDemo;cigarDemoBtn.classList.toggle('active',cigarDemo);cigarDemoBtn.textContent=cigarDemo?'💨 Cigar Demo ON':'💨 Cigar Demo';refresh();const havana=pins.find(x=>x.p[0]=='8');if(havana&&cigarDemo){havana.b.click()}};
