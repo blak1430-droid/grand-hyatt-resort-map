@@ -16,7 +16,7 @@ h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.hea
 .map img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .loading{position:absolute;inset:0;display:grid;place-items:center;color:#d3e6e6;font-weight:700}
 .pin{position:absolute;transform:translate(-50%,-50%);width:36px;height:36px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;cursor:pointer;z-index:2;box-shadow:0 4px 12px #0008}
-.live{background:#ff7146;animation:p 1.7s infinite}.chill,.open{background:#4fcd98}.soon{background:#f2c85b;color:#222}.closed{background:#8fa3b5}.activity{background:#51457c;border-radius:12px;width:43px}.dj-live{background:#e9361f!important;animation:djPulse 1s infinite;z-index:4}.dj-live::before{content:'🔥 🔥 🔥';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:30px;letter-spacing:1px;width:92px;pointer-events:none;filter:drop-shadow(0 0 5px #ff7a00)}.dj-live::after{content:'LIVE';position:absolute;left:42px;top:7px;background:#e60000;color:#fff;border:1px solid #fff;border-radius:7px;padding:3px 6px;font:800 9px Arial;letter-spacing:.06em;box-shadow:0 2px 8px #0008}.cigar-live{background:#6f554a!important;animation:cigarPulse 1.8s infinite;z-index:4}.cigar-live::before{content:'💨  💨';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;width:90px;pointer-events:none;opacity:.95;filter:drop-shadow(0 0 4px #fff8)}.cigar-live::after{content:'LIVE';position:absolute;left:42px;top:7px;background:#6f554a;color:#fff;border:1px solid #fff;border-radius:7px;padding:3px 6px;font:800 9px Arial;letter-spacing:.06em;box-shadow:0 2px 8px #0008}
+.live{background:#ff7146;animation:p 1.7s infinite}.chill,.open{background:#4fcd98}.soon{background:#f2c85b;color:#222}.closed{background:#8fa3b5}.activity{background:#51457c;border-radius:12px;width:43px}.amenity-pin{background:#2d7b91!important}.event-pin{background:#3267c8!important}.dj-live{background:#e9361f!important;animation:djPulse 1s infinite;z-index:4}.dj-live::before{content:'🔥 🔥 🔥';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:30px;letter-spacing:1px;width:92px;pointer-events:none;filter:drop-shadow(0 0 5px #ff7a00)}.dj-live::after{content:'LIVE';position:absolute;left:42px;top:7px;background:#e60000;color:#fff;border:1px solid #fff;border-radius:7px;padding:3px 6px;font:800 9px Arial;letter-spacing:.06em;box-shadow:0 2px 8px #0008}.cigar-live{background:#6f554a!important;animation:cigarPulse 1.8s infinite;z-index:4}.cigar-live::before{content:'💨  💨';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;width:90px;pointer-events:none;opacity:.95;filter:drop-shadow(0 0 4px #fff8)}.cigar-live::after{content:'LIVE';position:absolute;left:42px;top:7px;background:#6f554a;color:#fff;border:1px solid #fff;border-radius:7px;padding:3px 6px;font:800 9px Arial;letter-spacing:.06em;box-shadow:0 2px 8px #0008}
 @keyframes p{70%{box-shadow:0 0 0 13px #ff714600,0 4px 12px #0008}}@keyframes djPulse{0%,100%{box-shadow:0 0 0 3px #ff5a32aa,0 0 15px #ff7a00,0 4px 12px #0008}50%{box-shadow:0 0 0 9px #ff5a3222,0 0 28px #ff7a00,0 4px 12px #0008}}@keyframes cigarPulse{0%,100%{box-shadow:0 0 0 3px #d5c5bb55,0 0 14px #d5c5bb88,0 4px 12px #0008}50%{box-shadow:0 0 0 10px #d5c5bb12,0 0 28px #e4d9d288,0 4px 12px #0008}}
 .panel{position:fixed;right:15px;bottom:15px;width:min(390px,calc(100vw - 30px));background:#061d1ff2;border:1px solid #ffffff24;border-radius:18px;padding:16px;z-index:5;display:none}.panel.open{display:block}
 .close{float:right;border:0;background:none;color:white;font-size:23px}.panel h2{margin:8px 0}.panel p{color:#bad0d1;font-size:13px;line-height:1.4}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#ffffff10;border-radius:12px;padding:10px}.card small{display:block;color:#93abad;margin-bottom:3px}.status-open{color:#65e2ad}.status-soon{color:#f2c85b}.status-closed{color:#a8bac8}
@@ -25,7 +25,7 @@ h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.hea
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
-<div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button id="djDemoBtn" class="demo-dj">🔥 DJ Demo</button><button id="cigarDemoBtn" class="demo-cigar">💨 Cigar Demo</button></div>
+<div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button data-f="amenity">Amenities</button><button data-f="event">Events</button><button id="djDemoBtn" class="demo-dj">🔥 DJ Demo</button><button id="cigarDemoBtn" class="demo-cigar">💨 Cigar Demo</button></div>
 <main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"></div></main>
 <aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Demo schedule for concept testing. Replace with confirmed operating hours when available.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Status</small><b id="venueStatus"></b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div></div><div class="schedule-note">Restaurant hours shown here are demo data for the prototype.</div></aside>
 <script>
@@ -43,7 +43,12 @@ const P=[
 ['🎧','Hideaway','family',24.4,84,'Teen activities','Ages 12–17',null,null,'chill'],
 ['🏊','Family Pool','family',22.1,85.6,'Open swim','Families',null,null,'chill'],
 ['💦','Kids Pool & Splash','family',27.3,86,'Splash activity','Children',null,null,'live'],
-['🛶','Wama Water Activities','water',19,73.7,'Kayaking / water activities','Adventure',null,null,'soon']
+['🛶','Wama Water Activities','water',19,73.7,'Kayaking / water activities','Adventure',null,null,'soon'],
+['🏊','Indoor Pool','amenity',36.8,21.1,'Indoor pool','Wellness',null,null,'chill'],
+['🏋️','Gym','amenity',32.8,29.4,'Fitness center','Training',null,null,'chill'],
+['🧘','Yoga Studio','amenity',32.2,34.3,'Yoga studio','Wellness',null,null,'chill'],
+['🍓','Seasonal Fruit Corner','event',63.1,66.1,'Seasonal fruit corner / gathering','Pop-up gathering',null,null,'soon'],
+['🚗','Car Meetup','event',69.0,77.6,'Car meetup / automotive gathering','Special event',null,null,'chill']
 ];
 const m=document.getElementById('map'),pan=document.getElementById('panel');let djDemo=false,cigarDemo=false;
 function riyadhParts(){
@@ -70,7 +75,7 @@ function venueState(open,close){
 const pins=[];
 P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'?venueState(p[7],p[8]):{key:p[9]||'chill',label:p[9]||'Available'};
-  b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity');
+  b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'');
   b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];
   b.onclick=()=>{
     const s=p[2]=='restaurant'?venueState(p[7],p[8]):state;
