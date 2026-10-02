@@ -67,7 +67,7 @@ const P=[
 ['🧒','Camp Hyatt','family',20.8,81,'Kids activities','Ages 4–12',null,null,'live'],
 ['🎧','Hideaway','family',24.4,84,'Teen activities','Ages 12–17',null,null,'chill'],
 ['🏊','Family Pool','family',22.1,85.6,'Open swim','Families',null,null,'chill'],
-['💦','Kids Pool & Splash','family',27.3,86,'Splash activity','Children',null,null,'live'],
+['💦','Kids Pool & Splash','family',27.3,86,'Splash activity','Children','09:00','18:00','scheduled'],
 ['🛶','Wama Water Activities','water',19,73.7,'Kayaking / water activities','Adventure',null,null,'soon'],
 ['🏊','Indoor Pool','amenity',36.8,21.1,'Indoor pool','Wellness',null,null,'chill'],
 ['🏋️','Gym','amenity',32.8,29.4,'Fitness center','Training',null,null,'chill'],
@@ -103,12 +103,12 @@ function venueState(open,close){
 }
 const pins=[];
 P.forEach((p,i)=>{
-  let b=document.createElement('button'),state=p[2]=='restaurant'?venueState(p[7],p[8]):{key:p[9]||'chill',label:p[9]||'Available'};
+  let b=document.createElement('button'),state=p[2]=='restaurant'||p[1]=='Kids Pool & Splash'?venueState(p[7],p[8]):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-pin':'');
   b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];
   b.onclick=()=>{
     focusOnPin(b);
-    const s=p[2]=='restaurant'?venueState(p[7],p[8]):state;
+    const s=p[2]=='restaurant'||p[1]=='Kids Pool & Splash'?venueState(p[7],p[8]):state;
     ttl.textContent=p[1];act.textContent=p[5];best.textContent=p[6];
     if(p[0]=='2'){act.textContent=isEmberDjLive()?'🔥 LIVE DJ • 22:00–00:00':isEmberDjSoon()?'DJ starts at 22:00':'DJ • 22:00–00:00';best.textContent='Music & dinner'}
     if(p[0]=='8'&&cigarDemo){act.textContent='💨 LIVE CIGAR EVENT';best.textContent='Havana Social'}
@@ -120,8 +120,13 @@ P.forEach((p,i)=>{
       venueStatus.textContent=s.label;venueStatus.className=s.cls;
       stateEl.textContent=s.key=='open'?'● Open now':s.key=='soon'?'◐ Closing soon':'○ Closed';
     } else {
-      hrs.textContent='Demo schedule';venueStatus.textContent='Activity venue';venueStatus.className='';
-      stateEl.textContent=s.key=='live'?'🔥 Live now':s.key=='soon'?'◐ Starting soon':'● Available';
+      if(p[1]=='Kids Pool & Splash'){
+        hrs.textContent='09:00 – 18:00';venueStatus.textContent=s.label;venueStatus.className=s.cls;
+        stateEl.textContent=s.key=='open'?'● Open now':s.key=='soon'?'◐ Closing soon':'○ Closed';
+      }else{
+        hrs.textContent='Demo schedule';venueStatus.textContent='Activity venue';venueStatus.className='';
+        stateEl.textContent=s.key=='live'?'🔥 Live now':s.key=='soon'?'◐ Starting soon':'● Available';
+      }
     }
     pan.classList.add('open')
   };
@@ -146,6 +151,9 @@ function refresh(){
       else{b.dataset.s='soon'}
     }
     if(p[1]=='Grand Club'){b.classList.remove('chef-live');if(isGrandClubChefLive()){b.classList.add('chef-live');b.dataset.s='live'}else{b.dataset.s='chill'};return}
+    if(p[1]=='Kids Pool & Splash'){
+      const s=venueState(p[7],p[8]);b.classList.remove('open','soon','closed','live');b.classList.add(s.key);b.dataset.s=s.key;return
+    }
     if(p[2]!='restaurant')return;
     const s=venueState(p[7],p[8]);
     b.classList.remove('open','soon','closed','dj-live','cigar-live');b.classList.add(s.key);b.dataset.s=s.key;
