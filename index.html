@@ -24,7 +24,7 @@ h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.dem
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="demo">DEMO DATA</div></header>
 <div class="filters"><button class="on" data-f="all">All</button><button data-f="live">🔥 Live now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button></div>
-<main class="stage"><div class="map" id="map"><div class="loading" id="loading">Loading resort map…</div><img id="mapimg" alt="Resort map"></div></main>
+<main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"></div></main>
 <aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Concept information only. Real venue names, opening hours and activity schedules will be added next.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div><div class="card"><small>Walking</small><b>Route coming later</b></div></div></aside>
 <script>
 const P=[
@@ -47,5 +47,5 @@ const m=document.getElementById('map'),pan=document.getElementById('panel');
 P.forEach((p,i)=>{let b=document.createElement('button');b.className='pin '+p[5]+(p[2]=='restaurant'?'':' activity');b.dataset.t=p[2];b.dataset.s=p[5];b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];b.onclick=()=>{ttl.textContent=p[1];act.textContent=p[6];best.textContent=p[7];state.textContent=p[5]=='live'?'🔥 Live now':p[5]=='soon'?'◐ Starting soon':p[5]=='chill'?'● Chill / available':'○ Closed';pan.classList.add('open')};m.appendChild(b)});
 x.onclick=()=>pan.classList.remove('open');
 document.querySelectorAll('.filters button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.filters button').forEach(q=>q.classList.remove('on'));b.classList.add('on');let f=b.dataset.f;document.querySelectorAll('.pin').forEach(q=>q.style.display=f=='all'||(f=='live'&&q.dataset.s=='live')||q.dataset.t==f?'grid':'none')});
-Promise.all([1,2,3,4,5,6,7].map(n=>fetch('map-chunk-'+n+'.txt').then(r=>{if(!r.ok)throw Error(r.status);return r.text()}))).then(a=>{mapimg.onload=()=>loading.style.display='none';mapimg.src='data:image/webp;base64,'+a.join('')}).catch(e=>loading.textContent='Map failed to load. Please refresh.');
+mapimg.onerror=()=>{const d=document.createElement('div');d.className='loading';d.textContent='Map failed to load. Please refresh.';m.prepend(d)};
 </script></body></html>
