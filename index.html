@@ -429,14 +429,16 @@ let shuttleSoundEnabled=false,shuttleAudioContext=null,lastShuttleChime=-Infinit
 function playShuttleChime(){
   if(!shuttleSoundEnabled||!shuttleAudioContext||shuttleAudioContext.state!=='running'||document.hidden)return;
   const now=shuttleAudioContext.currentTime;
-  if(now-lastShuttleChime<1)return;
+  if(now-lastShuttleChime<2.3)return;
   lastShuttleChime=now;
+  for(let repeat=0;repeat<3;repeat++){
   [659.25,880].forEach((frequency,index)=>{
-    const oscillator=shuttleAudioContext.createOscillator(),gain=shuttleAudioContext.createGain(),start=now+index*.18;
+    const oscillator=shuttleAudioContext.createOscillator(),gain=shuttleAudioContext.createGain(),start=now+repeat*.8+index*.18;
     oscillator.type='sine';oscillator.frequency.value=frequency;
     gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(.12,start+.015);gain.gain.exponentialRampToValueAtTime(.001,start+.45);
     oscillator.connect(gain);gain.connect(shuttleAudioContext.destination);oscillator.start(start);oscillator.stop(start+.46);
   });
+  }
 }
 shuttleSoundBtn.onclick=async()=>{
   if(shuttleSoundEnabled){shuttleSoundEnabled=false;}
