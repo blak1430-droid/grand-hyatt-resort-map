@@ -54,7 +54,7 @@ header{gap:8px}.sub{display:none}.demo{display:none}
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 <div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button data-f="amenity">Amenities</button><button data-f="event">Events</button><button id="djDemoBtn" class="demo-dj">🔥 DJ Demo</button><button id="cigarDemoBtn" class="demo-cigar">💨 Cigar Demo</button><button id="nationalDemoBtn" class="demo-national">🇸🇦 National Day</button><button id="nyeDemoBtn" class="demo-nye">🎆 New Year&#39;s Eve</button><button id="chefDemoBtn" class="demo-chef">✨ Chef Selection Demo</button></div>
 <main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="emberRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Buggy Assembly Point to Embers route"><polyline class="buggy-route" points="449,568 425,568 398,560 368,543 333,520 300,490 268,458 238,421 219,384 215,347 218,303 225,260 236,220 249,180 266,140 284,105 306,76 325,57 347,43 365,39 328,120"/></svg><svg class="route-overlay" id="roomRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Room to destination route"><line id="roomRouteLine" class="room-route-line" x1="0" y1="0" x2="0" y2="0"/><circle id="roomRouteStart" class="room-route-dot" cx="0" cy="0" r="7"/><circle id="roomRouteEnd" class="room-route-dot" cx="0" cy="0" r="7"/></svg></div></main>
-<aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Demo schedule for concept testing. Replace with confirmed operating hours when available.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Status</small><b id="venueStatus"></b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div></div><div class="grid" id="amalfiDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Total capacity</small><b>261 seats</b></div><div class="card"><small>Dining area</small><b>76 seats</b></div><div class="card"><small>Beach lounges</small><b>182 seats</b></div><div class="card"><small>Private cabanas</small><b>3</b></div></div><div class="grid" id="embersDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Total capacity</small><b>167 seats</b></div><div class="card"><small>Indoor seating</small><b>70 seats</b></div><div class="card"><small>Private dining room (PDR)</small><b>1 table · 10 seats</b></div><div class="card"><small>Kitchen seating</small><b>14 seats</b></div><div class="card"><small>Wine tasting room</small><b>1 table · 6 seats</b></div><div class="card"><small>Outdoor seating</small><b>62 seats</b></div></div><div class="schedule-note" id="scheduleNote">Restaurant hours shown here are demo data for the prototype.</div></aside>
+<aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Demo schedule for concept testing. Replace with confirmed operating hours when available.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Status</small><b id="venueStatus"></b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div></div><div class="grid" id="amalfiDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Total capacity</small><b>261 seats</b></div><div class="card"><small>Dining area</small><b>76 seats</b></div><div class="card"><small>Beach lounges</small><b>182 seats</b></div><div class="card"><small>Private cabanas</small><b>3</b></div></div><div class="grid" id="embersDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Total capacity</small><b>167 seats</b></div><div class="card"><small>Indoor seating</small><b>70 seats</b></div><div class="card"><small>Private dining room (PDR)</small><b>1 table · 10 seats</b></div><div class="card"><small>Kitchen seating</small><b>14 seats</b></div><div class="card"><small>Wine tasting room</small><b>1 table · 6 seats</b></div><div class="card"><small>Outdoor seating</small><b>62 seats</b></div></div><div class="grid" id="driftDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Total capacity</small><b>814 seats</b></div><div class="card"><small>Indoor seating</small><b>68 seats</b></div><div class="card"><small>Outdoor seating</small><b>124 seats</b></div><div class="card"><small>Bar seating</small><b>18 seats</b></div><div class="card"><small>Cabanas</small><b>4</b></div><div class="card"><small>Sunbeds</small><b>300</b></div></div><div class="schedule-note" id="scheduleNote">Restaurant hours shown here are demo data for the prototype.</div></aside>
 <script>
 const P=[
 ['1','Amalfi Beach Club','restaurant',23.3,20.2,'Italian beachfront dining','Day-to-evening socializing','10:00','20:00',null,'A relaxed Italian beachfront club inspired by the Amalfi Coast, featuring modern Southern Italian favorites from antipasti and bruschetta to pasta, gourmet pizza, salads, desserts, and signature gelato.'],
@@ -66,7 +66,7 @@ const P=[
 ['7','El Tacoy','restaurant',47.9,45.7,'Casual dining','Families','19:00','02:00'],
 ['8','Havana Social','restaurant',54.5,35.1,'Social dining','Evening','23:00','04:00'],
 ['🔑','Grand Club','amenity',52.1,38.3,'Grand Club Chef Selection','Eligible Members','15:00','16:00','club'],
-['9','Drift','restaurant',23.4,91.8,'Recreation dining','Recreation / Drift','10:00','18:00'],
+['9','Drift','restaurant',23.4,91.8,'A flow of flavors, vibes & ambiance','Relaxing in your own mood','10:00','Sunset',null,'Drift celebrates your personal mood, letting the flow of the moment carry you wherever you want to be. Its Flow Factor brings together flowing vibes, flavors, and ambiance for a relaxed experience at your own pace.'],
 ['🧒','Camp Hyatt','family',32.2,89.5,'Kids activities','Ages 4–12',null,null,'live'],
 ['🎧','Hideaway','family',25.1,70.6,'Teen activities','Ages 12–17',null,null,'chill'],
 ['🏊','Family Pool','family',21.9,78.1,'Open swim','Families',null,null,'chill'],
@@ -93,6 +93,7 @@ function isEmberDjSoon(){const z=riyadhParts(),now=Number(z.hour)*60+Number(z.mi
 function isGrandClubChefLive(){const z=riyadhParts(),now=Number(z.hour)*60+Number(z.minute);return chefDemo||(now>=15*60&&now<16*60)}
 function venueState(open,close){
   const z=riyadhParts(),now=Number(z.hour)*60+Number(z.minute),o=mins(open),c=close==='Late'?null:mins(close);
+  if(close==='Sunset')return {key:'scheduled',label:'10:00 – Sunset',cls:''};
   if(close==='Late')return now>=o?{key:'open',label:'Open now · until late',cls:'status-open'}:{key:'scheduled',label:'19:00 – Late',cls:''};
   let isOpen,remaining;
   if(c<=o){
@@ -114,7 +115,8 @@ P.forEach((p,i)=>{
   b.onclick=()=>{
     document.getElementById('amalfiDetails').hidden=p[0]!=='1';
     document.getElementById('embersDetails').hidden=p[0]!=='2';
-    document.getElementById('scheduleNote').hidden=p[0]==='1'||p[0]==='2';
+    document.getElementById('driftDetails').hidden=p[0]!=='9';
+    document.getElementById('scheduleNote').hidden=['1','2','9'].includes(p[0]);
     const isRouteEndpoint=p[0]=='2'||p[1]=='Buggy Assembly Point';
     if(selectedRoomButton){
       handleRoomDestinationSelection(b,p);
@@ -136,7 +138,7 @@ P.forEach((p,i)=>{
     if(p[2]=='restaurant'){
       hrs.textContent=p[7]+' – '+p[8];
       venueStatus.textContent=s.label;venueStatus.className=s.cls;
-      stateEl.textContent=s.key=='open'?'● Open now':s.key=='soon'?'◐ Closing soon':s.key=='scheduled'?'◷ 19:00 – Late':'○ Closed';
+      stateEl.textContent=s.key=='open'?'● Open now':s.key=='soon'?'◐ Closing soon':s.key=='scheduled'?'◷ '+p[7]+' – '+p[8]:'○ Closed';
     } else {
       if(p[1]=='Kids Pool & Splash'){
         hrs.textContent='09:00 – 18:00';venueStatus.textContent=s.label;venueStatus.className=s.cls;
@@ -167,7 +169,7 @@ function addRoomPin(roomNo,floor,xPos,yPos,extraClass){
     if(wasSelected){selectedRoomButton=null;hideRoomDestinationRoute();pan.classList.remove('open');return}
     selectedRoomButton=b;
     roomPins.forEach(({b:q})=>{if(q.dataset.cluster===clusterId){q.classList.toggle('room-selected',q===b);q.classList.toggle('room-hidden',q!==b)}});
-    document.getElementById('embersDetails').hidden=true;document.getElementById('amalfiDetails').hidden=true;document.getElementById('scheduleNote').hidden=true;
+    document.getElementById('driftDetails').hidden=true;document.getElementById('embersDetails').hidden=true;document.getElementById('amalfiDetails').hidden=true;document.getElementById('scheduleNote').hidden=true;
     stateEl.textContent='ROOM • '+floor.toUpperCase();ttl.textContent='Room '+roomNo;hrs.textContent=floor;
     venueStatus.textContent='Guest Room';venueStatus.className='';act.textContent='Room selected';best.textContent='Now select a restaurant or activity';pan.classList.add('open');
   };
