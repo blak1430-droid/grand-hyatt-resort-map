@@ -142,7 +142,7 @@ P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||p[1]=='Kids Pool & Splash'?venueState(p[7],p[8]):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-pin':'');
   b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];
-  if(p[2]==='restaurant')fitRestaurantFootprint(b,p);
+  if(p[2]==='restaurant'&&!['3','8'].includes(p[0]))fitRestaurantFootprint(b,p);
   b.onclick=()=>{
     document.getElementById('amalfiDetails').hidden=p[0]!=='1';
     document.getElementById('embersDetails').hidden=p[0]!=='2';
