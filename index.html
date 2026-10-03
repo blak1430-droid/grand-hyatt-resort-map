@@ -122,6 +122,7 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 @media(max-width:700px){
 .pin.grand-club-pin{left:58%!important;top:39%!important;width:16px!important;height:16px!important;font-size:8px!important;box-shadow:0 1px 3px #0008}
 }
+.pin.restaurant-footprint.larger-restaurant-marker{transform:translate(-50%,-50%) scale(1.2)}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -192,6 +193,7 @@ function fitRestaurantFootprint(button,p){
   button.style.left=p[3]+'%';button.style.top=p[4]+'%';
   button.style.width=width/700*100+'%';button.style.height=height/498*100+'%';
   button.classList.add('restaurant-footprint');
+  if(['4','5','6','7'].includes(p[0]))button.classList.add('larger-restaurant-marker');
   button.setAttribute('aria-label',p[0]+' — '+p[1]);button.title=p[1];
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),polygon=document.createElementNS(ns,'polygon'),label=document.createElement('span');
   svg.setAttribute('viewBox', '0 0 '+width+' '+height);svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');
