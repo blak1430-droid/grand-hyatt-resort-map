@@ -77,6 +77,12 @@ header{height:auto;min-height:56px}h1{font-size:15px}.clock b{font-size:15px}.cl
 .panel h2{font-size:21px}.panel p{font-size:15px;line-height:1.5}.card{font-size:14px;padding:11px}.card b{font-size:14px}.card small{font-size:13px}.schedule-note{font-size:13px;line-height:1.4}
 .close{width:44px;height:44px;font-size:30px}
 }
+
+.pin.grand-club-pin,.pin.compact-havana-pin{width:22px!important;height:22px!important;min-width:0;padding:0;border-width:1.5px;font-size:10px!important}
+.pin.grand-club-pin{box-shadow:0 0 0 1px #f7d77b44,0 2px 6px #0008}
+@media(max-width:700px){
+.pin.grand-club-pin,.pin.compact-havana-pin{width:18px!important;height:18px!important;font-size:9px!important;border-width:1px}
+}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -165,6 +171,7 @@ const pins=[];
 P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||p[1]=='Kids Pool & Splash'?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-pin':'');
+  if(p[0]==='8')b.classList.add('compact-havana-pin');
   b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];
   if(p[2]==='restaurant'&&!['3','8'].includes(p[0]))fitRestaurantFootprint(b,p);
   b.onclick=()=>{
