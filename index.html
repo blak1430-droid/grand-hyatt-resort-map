@@ -402,24 +402,24 @@ function shuttleSeconds(){const z=riyadhParts();return Number(z.hour)*3600+Numbe
 function shuttleTime(seconds){seconds=((seconds%86400)+86400)%86400;return String(Math.floor(seconds/3600)).padStart(2,'0')+':'+String(Math.floor(seconds%3600/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}
 function shuttleArrivals(index){
 const offset=shuttleStops[index][3],times=[];
-for(const [start,end,interval] of [[0,21600,1350],[21600,75600,450],[75600,86400,1350]]){
+for(const [start,end,interval] of [[0,21600,1800],[21600,75600,450],[75600,86400,1800]]){
 const first=start+(offset%interval);for(let t=first;t<end;t+=interval)times.push(t);
 }return times;
 }
 function shuttleTiming(index){
 const now=shuttleSeconds(),arrivals=shuttleArrivals(index),previous=[...arrivals].reverse().find(t=>t<=now)??arrivals[arrivals.length-1]-86400,next=arrivals.find(t=>t>=now)??arrivals[0]+86400;
-return {now,next,phase:now-previous,interval:now>=21600&&now<75600?450:1350};
+return {now,next,phase:now-previous,interval:now>=21600&&now<75600?450:1800};
 }
 function shuttlePhase(index){return shuttleTiming(index).phase}
 function renderShuttleTimetable(index){
 const [name,,,offset,hold]=shuttleStops[index],{now,phase,next,interval}=shuttleTiming(index),due=phase<hold;
-document.getElementById('shuttleStopTimetable').innerHTML='<div class="grid"><div class="card"><small>Service</small><b>06:00–21:00 · 3 buggies<br>21:00–06:00 · 1 buggy</b></div><div class="card"><small>Arrival interval</small><b>'+(interval===450?'7 min 30 sec':'22 min 30 sec')+'</b></div><div class="card"><small>Next scheduled arrival</small><b>'+shuttleTime(next)+(next>=86400?' · tomorrow':'')+'</b></div><div class="card"><small>Demo status</small><b>'+(due?'🟢 Scheduled at stop':'Arrival in '+Math.floor((next-now)/60)+'m '+((next-now)%60)+'s')+'</b></div></div><p>22 min 30 sec cycle: 20 min travel plus 1 min 15 sec waiting at Recreation and Embers. Intermediate travel times are illustrative. Green follows the demo clock.</p><details><summary>Full-day arrival timetable</summary><div class="shuttle-day-times">'+shuttleArrivals(index).map(t=>'<span class="'+(t===next?'next-arrival':'')+'">'+shuttleTime(t)+'</span>').join('')+'</div></details>';
+document.getElementById('shuttleStopTimetable').innerHTML='<div class="grid"><div class="card"><small>Service</small><b>06:00–21:00 · 3 buggies<br>21:00–06:00 · 1 buggy</b></div><div class="card"><small>Arrival interval</small><b>'+(interval===450?'7 min 30 sec':'30 min')+'</b></div><div class="card"><small>Next scheduled arrival</small><b>'+shuttleTime(next)+(next>=86400?' · tomorrow':'')+'</b></div><div class="card"><small>Demo status</small><b>'+(due?'🟢 Scheduled at stop':'Arrival in '+Math.floor((next-now)/60)+'m '+((next-now)%60)+'s')+'</b></div></div><p>22 min 30 sec cycle: 20 min travel plus 1 min 15 sec waiting at Recreation and Embers. Overnight: one buggy every 30 minutes, with 7 min 30 sec recovery time per cycle. Intermediate travel times are illustrative. Green follows the demo clock.</p><details><summary>Full-day arrival timetable</summary><div class="shuttle-day-times">'+shuttleArrivals(index).map(t=>'<span class="'+(t===next?'next-arrival':'')+'">'+shuttleTime(t)+'</span>').join('')+'</div></details>';
 }
 function refreshShuttleDemo(){
 shuttleButtons.forEach(({button,index})=>{
 const name=shuttleStops[index][0],due=shuttlePhase(index)<shuttleStops[index][4],interval=shuttleTiming(index).interval;
 button.classList.toggle('scheduled-here',due);
-button.title=(index+1)+' · '+name+ (interval===450?' · Every 7 min 30 sec':' · Every 22 min 30 sec')+(due?' · Scheduled at stop':'');
+button.title=(index+1)+' · '+name+ (interval===450?' · Every 7 min 30 sec':' · Every 30 min')+(due?' · Scheduled at stop':'');
 button.setAttribute('aria-label',button.title);
 });
 if(selectedShuttleStop!==null&&pan.classList.contains('open')&&!document.getElementById('shuttleSchedule').hidden&&ttl.textContent===shuttleStops[selectedShuttleStop][0]){
@@ -428,7 +428,7 @@ const details=document.querySelector('#shuttleStopTimetable details'),expanded=d
 }
 shuttleStops.forEach(([name,x,y],index)=>{
 const button=document.createElement('button');button.className='shuttle-stop';button.style.left=x+'%';button.style.top=y+'%';button.textContent='🛺';
-button.onclick=()=>{selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='24-hour shuttle demo with extra waiting at Recreation and Embers.';hrs.textContent='24 hours';venueStatus.textContent='7½ min daytime · 22½ min overnight';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF 5';act.textContent='Three-buggy demo';best.textContent='Recreation & Embers waiting priority';renderShuttleTimetable(index);pan.classList.add('open')};m.appendChild(button);shuttleButtons.push({button,index});
+button.onclick=()=>{selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='24-hour shuttle demo with extra waiting at Recreation and Embers.';hrs.textContent='24 hours';venueStatus.textContent='7½ min daytime · 30 min overnight';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF 5';act.textContent='Three-buggy demo';best.textContent='Recreation & Embers waiting priority';renderShuttleTimetable(index);pan.classList.add('open')};m.appendChild(button);shuttleButtons.push({button,index});
 });
 refreshShuttleDemo();setInterval(refreshShuttleDemo,1000);
 
