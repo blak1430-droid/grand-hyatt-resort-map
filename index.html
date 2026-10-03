@@ -164,7 +164,7 @@ function addRoomPin(roomNo,floor,xPos,yPos,extraClass){
     selectedRoomButton=b;
     roomPins.forEach(({b:q})=>{if(q.dataset.cluster===clusterId){q.classList.toggle('room-selected',q===b);q.classList.toggle('room-hidden',q!==b)}});
     stateEl.textContent='ROOM • '+floor.toUpperCase();ttl.textContent='Room '+roomNo;hrs.textContent=floor;
-    venueStatus.textContent='Guest Room';venueStatus.className='';act.textContent='Room location';best.textContent='Blue room section';pan.classList.add('open');
+    venueStatus.textContent='Guest Room';venueStatus.className='';act.textContent='Room selected';best.textContent='Now select a restaurant or activity';pan.classList.add('open');
   };
   m.appendChild(b);roomPins.push({b,roomNo,floor});
 }
