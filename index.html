@@ -14,7 +14,7 @@ h1{margin:0;font-size:20px}.sub{font-size:12px;color:#abc1c2;margin-top:3px}.hea
 .stage{overflow:auto;background:#0b575a;min-height:calc(100vh - 112px);-webkit-overflow-scrolling:touch}
 .map{position:relative;width:min(1200px,100%);min-width:850px;aspect-ratio:1487/1058;margin:auto;background:#164e50}
 .map img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
-.route-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:0;transition:opacity .25s ease}.route-overlay.show{opacity:1}.buggy-route{fill:none;stroke:#1769ff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px #001b55aa)}
+.route-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:0;transition:opacity .25s ease}.route-overlay.show{opacity:1}.buggy-route{fill:none;stroke:#1769ff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px #001b55aa)}.room-route-line{fill:none;stroke:#1769ff;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px #001b55aa)}.room-route-dot{fill:#1769ff;stroke:#fff;stroke-width:2}
 .grand-club-pin{background:#9a7622!important;border-color:#ffe6a3!important;color:#fff6d8!important;box-shadow:0 0 0 2px #f7d77b44,0 4px 12px #0008;width:30px!important;height:30px!important;font-size:13px!important}.chef-live{background:#b88a25!important;animation:chefPulse 1.5s infinite;z-index:4}.chef-live::after{content:'LIVE';position:absolute;left:42px;top:7px;background:#9a7622;color:#fff;border:1px solid #ffe6a3;border-radius:7px;padding:3px 6px;font:800 9px Arial;letter-spacing:.06em;box-shadow:0 2px 8px #0008}
 .loading{position:absolute;inset:0;display:grid;place-items:center;color:#d3e6e6;font-weight:700}
 .pin{position:absolute;transform:translate(-50%,-50%);width:36px;height:36px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;cursor:pointer;z-index:2;box-shadow:0 4px 12px #0008;transition:opacity .32s ease,filter .32s ease,box-shadow .32s ease}.pin.focus-hidden{opacity:0;filter:blur(1px);pointer-events:none}.pin.focus-selected{z-index:6}
@@ -53,7 +53,7 @@ header{gap:8px}.sub{display:none}.demo{display:none}
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 <div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button data-f="amenity">Amenities</button><button data-f="event">Events</button><button id="djDemoBtn" class="demo-dj">🔥 DJ Demo</button><button id="cigarDemoBtn" class="demo-cigar">💨 Cigar Demo</button><button id="nationalDemoBtn" class="demo-national">🇸🇦 National Day</button><button id="xmasDemoBtn" class="demo-xmas">🎄 Christmas</button><button id="chefDemoBtn" class="demo-chef">✨ Chef Selection Demo</button></div>
-<main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="emberRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Buggy Assembly Point to Ember route"><polyline class="buggy-route" points="449,568 425,568 398,560 368,543 333,520 300,490 268,458 238,421 219,384 215,347 218,303 225,260 236,220 249,180 266,140 284,105 306,76 325,57 347,43 365,39 328,120"/></svg></div></main>
+<main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="emberRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Buggy Assembly Point to Ember route"><polyline class="buggy-route" points="449,568 425,568 398,560 368,543 333,520 300,490 268,458 238,421 219,384 215,347 218,303 225,260 236,220 249,180 266,140 284,105 306,76 325,57 347,43 365,39 328,120"/></svg><svg class="route-overlay" id="roomRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Room to destination route"><line id="roomRouteLine" class="room-route-line" x1="0" y1="0" x2="0" y2="0"/><circle id="roomRouteStart" class="room-route-dot" cx="0" cy="0" r="7"/><circle id="roomRouteEnd" class="room-route-dot" cx="0" cy="0" r="7"/></svg></div></main>
 <aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Demo schedule for concept testing. Replace with confirmed operating hours when available.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Status</small><b id="venueStatus"></b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div></div><div class="schedule-note">Restaurant hours shown here are demo data for the prototype.</div></aside>
 <script>
 const P=[
@@ -82,7 +82,7 @@ const P=[
 ['🛺','Buggy Assembly Point','amenity',44.9,79.8,'Buggy assembly / staging point','Guest transport',null,null,'chill'],
 ['🚗','Car Meetup','event',69.0,77.6,'Car meetup / automotive gathering','Special event',null,null,'chill']
 ];
-const m=document.getElementById('map'),pan=document.getElementById('panel'),emberRoute=document.getElementById('emberRoute');let djDemo=false,cigarDemo=false,eventTheme=null,focusedPin=null,chefDemo=false,routeSelection=new Set();
+const m=document.getElementById('map'),pan=document.getElementById('panel'),emberRoute=document.getElementById('emberRoute'),roomRoute=document.getElementById('roomRoute'),roomRouteLine=document.getElementById('roomRouteLine'),roomRouteStart=document.getElementById('roomRouteStart'),roomRouteEnd=document.getElementById('roomRouteEnd');let djDemo=false,cigarDemo=false,eventTheme=null,focusedPin=null,chefDemo=false,routeSelection=new Set(),selectedRoomButton=null,selectedDestinationButton=null;
 function riyadhParts(){
   const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Riyadh',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(new Date());
   return Object.fromEntries(parts.map(p=>[p.type,p.value]));
@@ -111,9 +111,10 @@ P.forEach((p,i)=>{
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-pin':'');
   b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];
   b.onclick=()=>{
-    clearRoomFocus();
     const isRouteEndpoint=p[0]=='2'||p[1]=='Buggy Assembly Point';
-    if(isRouteEndpoint){
+    if(selectedRoomButton){
+      handleRoomDestinationSelection(b,p);
+    }else if(isRouteEndpoint){
       handleRouteEndpointSelection(b,p);
     }else{
       routeSelection.clear();
@@ -159,7 +160,8 @@ function addRoomPin(roomNo,floor,xPos,yPos,extraClass){
     const wasSelected=b.classList.contains('room-selected');
     clearPinFocus();
     roomPins.forEach(({b:q})=>{q.classList.remove('room-selected');if(q.dataset.cluster===clusterId)q.classList.remove('room-hidden')});
-    if(wasSelected){pan.classList.remove('open');return}
+    if(wasSelected){selectedRoomButton=null;hideRoomDestinationRoute();pan.classList.remove('open');return}
+    selectedRoomButton=b;
     roomPins.forEach(({b:q})=>{if(q.dataset.cluster===clusterId){q.classList.toggle('room-selected',q===b);q.classList.toggle('room-hidden',q!==b)}});
     stateEl.textContent='ROOM • '+floor.toUpperCase();ttl.textContent='Room '+roomNo;hrs.textContent=floor;
     venueStatus.textContent='Guest Room';venueStatus.className='';act.textContent='Room location';best.textContent='Blue room section';pan.classList.add('open');
@@ -175,7 +177,7 @@ function addRoomCluster(startRoom,endRoom,floor,clusterId,xPos,yPos,extraClass){
   const b=document.createElement('button');b.className='room-cluster '+extraClass;b.textContent=startRoom+'–'+endRoom;b.dataset.cluster=clusterId;
   b.style.left=xPos+'%';b.style.top=yPos+'%';b.title=floor+' rooms '+startRoom+' to '+endRoom;
   b.onclick=()=>{
-    clearPinFocus();
+    clearPinFocus();selectedRoomButton=null;
     const same=activeRoomCluster===clusterId;
     activeRoomCluster=same?null:clusterId;
     pan.classList.remove('open');
@@ -201,7 +203,22 @@ function updateRoomPresentation(){
     b.classList.toggle('mobile-room-visible',!!show);if(!show)b.classList.remove('room-selected','room-hidden');
   });
 }
-function clearRoomFocus(){activeRoomCluster=null;roomPins.forEach(({b})=>b.classList.remove('room-selected','room-hidden','mobile-room-visible'));roomClusters.forEach(({b})=>b.classList.remove('cluster-selected','cluster-hidden'));updateRoomPresentation()}
+function hideRoomDestinationRoute(){roomRoute.classList.remove('show');selectedDestinationButton=null;pins.forEach(({b})=>b.classList.remove('focus-selected'))}
+function elementPoint(el){return {x:parseFloat(el.style.left)*10,y:parseFloat(el.style.top)*7.12}}
+function drawRoomDestinationRoute(roomButton,destinationButton){
+  const a=elementPoint(roomButton),b=elementPoint(destinationButton);
+  roomRouteLine.setAttribute('x1',a.x);roomRouteLine.setAttribute('y1',a.y);roomRouteLine.setAttribute('x2',b.x);roomRouteLine.setAttribute('y2',b.y);
+  roomRouteStart.setAttribute('cx',a.x);roomRouteStart.setAttribute('cy',a.y);roomRouteEnd.setAttribute('cx',b.x);roomRouteEnd.setAttribute('cy',b.y);
+  roomRoute.classList.add('show');
+}
+function handleRoomDestinationSelection(destinationButton,p){
+  routeSelection.clear();emberRoute.classList.remove('show');
+  if(selectedDestinationButton===destinationButton){hideRoomDestinationRoute();return}
+  selectedDestinationButton=destinationButton;
+  pins.forEach(({b})=>b.classList.toggle('focus-selected',b===destinationButton));
+  drawRoomDestinationRoute(selectedRoomButton,destinationButton);
+}
+function clearRoomFocus(){selectedRoomButton=null;activeRoomCluster=null;hideRoomDestinationRoute();roomPins.forEach(({b})=>b.classList.remove('room-selected','room-hidden','mobile-room-visible'));roomClusters.forEach(({b})=>b.classList.remove('cluster-selected','cluster-hidden'));updateRoomPresentation()}
 updateRoomPresentation();window.addEventListener('resize',updateRoomPresentation);
 function focusOnPin(selected){
   focusedPin=selected;
@@ -223,6 +240,7 @@ function clearPinFocus(){
   focusedPin=null;
   routeSelection.clear();
   emberRoute.classList.remove('show');
+  hideRoomDestinationRoute();
   pins.forEach(({b})=>b.classList.remove('focus-selected','focus-hidden'));
 }
 function refresh(){
