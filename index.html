@@ -123,6 +123,9 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 .pin.grand-club-pin{left:58%!important;top:39%!important;width:16px!important;height:16px!important;font-size:8px!important;box-shadow:0 1px 3px #0008}
 }
 .pin.restaurant-footprint.larger-restaurant-marker{transform:translate(-50%,-50%) scale(1.2)}
+
+.shuttle-stop[data-stop="3"] .shuttle-countdown{top:auto;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%)}
+.shuttle-stop[data-stop="4"] .shuttle-countdown,.shuttle-stop[data-stop="5"] .shuttle-countdown{top:50%;bottom:auto;left:calc(100% + 5px);transform:translateY(-50%)}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -474,7 +477,7 @@ const details=document.querySelector('#shuttleStopTimetable details'),expanded=d
 }
 }
 shuttleStops.forEach(([name,x,y],index)=>{
-const button=document.createElement('button');button.className='shuttle-stop';button.style.left=x+'%';button.style.top=y+'%';button.textContent='🛺';const countdown=document.createElement('span');countdown.className='shuttle-countdown';countdown.setAttribute('aria-hidden','true');countdown.innerHTML='<small>NEXT BUGGY</small><b>—</b>';button.appendChild(countdown);
+const button=document.createElement('button');button.className='shuttle-stop';button.dataset.stop=String(index+1);button.style.left=x+'%';button.style.top=y+'%';button.textContent='🛺';const countdown=document.createElement('span');countdown.className='shuttle-countdown';countdown.setAttribute('aria-hidden','true');countdown.innerHTML='<small>NEXT BUGGY</small><b>—</b>';button.appendChild(countdown);
 button.onclick=()=>{selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='Outward and return shuttle arrivals through all five stops, with extra waiting at Recreation and Embers.';hrs.textContent='24 hours';venueStatus.textContent='7½ min daytime · 30 min overnight';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF 5';act.textContent='Three-buggy demo';best.textContent='Recreation & Embers waiting priority';renderShuttleTimetable(index);pan.classList.add('open')};m.appendChild(button);shuttleButtons.push({button,index});
 });
 refreshShuttleDemo();setInterval(refreshShuttleDemo,1000);
