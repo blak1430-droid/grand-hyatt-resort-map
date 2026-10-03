@@ -126,6 +126,11 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 
 .shuttle-stop[data-stop="3"] .shuttle-countdown{top:auto;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%)}
 .shuttle-stop[data-stop="4"] .shuttle-countdown,.shuttle-stop[data-stop="5"] .shuttle-countdown{top:50%;bottom:auto;left:calc(100% + 5px);transform:translateY(-50%)}
+
+@media(max-width:700px){
+.shuttle-stop[data-stop="3"] .shuttle-countdown{top:50%;bottom:auto;left:calc(100% + 5px);transform:translateY(-50%);font-size:12px;padding:5px 7px}
+.shuttle-stop[data-stop="3"] .shuttle-countdown small{font-size:8px}
+}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
