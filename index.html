@@ -49,6 +49,18 @@ header{gap:8px}.sub{display:none}.demo{display:none}
 .panel{left:6px;right:6px;bottom:6px;max-height:68vh}
 .grid{grid-template-columns:1fr 1fr}
 }
+
+.pin.restaurant-footprint{background:transparent!important;border:0;border-radius:0;padding:0;box-shadow:none;animation:none;overflow:visible;isolation:isolate}
+.restaurant-footprint svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.restaurant-footprint polygon{fill:#3bb884;fill-opacity:.76;stroke:#fff;stroke-width:1;stroke-linejoin:round}
+.restaurant-footprint.closed polygon{fill:#657b8d}
+.restaurant-footprint.soon polygon{fill:#cfad37}
+.restaurant-footprint.scheduled polygon{fill:#447e85}
+.restaurant-footprint.dj-live polygon{fill:#e9361f}
+.restaurant-footprint.cigar-live polygon{fill:#6f554a}
+.restaurant-footprint span{position:relative;z-index:1;color:#fff;font-size:clamp(8px,1.1vw,15px);line-height:1;font-weight:800;text-shadow:0 1px 3px #000;pointer-events:none}
+.restaurant-footprint:focus-visible{outline:2px solid #f2c85b;outline-offset:3px}
+.restaurant-footprint.focus-selected polygon{fill-opacity:.95;stroke:#f2c85b;stroke-width:1.5}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -107,11 +119,30 @@ function venueState(open,close){
   if(remaining<=60)return {key:'soon',label:'Closing soon',cls:'status-soon'};
   return {key:'open',label:'Open now',cls:'status-open'};
 }
+
+const restaurantFootprints={"1":[[144,95],[150,87],[164,86],[174,93],[177,103],[172,113],[162,116],[146,113],[140,108]],"2":[[218,81],[241,69],[247,74],[255,91],[233,103],[220,97],[215,89]],"3":[[325,137],[348,136],[365,140],[362,148],[346,145],[327,146]],"4":[[308,175],[319,168],[327,183],[316,190]],"5":[[340,174],[350,174],[362,187],[355,195],[340,183]],"6":[[364,195],[376,203],[373,220],[362,215],[364,207]],"7":[[348,232],[366,224],[371,233],[353,243]],"8":[[367,141],[381,148],[397,161],[391,167],[376,155],[364,149]],"9":[[144,447],[162,441],[180,448],[184,457],[179,473],[151,478],[140,474],[143,465],[138,460]]};
+function fitRestaurantFootprint(button,p){
+  const points=restaurantFootprints[p[0]];
+  if(!points)return;
+  const xs=points.map(q=>q[0]),ys=points.map(q=>q[1]);
+  const left=Math.min(...xs),top=Math.min(...ys),width=Math.max(...xs)-left,height=Math.max(...ys)-top;
+  p[3]=(left+width/2)/700*100;p[4]=(top+height/2)/498*100;
+  button.style.left=p[3]+'%';button.style.top=p[4]+'%';
+  button.style.width=width/700*100+'%';button.style.height=height/498*100+'%';
+  button.classList.add('restaurant-footprint');
+  button.setAttribute('aria-label',p[0]+' — '+p[1]);button.title=p[1];
+  const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),polygon=document.createElementNS(ns,'polygon'),label=document.createElement('span');
+  svg.setAttribute('viewBox', '0 0 '+width+' '+height);svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');
+  polygon.setAttribute('points',points.map(q=>(q[0]-left)+','+(q[1]-top)).join(' '));
+  svg.appendChild(polygon);label.textContent=p[0];button.replaceChildren(svg,label);
+}
+
 const pins=[];
 P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||p[1]=='Kids Pool & Splash'?venueState(p[7],p[8]):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-pin':'');
   b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0];
+  if(p[2]==='restaurant')fitRestaurantFootprint(b,p);
   b.onclick=()=>{
     document.getElementById('amalfiDetails').hidden=p[0]!=='1';
     document.getElementById('embersDetails').hidden=p[0]!=='2';
