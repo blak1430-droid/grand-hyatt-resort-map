@@ -118,7 +118,7 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 
 .shuttle-stop{position:absolute;transform:translate(-50%,-50%);z-index:9;width:30px;height:30px;background:#1769ff;color:#fff;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;cursor:pointer;font-size:15px;box-shadow:0 2px 5px #0008}
 @media(max-width:700px){.shuttle-stop{width:24px;height:24px;font-size:12px;border-width:1px}}
-.shuttle-stop.scheduled-here{background:#16a765;box-shadow:0 0 0 5px #16a76544,0 2px 5px #0008}.shuttle-day-times{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}.shuttle-day-times span{padding:7px;background:#ffffff10;border-radius:7px;text-align:center;font-variant-numeric:tabular-nums}.shuttle-day-times .next-arrival{background:#1769ff}.shuttle-day-times .scheduled-here{background:#16a765}</style></head>
+.shuttle-stop.scheduled-here{background:#16a765;box-shadow:0 0 0 5px #16a76544,0 2px 5px #0008}.shuttle-day-times{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}.shuttle-day-times span{padding:7px;background:#ffffff10;border-radius:7px;text-align:center;font-variant-numeric:tabular-nums}.shuttle-day-times .next-arrival{background:#1769ff}.shuttle-day-times .scheduled-here{background:#16a765}.shuttle-countdown{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);padding:4px 6px;border:1px solid #ffffff80;border-radius:7px;background:#061d1ff2;color:#fff;white-space:nowrap;font:700 11px/1.2 Arial;font-variant-numeric:tabular-nums;box-shadow:0 2px 5px #0006;pointer-events:none}.scheduled-here .shuttle-countdown{background:#087846}.shuttle-countdown small{display:block;font-size:8px;color:#c9dddd;margin-bottom:2px}@media(max-width:700px){.shuttle-countdown{font-size:10px;padding:3px 4px;top:calc(100% + 3px)}.shuttle-countdown small{font-size:7px}}</style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 <div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button data-f="amenity">Amenities</button><button data-f="event">Events</button><button id="djDemoBtn" class="demo-dj">🔥 DJ Demo</button><button id="cigarDemoBtn" class="demo-cigar">💨 Cigar Demo</button><button id="nationalDemoBtn" class="demo-national">🇸🇦 National Day</button><button id="nyeDemoBtn" class="demo-nye">🎆 New Year&#39;s Eve</button><button id="chefDemoBtn" class="demo-chef">✨ Chef Selection Demo</button></div>
@@ -419,17 +419,18 @@ document.getElementById('shuttleStopTimetable').innerHTML='<div class="grid"><di
 }
 function refreshShuttleDemo(){
 shuttleButtons.forEach(({button,index})=>{
-const name=shuttleStops[index][0],due=shuttleTiming(index).due,interval=shuttleTiming(index).interval;
+const name=shuttleStops[index][0],{due,interval,now,next}=shuttleTiming(index),remaining=Math.max(0,next-now),countdown=button.querySelector('.shuttle-countdown');
+countdown.querySelector('small').textContent=due?'DEMO':'NEXT BUGGY';countdown.querySelector('b').textContent=due?'Here':Math.floor(remaining/60)+'m '+String(remaining%60).padStart(2,'0')+'s';
 button.classList.toggle('scheduled-here',due);
 button.title=(index+1)+' · '+name+ (interval===450?' · Outward & return · Day service':' · Outward & return · Night service')+(due?' · Scheduled at stop':'');
-button.setAttribute('aria-label',button.title);
+button.setAttribute('aria-label',button.title+(due?'':'; next buggy in '+Math.floor(remaining/60)+' minutes '+remaining%60+' seconds'));
 });
 if(selectedShuttleStop!==null&&pan.classList.contains('open')&&!document.getElementById('shuttleSchedule').hidden&&ttl.textContent===shuttleStops[selectedShuttleStop][0]){
 const details=document.querySelector('#shuttleStopTimetable details'),expanded=details&&details.open;renderShuttleTimetable(selectedShuttleStop);document.querySelector('#shuttleStopTimetable details').open=!!expanded;
 }
 }
 shuttleStops.forEach(([name,x,y],index)=>{
-const button=document.createElement('button');button.className='shuttle-stop';button.style.left=x+'%';button.style.top=y+'%';button.textContent='🛺';
+const button=document.createElement('button');button.className='shuttle-stop';button.style.left=x+'%';button.style.top=y+'%';button.textContent='🛺';const countdown=document.createElement('span');countdown.className='shuttle-countdown';countdown.setAttribute('aria-hidden','true');countdown.innerHTML='<small>NEXT BUGGY</small><b>—</b>';button.appendChild(countdown);
 button.onclick=()=>{selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='Outward and return shuttle arrivals through all five stops, with extra waiting at Recreation and Embers.';hrs.textContent='24 hours';venueStatus.textContent='7½ min daytime · 30 min overnight';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF 5';act.textContent='Three-buggy demo';best.textContent='Recreation & Embers waiting priority';renderShuttleTimetable(index);pan.classList.add('open')};m.appendChild(button);shuttleButtons.push({button,index});
 });
 refreshShuttleDemo();setInterval(refreshShuttleDemo,1000);
