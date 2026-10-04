@@ -179,6 +179,13 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 .pin.wellness-marker{width:22px!important;height:22px!important;font-size:11px!important;border-radius:6px;border-width:1px}
 @media(max-width:700px){.pin.wellness-marker{width:14px!important;height:14px!important;font-size:8px!important;border-radius:4px}}
 @media(max-width:700px){.panel{scroll-margin-top:12px}}
+@media(max-width:700px){
+#zoomOut{grid-column:2}
+#zoomIn{grid-column:3}
+#zoomFit{grid-column:4}
+#zoomOut,#zoomIn,#zoomFit{width:44px;min-width:44px;max-width:44px;height:44px;min-height:44px;padding:0;display:grid;place-items:center;justify-self:end}
+#zoomOut,#zoomIn{font-size:20px;line-height:1}
+}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
