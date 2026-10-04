@@ -176,6 +176,8 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 }
 .pin[data-venue="3"]{width:24px!important;height:24px!important;font-size:11px!important;border-width:1.5px}
 @media(max-width:700px){.pin[data-venue="3"]{width:16px!important;height:16px!important;font-size:9px!important;border-width:1px}}
+.pin.wellness-marker{width:22px!important;height:22px!important;font-size:11px!important;border-radius:6px;border-width:1px}
+@media(max-width:700px){.pin.wellness-marker{width:14px!important;height:14px!important;font-size:8px!important;border-radius:4px}}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -201,9 +203,9 @@ const P=[
 ['💦','Kids Pool & Splash','family',26.8,81.8,'Splash activity','Children','09:00','18:00','scheduled'],
 ['🏐','Beach Volleyball','family',22.3,60.2,'Beach volleyball activity','Recreation & sports',null,null,'chill'],
 ['🛶','Wama Water Activities','water',15.5,87.5,'Kayaking / water activities','Adventure',null,null,'soon'],
-['🏊','Indoor Pool','amenity',36.8,21.1,'Indoor pool','Wellness',null,null,'chill'],
-['🏋️','Gym','amenity',32.8,29.4,'Fitness center','Training',null,null,'chill'],
-['🧘','Yoga Studio','amenity',32.2,34.3,'Yoga studio','Wellness',null,null,'chill'],
+['🏊','Indoor Pool','amenity',30.8,28.6,'Indoor pool','Wellness',null,null,'chill'],
+['🏋️','Gym','amenity',36.8,28.6,'Fitness center','Training',null,null,'chill'],
+['🧘','Yoga Studio','amenity',42.8,28.6,'Yoga studio','Wellness',null,null,'chill'],
 ['🚌','Bus Drop-off','amenity',66.05,71.85,'Bus station / drop-off point','Guest transport',null,null,'chill'],
 ['🛎️','Reception Entrance','amenity',55.3,77.2,'Main reception entrance','Arrival & guest services',null,null,'chill'],
 ['pavilion-5','The Pavilion','event',78.1,53.4,'Outdoor meetings & events','Cocktail receptions, alfresco weddings & evening entertainment',null,null,'chill','A unique outdoor Pavilion for beachfront, seafront, or landscaped events, including cocktail receptions, alfresco weddings, product experiences, sunset dinners, and firelight entertainment. Natural scenery and sustainable credentials support eco-luxe outdoor programming.'],
@@ -264,6 +266,7 @@ const pins=[];
 P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-footprint':'');
+  if(['Indoor Pool','Gym','Yoga Studio'].includes(p[1]))b.classList.add('wellness-marker');
   b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0]==='pavilion-5'?'5':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
   b.onclick=()=>{
