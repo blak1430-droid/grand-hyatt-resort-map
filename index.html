@@ -214,7 +214,7 @@ const P=[
 ['🏐','Beach Volleyball','family',22.3,60.2,'Beach volleyball activity','Recreation & sports',null,null,'chill'],
 ['🛶','Wama Water Activities','water',15.5,87.5,'Kayaking / water activities','Adventure',null,null,'soon'],
 ['🏊','Indoor Pool','amenity',36.8,21.1,'Indoor pool','Wellness',null,null,'chill'],
-['🏋️','Gym','amenity',32.8,29.4,'Fitness center','Training',null,null,'chill'],
+['🏋️','Fitness Center','amenity',32.8,29.4,'Fitness & training','Room key card access','00:00','24:00','open','Open 24 hours. Accessible with your room key card.'],
 ['🧘','Yoga Studio','amenity',32.2,34.3,'Yoga studio','Wellness',null,null,'chill'],
 ['🚌','Bus Drop-off','amenity',66.05,71.85,'Bus station / drop-off point','Guest transport',null,null,'chill'],
 ['🛎️','Reception Entrance','amenity',55.3,77.2,'Main reception entrance','Arrival & guest services',null,null,'chill'],
@@ -284,7 +284,7 @@ const pins=[];
 P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-footprint':'');
-  if(['Indoor Pool','Gym','Yoga Studio'].includes(p[1]))b.classList.add('wellness-marker');
+  if(['Indoor Pool','Fitness Center','Yoga Studio'].includes(p[1]))b.classList.add('wellness-marker');
   b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0]==='pavilion-5'?'5':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
   b.onclick=()=>{
@@ -312,6 +312,12 @@ P.forEach((p,i)=>{
     ttl.textContent=p[1];act.textContent=p[5];best.textContent=p[6];desc.textContent=p[10]||'Demo schedule for concept testing. Replace with confirmed operating hours when available.';
     if(p[0]=='2'){act.textContent=isEmberDjLive()?'🔥 LIVE DJ • 22:00–23:00':isEmberDjSoon()?'DJ starts at 22:00':'DJ • 22:00–23:00';best.textContent='🛺 Approx. 4 min by buggy • distance pending GPS measurement'}
     if(p[0]=='8'&&cigarDemo){act.textContent='💨 LIVE CIGAR EVENT';best.textContent='Havana Social'}
+    if(p[1]=='Fitness Center'){
+      ttl.textContent='Fitness Center';desc.textContent='Open 24 hours. Accessible with your room key card.';
+      hrs.textContent='24 hours';venueStatus.textContent='Open 24 hours';venueStatus.className='status-open';
+      act.textContent='Fitness & training';best.textContent='Access with your room key card';stateEl.textContent='● Open 24 hours';
+      document.getElementById('scheduleNote').hidden=true;pan.classList.add('open');scrollToDetails();return;
+    }
     if(p[1]=='Grand Club'){ttl.textContent='Grand Club';act.textContent=isGrandClubChefLive()?'LIVE • Grand Club Chef Selection':'Grand Club Chef Selection • 15:00–16:00';best.textContent='Eligible Members';hrs.textContent='15:00 – 16:00';venueStatus.textContent=isGrandClubChefLive()?'Live now':'Private lounge';venueStatus.className=isGrandClubChefLive()?'status-open':'';stateEl.textContent=isGrandClubChefLive()?'● Live now':'◆ Grand Club';pan.classList.add('open');scrollToDetails();return}
     if(p[2]=='restaurant'){
       hrs.textContent=['2','5'].includes(p[0])?'Breakfast · Lunch · Dinner':p[7]+' – '+p[8];
