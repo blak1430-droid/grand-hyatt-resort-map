@@ -120,7 +120,7 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 @media(max-width:700px){.shuttle-stop{width:24px;height:24px;font-size:12px;border-width:1px}}
 .shuttle-stop.scheduled-here{background:#16a765;box-shadow:0 0 0 5px #16a76544,0 2px 5px #0008}.shuttle-day-times{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:10px}.shuttle-day-times span{padding:7px;background:#ffffff10;border-radius:7px;text-align:center;font-variant-numeric:tabular-nums}.shuttle-day-times .next-arrival{background:#1769ff}.shuttle-day-times .scheduled-here{background:#16a765}.shuttle-countdown{position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);padding:4px 6px;border:1px solid #ffffff80;border-radius:7px;background:#061d1ff2;color:#fff;white-space:nowrap;font:700 11px/1.2 Arial;font-variant-numeric:tabular-nums;box-shadow:0 2px 5px #0006;pointer-events:none}.scheduled-here .shuttle-countdown{background:#087846}.shuttle-countdown small{display:block;font-size:8px;color:#c9dddd;margin-bottom:2px}@media(max-width:700px){.shuttle-countdown{font-size:10px;padding:3px 4px;top:calc(100% + 3px)}.shuttle-countdown small{font-size:7px}}
 @media(max-width:700px){
-.pin.grand-club-pin{left:58%!important;top:39%!important;width:16px!important;height:16px!important;font-size:8px!important;box-shadow:0 1px 3px #0008}
+.pin.grand-club-pin{box-shadow:0 1px 3px #0008}
 }
 .pin.restaurant-footprint.larger-restaurant-marker{transform:translate(-50%,-50%) scale(1.2)}
 
@@ -163,6 +163,8 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 .shuttle-primary-timer{margin:0 0 12px;padding:16px;background:#ffffff14}
 .shuttle-primary-timer b{display:block;font-size:24px;line-height:1.3;font-variant-numeric:tabular-nums}
 #shuttleSchedule{margin-top:8px;padding-top:0;border-top:0}
+.pin.grand-club-pin,.pin.compact-havana-pin{border-radius:3px!important;width:22px!important;height:22px!important;aspect-ratio:1;display:grid;place-items:center}
+@media(max-width:700px){.pin.grand-club-pin,.pin.compact-havana-pin{width:18px!important;height:18px!important;border-radius:2px!important}}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -179,8 +181,8 @@ const P=[
 ['5','Charcoal Tandoor','restaurant',50.6,35.1,'Indian tandoor cuisine & spice-infused cocktails','Meat & vegetarian specialties','06:30','24:00',null,'Charcoal Tandoor pairs authentic Indian meat and vegetarian dishes, cooked in copper-clad tandoor ovens, with spice-infused cocktails. Its recipes draw on Indian and Mughal traditions from before the partition of India and Pakistan. Traditional Indian details meet an industrial interior, with jali screens and an exotic spice library.'],
 ['6','Akira Back','restaurant',50.6,43.8,'Contemporary Japanese cuisine','Immersive dinner experience','19:00','Late',null,'Akira Back celebrates the ever-evolving world of Japanese cuisine, elevating dining to an art form. Culinary excellence, exceptional service, and an immersive atmosphere come together for an unforgettable experience.'],
 ['7','Al Takoy','restaurant',47.9,45.7,'Hawaiian-inspired flavors & tacos','Laid-back dining & music','19:00','Late',null,'Al Takoy is fun, dynamic, and laid-back, pairing toe-tapping music with flavorful dishes enjoyed one taco at a time. Inspired by Hawaii’s melting pot of cultures, it brings global influences together through a shared love of food.'],
-['8','Havana Social','restaurant',54.5,35.1,'1950s Cuban bar concept','Late-night socializing','20:00','03:00',null,'Havana Social evokes an early-1950s, pre-revolution Cuban bar with the character of a once-chic, now weathered hidden jewel. Developed by Soho Hospitality, the original Bangkok venue is tucked into a back alley in the city’s bustling nightlife district, telling the story of a bar rediscovered decades after its doors closed.'],
-['🔑','Grand Club','amenity',52.1,38.3,'Grand Club Chef Selection','Eligible Members','15:00','16:00','club'],
+['8','Havana Social','restaurant',55.6,36.8,'1950s Cuban bar concept','Late-night socializing','20:00','03:00',null,'Havana Social evokes an early-1950s, pre-revolution Cuban bar with the character of a once-chic, now weathered hidden jewel. Developed by Soho Hospitality, the original Bangkok venue is tucked into a back alley in the city’s bustling nightlife district, telling the story of a bar rediscovered decades after its doors closed.'],
+['🔑','Grand Club','amenity',57.2,41.7,'Grand Club Chef Selection','Eligible Members','15:00','16:00','club'],
 ['9','Drift','restaurant',23.4,91.8,'A flow of flavors, vibes & ambiance','Relaxing in your own mood','10:00','Sunset',null,'Drift celebrates your personal mood, letting the flow of the moment carry you wherever you want to be. Its Flow Factor brings together flowing vibes, flavors, and ambiance for a relaxed experience at your own pace.'],
 ['🧒','Camp Hyatt','family',32.2,89.5,'Kids activities','Ages 4–12','08:00','20:00','scheduled'],
 ['🎧','Hideaway','family',25.1,70.6,'Teen activities','Ages 12–17','08:00','20:00','scheduled'],
@@ -194,7 +196,6 @@ const P=[
 ['🚌','Bus Drop-off','amenity',66.05,71.85,'Bus station / drop-off point','Guest transport',null,null,'chill'],
 ['🛎️','Reception Entrance','amenity',55.3,77.2,'Main reception entrance','Arrival & guest services',null,null,'chill'],
 ['pavilion-5','The Pavilion','event',78.1,53.4,'Outdoor meetings & events','Cocktail receptions, alfresco weddings & evening entertainment',null,null,'chill','A unique outdoor Pavilion for beachfront, seafront, or landscaped events, including cocktail receptions, alfresco weddings, product experiences, sunset dinners, and firelight entertainment. Natural scenery and sustainable credentials support eco-luxe outdoor programming.'],
-['🚗','Car Meetup','event',69.0,77.6,'Car meetup / automotive gathering','Special event',null,null,'chill']
 ];
 const m=document.getElementById('map'),pan=document.getElementById('panel'),roomRoute=document.getElementById('roomRoute'),roomRouteLine=document.getElementById('roomRouteLine'),roomRouteStart=document.getElementById('roomRouteStart'),roomRouteEnd=document.getElementById('roomRouteEnd');let djDemo=false,cigarDemo=false,focusedPin=null,chefDemo=false,routeSelection=new Set(),selectedRoomButton=null,selectedDestinationButton=null;
 function riyadhParts(){
