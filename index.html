@@ -151,8 +151,8 @@ const P=[
 ['8','Havana Social','restaurant',54.5,35.1,'1950s Cuban bar concept','Late-night socializing','20:00','03:00',null,'Havana Social evokes an early-1950s, pre-revolution Cuban bar with the character of a once-chic, now weathered hidden jewel. Developed by Soho Hospitality, the original Bangkok venue is tucked into a back alley in the city’s bustling nightlife district, telling the story of a bar rediscovered decades after its doors closed.'],
 ['🔑','Grand Club','amenity',52.1,38.3,'Grand Club Chef Selection','Eligible Members','15:00','16:00','club'],
 ['9','Drift','restaurant',23.4,91.8,'A flow of flavors, vibes & ambiance','Relaxing in your own mood','10:00','Sunset',null,'Drift celebrates your personal mood, letting the flow of the moment carry you wherever you want to be. Its Flow Factor brings together flowing vibes, flavors, and ambiance for a relaxed experience at your own pace.'],
-['🧒','Camp Hyatt','family',32.2,89.5,'Kids activities','Ages 4–12','09:00','18:00','scheduled'],
-['🎧','Hideaway','family',25.1,70.6,'Teen activities','Ages 12–17','09:00','18:00','scheduled'],
+['🧒','Camp Hyatt','family',32.2,89.5,'Kids activities','Ages 4–12','08:00','20:00','scheduled'],
+['🎧','Hideaway','family',25.1,70.6,'Teen activities','Ages 12–17','08:00','20:00','scheduled'],
 ['🏊','Family Pool','family',21.9,78.1,'Open swim','Families',null,null,'chill'],
 ['💦','Kids Pool & Splash','family',26.8,81.8,'Splash activity','Children','09:00','18:00','scheduled'],
 ['🏐','Beach Volleyball','family',22.3,60.2,'Beach volleyball activity','Recreation & sports',null,null,'chill'],
@@ -263,7 +263,7 @@ P.forEach((p,i)=>{
       stateEl.textContent=s.key=='open'?'● Open now':s.key=='soon'?'◐ Closing soon':s.key=='scheduled'?'◷ '+p[7]+' – '+p[8]:'○ Closed';
     } else {
       if(['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])){
-        hrs.textContent='09:00 – 18:00';venueStatus.textContent=s.label;venueStatus.className=s.cls;
+        hrs.textContent=p[7]+' – '+p[8];venueStatus.textContent=s.label;venueStatus.className=s.cls;
         stateEl.textContent=s.key=='open'?'● Open now':s.key=='soon'?'◐ Closing soon':'○ Closed';
       }else{
         hrs.textContent=p[1]==='The Pavilion'?'By event arrangement':'Demo schedule';venueStatus.textContent=p[1]==='The Pavilion'?'Meeting & events venue':'Activity venue';venueStatus.className='';
