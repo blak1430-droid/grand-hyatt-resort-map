@@ -168,6 +168,12 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 .grand-club-footprint polygon{fill:#9a7622!important;stroke:#ffe6a3}
 .grand-club-footprint.chef-live polygon{fill:#b88a25!important}
 .grand-club-footprint span{font-size:clamp(8px,1.1vw,15px)}
+.shuttle-stop[data-stop="5"]{width:22px;height:22px;font-size:11px;border-width:1px}
+.pin[data-venue="pavilion-5"]{width:22px!important;height:22px!important;font-size:10px!important;border-radius:6px;border-width:1px}
+@media(max-width:700px){
+.shuttle-stop[data-stop="5"]{width:16px;height:16px;font-size:9px}
+.pin[data-venue="pavilion-5"]{width:16px!important;height:16px!important;font-size:9px!important;border-radius:4px}
+}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -256,7 +262,7 @@ const pins=[];
 P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-footprint':'');
-  b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0]==='pavilion-5'?'5':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
+  b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0]==='pavilion-5'?'5':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
   b.onclick=()=>{
     document.getElementById('pavilionDetails').hidden=p[1]!=='The Pavilion';
@@ -404,7 +410,7 @@ document.getElementById('zoomOut').onclick=()=>setMapZoom(mapZoom-50);
 document.getElementById('zoomFit').onclick=()=>{setMapZoom(100);document.querySelector('.stage').scrollTo({left:0,top:0})};
 
 const shuttleStops=[
-['Reception / Buggy Stand',46.3,81.1,0,30],['Recreation',32.65,70.4,180,120],['Embers Stop',37.26,7.1,450,120],['Bridge Stop',70.4,17.2,720,30],['Pavilion Stop',75.74,52.61,900,30]
+['Reception / Buggy Stand',46.3,81.1,0,30],['Recreation',32.65,70.4,180,120],['Embers Stop',37.26,7.1,450,120],['Bridge Stop',70.4,17.2,720,30],['Pavilion Stop',78.1,43.8,900,30]
 ];
 
 const shuttleButtons=[];let selectedShuttleStop=null;
