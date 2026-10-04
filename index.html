@@ -165,6 +165,9 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 #shuttleSchedule{margin-top:8px;padding-top:0;border-top:0}
 .pin.grand-club-pin,.pin.compact-havana-pin{border-radius:3px!important;width:22px!important;height:22px!important;aspect-ratio:1;display:grid;place-items:center}
 @media(max-width:700px){.pin.grand-club-pin,.pin.compact-havana-pin{width:18px!important;height:18px!important;border-radius:2px!important}}
+.grand-club-footprint polygon{fill:#9a7622!important;stroke:#ffe6a3}
+.grand-club-footprint.chef-live polygon{fill:#b88a25!important}
+.grand-club-footprint span{font-size:clamp(8px,1.1vw,15px)}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -223,7 +226,7 @@ function venueState(open,close){
   return {key:'open',label:'Open now',cls:'status-open'};
 }
 
-const restaurantFootprints={"1":[[144,95],[150,87],[164,86],[174,93],[177,103],[172,113],[162,116],[146,113],[140,108]],"2":[[218,81],[241,69],[247,74],[255,91],[233,103],[220,97],[215,89]],"3":[[325,137],[348,136],[365,140],[362,148],[346,145],[327,146]],"4":[[308,175],[319,168],[327,183],[316,190]],"5":[[340,174],[350,174],[362,187],[355,195],[340,183]],"6":[[364,195],[376,203],[373,220],[362,215],[364,207]],"7":[[348,232],[366,224],[371,233],[353,243]],"8":[[367,141],[381,148],[397,161],[391,167],[376,155],[364,149]],"9":[[144,447],[162,441],[180,448],[184,457],[179,473],[151,478],[140,474],[143,465],[138,460]]};
+const restaurantFootprints={"1":[[144,95],[150,87],[164,86],[174,93],[177,103],[172,113],[162,116],[146,113],[140,108]],"2":[[218,81],[241,69],[247,74],[255,91],[233,103],[220,97],[215,89]],"3":[[325,137],[348,136],[365,140],[362,148],[346,145],[327,146]],"4":[[308,175],[319,168],[327,183],[316,190]],"5":[[340,174],[350,174],[362,187],[355,195],[340,183]],"6":[[364,195],[376,203],[373,220],[362,215],[364,207]],"7":[[348,232],[366,224],[371,233],[353,243]],"8":[[368,174],[378,174],[390,187],[383,195],[368,183]],"🔑":[[384,195],[396,203],[393,220],[382,215],[384,207]],"9":[[144,447],[162,441],[180,448],[184,457],[179,473],[151,478],[140,474],[143,465],[138,460]]};
 function fitRestaurantFootprint(button,p){
   const points=restaurantFootprints[p[0]];
   if(!points)return;
@@ -233,7 +236,7 @@ function fitRestaurantFootprint(button,p){
   button.style.left=p[3]+'%';button.style.top=p[4]+'%';
   button.style.width=width/700*100+'%';button.style.height=height/498*100+'%';
   button.classList.add('restaurant-footprint');
-  if(['4','5','6','7'].includes(p[0]))button.classList.add('larger-restaurant-marker');
+  if(['4','5','6','7','8','🔑'].includes(p[0]))button.classList.add('larger-restaurant-marker');
   button.setAttribute('aria-label',p[0]+' — '+p[1]);button.title=p[1];
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),polygon=document.createElementNS(ns,'polygon'),label=document.createElement('span');
   svg.setAttribute('viewBox', '0 0 '+width+' '+height);svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');
@@ -252,10 +255,9 @@ function placeState(p){
 const pins=[];
 P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
-  b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-pin':'');
-  if(p[0]==='8')b.classList.add('compact-havana-pin');
+  b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-footprint':'');
   b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0]==='pavilion-5'?'5':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
-  if(p[2]==='restaurant'&&!['3','8'].includes(p[0]))fitRestaurantFootprint(b,p);
+  if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
   b.onclick=()=>{
     document.getElementById('pavilionDetails').hidden=p[1]!=='The Pavilion';
     document.getElementById('amalfiDetails').hidden=p[0]!=='1';
