@@ -426,7 +426,8 @@ const shuttleStops=[
 ];
 const shuttleLoop=document.getElementById('shuttleLoop');
 const shuttleButtons=[];let selectedShuttleStop=null;
-const shuttleHeadway=450;
+const shuttleServicePeriods=[[0,21600,1800],[21600,32400,675],[32400,75600,450],[75600,86400,1800]];
+function shuttleInterval(now){return shuttleServicePeriods.find(([start,end])=>now>=start&&now<end)[2]}
 function showShuttleLoop(){clearPinFocus();clearRoomFocus();emberRoute.classList.remove('show');shuttleLoop.classList.add('show')}
 function shuttleSeconds(){const z=riyadhParts();return Number(z.hour)*3600+Number(z.minute)*60+Number(z.second)}
 function shuttleTime(seconds){seconds=((seconds%86400)+86400)%86400;return String(Math.floor(seconds/3600)).padStart(2,'0')+':'+String(Math.floor(seconds%3600/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}
@@ -434,18 +435,18 @@ function shuttleArrivals(index){
 const outbound=shuttleStops[index][3],returnOffsets=[1350,1200,1050,900,null],visits=[{offset:outbound,direction:index===4?'Turnaround · toward Buggy Assembly':'Toward Pavilion',hold:shuttleStops[index][4]}];
 if(index>0&&index<4)visits.push({offset:returnOffsets[index],direction:'Toward Buggy Assembly',hold:30});
 const times=[];
-for(const [start,end,interval] of [[0,21600,1800],[21600,75600,450],[75600,86400,1800]]){
+for(const [start,end,interval] of shuttleServicePeriods){
 for(const visit of visits){for(let time=start+(visit.offset%interval);time<end;time+=interval)times.push({time,direction:visit.direction,hold:visit.hold});}
 }return times.sort((a,b)=>a.time-b.time);
 }
 function shuttleTiming(index){
 const now=shuttleSeconds(),arrivals=shuttleArrivals(index),previous=[...arrivals].reverse().find(a=>a.time<=now)??{...arrivals[arrivals.length-1],time:arrivals[arrivals.length-1].time-86400},next=arrivals.find(a=>a.time>=now)??{...arrivals[0],time:arrivals[0].time+86400};
-return {now,next:next.time,nextDirection:next.direction,phase:now-previous.time,due:now-previous.time<previous.hold,interval:now>=21600&&now<75600?450:1800};
+return {now,next:next.time,nextDirection:next.direction,phase:now-previous.time,due:now-previous.time<previous.hold,interval:shuttleInterval(now)};
 }
 function shuttlePhase(index){return shuttleTiming(index).phase}
 function renderShuttleTimetable(index){
 const {now,next,nextDirection,due,interval}=shuttleTiming(index);
-document.getElementById('shuttleStopTimetable').innerHTML='<div class="grid"><div class="card"><small>Service</small><b>06:00–21:00 · 3 buggies<br>21:00–06:00 · 1 buggy</b></div><div class="card"><small>Departures from assembly</small><b>'+(interval===450?'Every 7 min 30 sec':'Every 30 min')+'</b></div><div class="card"><small>Next scheduled arrival</small><b>'+shuttleTime(next)+(next>=86400?' · tomorrow':'')+'<br>'+nextDirection+'</b></div><div class="card"><small>Demo status</small><b>'+(due?'🟢 Scheduled at stop':'Arrival in '+Math.floor((next-now)/60)+'m '+((next-now)%60)+'s')+'</b></div></div><p>Outward: Assembly → Recreation → Embers → Bridge → Pavilion.<br>Return: Pavilion → Bridge → Embers → Recreation → Assembly.</p><p>22 min 30 sec cycle: 20 min travel plus 1 min 15 sec waiting at Recreation and Embers on the outward journey. Overnight: one buggy departing every 30 minutes. Intermediate times and green indicators follow the demo schedule.</p><details><summary>Full-day timetable · both directions</summary><div class="shuttle-day-times">'+shuttleArrivals(index).map(a=>'<span class="'+(a.time===next?'next-arrival':'')+'">'+shuttleTime(a.time)+'<br><small>'+a.direction+'</small></span>').join('')+'</div></details>';
+document.getElementById('shuttleStopTimetable').innerHTML='<div class="grid"><div class="card"><small>Service</small><b>06:00–09:00 · 2 shuttle buggies<br>09:00–21:00 · 3 shuttle buggies<br>21:00–06:00 · 1 shuttle buggy</b></div><div class="card"><small>Departures from assembly</small><b>'+(interval===675?'Every 11 min 15 sec':interval===450?'Every 7 min 30 sec':'Every 30 min')+'</b></div><div class="card"><small>Next scheduled arrival</small><b>'+shuttleTime(next)+(next>=86400?' · tomorrow':'')+'<br>'+nextDirection+'</b></div><div class="card"><small>Demo status</small><b>'+(due?'🟢 Scheduled at stop':'Arrival in '+Math.floor((next-now)/60)+'m '+((next-now)%60)+'s')+'</b></div></div><p>Outward: Assembly → Recreation → Embers → Bridge → Pavilion.<br>Return: Pavilion → Bridge → Embers → Recreation → Assembly.</p><p>22 min 30 sec cycle: 20 min travel plus 1 min 15 sec waiting at Recreation and Embers on the outward journey. Morning 06:00–09:00: two shuttle buggies departing every 11 min 15 sec; all remaining buggies handle requests. From 09:00–21:00: three shuttle buggies departing every 7 min 30 sec. Overnight: one buggy departing every 30 minutes. Intermediate times and green indicators follow the demo schedule.</p><details><summary>Full-day timetable · both directions</summary><div class="shuttle-day-times">'+shuttleArrivals(index).map(a=>'<span class="'+(a.time===next?'next-arrival':'')+'">'+shuttleTime(a.time)+'<br><small>'+a.direction+'</small></span>').join('')+'</div></details>';
 }
 
 const shuttleSoundBtn=document.getElementById('shuttleSoundBtn');
@@ -489,7 +490,7 @@ countdown.querySelector('small').textContent=due?'DEMO':'NEXT BUGGY';countdown.q
 if(button.dataset.arrivalInitialized==='true'&&due&&!button.classList.contains('scheduled-here'))arrivalStarted=true;
 button.dataset.arrivalInitialized='true';
 button.classList.toggle('scheduled-here',due);
-button.title=(index+1)+' · '+name+ (interval===450?' · Outward & return · Day service':' · Outward & return · Night service')+(due?' · Scheduled at stop':'');
+button.title=(index+1)+' · '+name+ (interval===675?' · Outward & return · Morning service · 2 shuttle buggies':interval===450?' · Outward & return · Day service':' · Outward & return · Night service')+(due?' · Scheduled at stop':'');
 button.setAttribute('aria-label',button.title+(due?'':'; next buggy in '+Math.floor(remaining/60)+' minutes '+remaining%60+' seconds'));
 });
 if(arrivalStarted)playShuttleChime();
@@ -499,7 +500,7 @@ const details=document.querySelector('#shuttleStopTimetable details'),expanded=d
 }
 shuttleStops.forEach(([name,x,y],index)=>{
 const button=document.createElement('button');button.className='shuttle-stop';button.dataset.stop=String(index+1);button.style.left=x+'%';button.style.top=y+'%';button.textContent='🛺';const countdown=document.createElement('span');countdown.className='shuttle-countdown';countdown.setAttribute('aria-hidden','true');countdown.innerHTML='<small>NEXT BUGGY</small><b>—</b>';button.appendChild(countdown);
-button.onclick=()=>{selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='Outward and return shuttle arrivals through all five stops, with extra waiting at Recreation and Embers.';hrs.textContent='24 hours';venueStatus.textContent='7½ min daytime · 30 min overnight';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF 5';act.textContent='Three-buggy demo';best.textContent='Recreation & Embers waiting priority';renderShuttleTimetable(index);pan.classList.add('open')};m.appendChild(button);shuttleButtons.push({button,index});
+button.onclick=()=>{selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='Outward and return shuttle arrivals through all five stops, with extra waiting at Recreation and Embers.';hrs.textContent='24 hours';venueStatus.textContent='11¼ min 06:00–09:00 · 7½ min 09:00–21:00 · 30 min overnight';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF 5';act.textContent='Scheduled shuttle demo';best.textContent='Recreation & Embers waiting priority';renderShuttleTimetable(index);pan.classList.add('open')};m.appendChild(button);shuttleButtons.push({button,index});
 });
 refreshShuttleDemo();setInterval(refreshShuttleDemo,1000);
 
