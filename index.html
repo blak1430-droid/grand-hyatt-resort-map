@@ -151,11 +151,20 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 .shuttle-stop.scheduled-waiting{background:#f2c85b;color:#17130a;box-shadow:0 0 0 4px #f2c85b44,0 2px 5px #0008}
 .scheduled-waiting .shuttle-countdown{background:#f2c85b;color:#17130a}
 .scheduled-waiting .shuttle-countdown small{color:#42360f}
+.mobile-tools{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,44px);gap:8px;padding:8px 12px;background:#0b292b}
+#mobileVenue{grid-column:1/-1;min-height:44px;background:#071b1d;color:#fff;border:1px solid #ffffff40;border-radius:9px;padding:8px;font-size:16px}
+.room-search{display:flex;flex-wrap:wrap;gap:6px;grid-column:1/-1;align-items:center}
+.room-search label{position:static;width:auto;height:auto;clip-path:none;color:#bad0d1;font-size:14px}
+.room-search input{flex:1;min-width:140px;min-height:44px;padding:10px;font:16px Arial;background:#071b1d;color:#fff;border:1px solid #ffffff40;border-radius:9px}
+.mobile-tools button{min-height:44px;padding:8px;background:#164e50;color:#fff;border:1px solid #ffffff40;border-radius:9px;cursor:pointer}
+#roomSearchStatus{flex-basis:100%;font-size:13px;color:#bad0d1}
+.room-pin,.room-cluster{display:none!important}
+#roomRouteStart{display:none}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 <div class="request-bar"><button id="requestBuggyBtn" type="button">🛺 Request a Buggy</button></div><div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button data-f="amenity">Amenities</button><button data-f="event">Events</button><button id="shuttleSoundBtn" aria-pressed="false">🔇 Arrival chime off</button><button id="djDemoBtn" class="demo-dj">🔥 DJ Demo</button><button id="cigarDemoBtn" class="demo-cigar">💨 Cigar Demo</button><button id="nationalDemoBtn" class="demo-national">🇸🇦 National Day</button><button id="nyeDemoBtn" class="demo-nye">🎆 New Year&#39;s Eve</button><button id="chefDemoBtn" class="demo-chef">✨ Chef Selection Demo</button></div>
-<div class="mobile-tools"><label for="mobileVenue">Destination</label><select id="mobileVenue"><option value="">Choose a destination</option></select><select id="mobileRoom" aria-label="Choose a room"><option value="">Choose a room</option></select><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomFit">Fit</button></div><main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="emberRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Buggy Assembly Point to Embers route"><polyline class="buggy-route" points="449,568 425,568 398,560 368,543 333,520 300,490 268,458 238,421 219,384 215,347 218,303 225,260 236,220 249,180 266,140 284,105 306,76 325,57 347,43 365,39 328,120"/><circle class="route-endpoint" cx="449" cy="568" r="6"/><circle class="route-endpoint" id="emberRouteEnd" cx="328" cy="120" r="6"/><g class="shuttle-route-label" transform="translate(219 375)"><rect x="-64" y="-18" width="128" height="36" rx="8"/><text text-anchor="middle" dominant-baseline="central">24-hour demo</text></g></svg><svg class="route-overlay" id="shuttleLoop" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Five-stop buggy shuttle route"><polyline class="buggy-route" points="500.88,587.13 449.56,572.08 394.69,546.40 371.68,523.37 326.55,501.23 304.42,479.98 286.73,442.79 254.87,403.82 232.74,368.40 226.55,327.66 230.97,290.47 233.63,249.73 252.21,204.57 260.18,178.00 282.30,133.72 302.65,88.56 314.16,69.07 372.57,39.85 398.23,26.57 457.52,27.45 515.04,25.68 557.52,23.02 594.69,32.77 640.71,54.02 681.42,75.27 706.19,98.30 723.89,116.90 738.94,143.46 764.60,168.26 777.88,202.80 790.27,238.22 793.81,293.12 794.69,342.72 787.61,374.60"/></svg><svg class="route-overlay" id="roomRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Room to destination route"><line id="roomRouteLine" class="room-route-line" x1="0" y1="0" x2="0" y2="0"/><circle id="roomRouteStart" class="room-route-dot" cx="0" cy="0" r="7"/><circle id="roomRouteEnd" class="room-route-dot" cx="0" cy="0" r="7"/></svg></div></main>
+<div class="mobile-tools"><label for="mobileVenue">Destination</label><select id="mobileVenue"><option value="">Choose a destination</option></select><form id="roomSearchForm" class="room-search"><label for="mobileRoom">Room number</label><input id="mobileRoom" type="search" inputmode="numeric" placeholder="Search room 1–195" aria-label="Search room number 1 to 195" autocomplete="off" required><button type="submit">Find room</button><button type="button" id="clearRoomSearch" aria-label="Clear selected room">Clear</button><span id="roomSearchStatus" role="status" aria-live="polite"></span></form><button id="zoomOut" aria-label="Zoom out">−</button><button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomFit">Fit</button></div><main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="emberRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Buggy Assembly Point to Embers route"><polyline class="buggy-route" points="449,568 425,568 398,560 368,543 333,520 300,490 268,458 238,421 219,384 215,347 218,303 225,260 236,220 249,180 266,140 284,105 306,76 325,57 347,43 365,39 328,120"/><circle class="route-endpoint" cx="449" cy="568" r="6"/><circle class="route-endpoint" id="emberRouteEnd" cx="328" cy="120" r="6"/><g class="shuttle-route-label" transform="translate(219 375)"><rect x="-64" y="-18" width="128" height="36" rx="8"/><text text-anchor="middle" dominant-baseline="central">24-hour demo</text></g></svg><svg class="route-overlay" id="shuttleLoop" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Five-stop buggy shuttle route"><polyline class="buggy-route" points="500.88,587.13 449.56,572.08 394.69,546.40 371.68,523.37 326.55,501.23 304.42,479.98 286.73,442.79 254.87,403.82 232.74,368.40 226.55,327.66 230.97,290.47 233.63,249.73 252.21,204.57 260.18,178.00 282.30,133.72 302.65,88.56 314.16,69.07 372.57,39.85 398.23,26.57 457.52,27.45 515.04,25.68 557.52,23.02 594.69,32.77 640.71,54.02 681.42,75.27 706.19,98.30 723.89,116.90 738.94,143.46 764.60,168.26 777.88,202.80 790.27,238.22 793.81,293.12 794.69,342.72 787.61,374.60"/></svg><svg class="route-overlay" id="roomRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Room to destination route"><line id="roomRouteLine" class="room-route-line" x1="0" y1="0" x2="0" y2="0"/><circle id="roomRouteStart" class="room-route-dot" cx="0" cy="0" r="7"/><circle id="roomRouteEnd" class="room-route-dot" cx="0" cy="0" r="7"/></svg></div></main>
 <aside class="panel" id="panel"><button class="close" id="x">×</button><div id="state"></div><h2 id="ttl"></h2><p id="desc">Demo schedule for concept testing. Replace with confirmed operating hours when available.</p><div class="grid"><div class="card"><small>Today</small><b id="hrs">Demo hours</b></div><div class="card"><small>Status</small><b id="venueStatus"></b></div><div class="card"><small>Activity</small><b id="act"></b></div><div class="card"><small>Best for</small><b id="best"></b></div></div><div class="grid" id="pavilionDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Area</small><b>600 sqm</b></div><div class="card"><small>Capacity</small><b>250 guests</b></div></div><div class="grid" id="amalfiDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Total capacity</small><b>261 seats</b></div><div class="card"><small>Dining area</small><b>76 seats</b></div><div class="card"><small>Beach lounges</small><b>182 seats</b></div><div class="card"><small>Private cabanas</small><b>3</b></div></div><div class="grid" id="embersDetails" hidden style="margin-top:8px"><div class="card"><small>Breakfast</small><b>06:30 – 10:30</b></div><div class="card"><small>Lunch</small><b>12:30 – 15:00</b></div><div class="card"><small>Dinner</small><b>18:30 – 23:00</b></div><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Total capacity</small><b>167 seats</b></div><div class="card"><small>Indoor seating</small><b>70 seats</b></div><div class="card"><small>Private dining room (PDR)</small><b>1 table · 10 seats</b></div><div class="card"><small>Kitchen seating</small><b>14 seats</b></div><div class="card"><small>Wine tasting room</small><b>1 table · 6 seats</b></div><div class="card"><small>Outdoor seating</small><b>62 seats</b></div></div><div class="grid" id="driftDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>G floor</b></div><div class="card"><small>Total capacity</small><b>814 seats</b></div><div class="card"><small>Indoor seating</small><b>68 seats</b></div><div class="card"><small>Outdoor seating</small><b>124 seats</b></div><div class="card"><small>Bar seating</small><b>18 seats</b></div><div class="card"><small>Cabanas</small><b>4</b></div><div class="card"><small>Sunbeds</small><b>300</b></div></div><div class="grid" id="maudeDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>3rd floor</b></div><div class="card"><small>Total capacity</small><b>76 seats</b></div><div class="card"><small>Indoor seating</small><b>32 seats</b></div><div class="card"><small>Bar stools</small><b>8 seats</b></div><div class="card"><small>Outdoor seating</small><b>36 seats</b></div></div><div class="grid" id="charcoalDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>5th floor</b></div><div class="card"><small>Total capacity</small><b>216 seats</b></div><div class="card"><small>Breakfast</small><b>06:30 – 10:30</b></div><div class="card"><small>Lunch</small><b>12:00 – 15:00</b></div><div class="card"><small>Dinner</small><b>18:00 – Midnight</b></div><div class="card"><small>Indoor seating</small><b>92 seats</b></div><div class="card"><small>Private dining room (PDR)</small><b>2 tables · 22 seats</b></div><div class="card"><small>Bar area</small><b>26 seats</b></div><div class="card"><small>Outdoor seating</small><b>76 seats</b></div></div><div class="grid" id="akiraDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>5th floor</b></div><div class="card"><small>Total capacity</small><b>124 seats</b></div><div class="card"><small>Dinner</small><b>19:00 – Late</b></div><div class="card"><small>Indoor seating</small><b>54 seats</b></div><div class="card"><small>Private dining room (PDR)</small><b>2 tables · 20 seats</b></div><div class="card"><small>Outdoor seating</small><b>50 seats</b></div></div><div class="grid" id="takoyDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>5th floor</b></div><div class="card"><small>Total capacity</small><b>131 seats</b></div><div class="card"><small>Indoor seating</small><b>49 seats</b></div><div class="card"><small>Outdoor seating</small><b>82 seats</b></div></div><div class="grid" id="havanaDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>6th floor</b></div><div class="card"><small>Total capacity</small><b>91 seats</b></div><div class="card"><small>Indoor seating</small><b>44 seats</b></div><div class="card"><small>Bar seating</small><b>8 seats</b></div><div class="card"><small>Outdoor seating</small><b>29 seats</b></div></div><div class="grid" id="dessertDetails" hidden style="margin-top:8px"><div class="card"><small>Location</small><b>5th + 6th floor</b></div><div class="card"><small>Total capacity</small><b>79 seats</b></div><div class="card"><small>5th floor capacity</small><b>52 seats</b></div><div class="card"><small>6th floor capacity</small><b>27 seats</b></div><div class="card"><small>5th floor · Indoor</small><b>24 seats</b></div><div class="card"><small>5th floor · Outdoor</small><b>28 seats</b></div><div class="card"><small>6th floor · Indoor</small><b>11 seats</b></div><div class="card"><small>6th floor · Outdoor</small><b>16 seats</b></div></div><section id="shuttleSchedule" hidden class="shuttle-schedule"><h3>Day & night buggy shuttle demo</h3><p>Buggy Assembly ↔ Recreation ↔ Embers ↔ Bridge ↔ Pavilion</p><p>Two shuttle buggies 06:00–15:00 · Three shuttle buggies 15:00–21:00 · One buggy overnight · Green shows the scheduled arrival minute in Saudi time. Select a stop to see its full-day timetable.</p><div id="shuttleStopTimetable"></div><button id="showShuttleRoute" type="button">Show shuttle line</button></section><div class="schedule-note" id="scheduleNote">Restaurant hours shown here are demo data for the prototype.</div></aside>
 <dialog id="buggyRequestDialog" aria-labelledby="buggyRequestTitle"><form id="buggyRequestForm"><div class="request-heading"><h2 id="buggyRequestTitle">Request a Buggy</h2><button id="closeBuggyRequest" type="button" aria-label="Close request">×</button></div><label for="buggyPickup">Pickup location</label><input id="buggyPickup" list="buggyLocations" placeholder="Room number or place" required maxlength="100"><label for="buggyDestination">Destination</label><input id="buggyDestination" list="buggyLocations" placeholder="Where would you like to go?" required maxlength="100"><datalist id="buggyLocations"></datalist><label for="buggyPassengers">Passengers</label><input id="buggyPassengers" type="number" min="1" max="20" value="2" required><p>WhatsApp will open with your request ready. Tap Send there to contact transportation. Please wait for the team to confirm your pickup time.</p><button class="request-submit" type="submit">Continue in WhatsApp</button></form></dialog>
 <script>
@@ -295,61 +304,39 @@ P.forEach((p,i)=>{
 });
 const stateEl=document.getElementById('state');
 const roomPins=[],roomClusters=[];let activeRoomCluster=null;
-function clusterIdFor(roomNo){const local=roomNo>100?roomNo-100:roomNo;return (roomNo>100?'f1-':'g-')+Math.floor((local-1)/5)}
+function selectRoom(b,roomNo,floor){
+  clearPinFocus();selectedRoomButton=b;
+  roomPins.forEach(({b:q})=>{q.classList.toggle('room-selected',q===b);q.classList.remove('room-hidden','mobile-room-visible')});
+  document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);
+  document.getElementById('shuttleSchedule').hidden=true;document.getElementById('scheduleNote').hidden=true;
+  stateEl.textContent='ROOM';ttl.textContent='Room '+roomNo;hrs.textContent=floor;
+  venueStatus.textContent='Guest Room';venueStatus.className='';act.textContent='Room selected';
+  const mapped=b.dataset.mapped==='true';
+  desc.textContent=mapped?'Select a restaurant or activity to view the route.':'This room can be used for buggy requests. Its exact map position is not available yet.';
+  best.textContent=mapped?'Now select a restaurant or activity':'Available for buggy requests';
+  document.getElementById('roomSearchStatus').textContent='Room '+roomNo+' selected'+(mapped?'':'; map position unavailable.');
+  pan.classList.add('open');
+}
 function addRoomPin(roomNo,floor,xPos,yPos,extraClass){
-  const b=document.createElement('button');
-  const clusterId=clusterIdFor(roomNo);
-  b.className='room-pin '+extraClass;
-  b.textContent=roomNo;b.dataset.cluster=clusterId;
-  b.style.left=xPos+'%';b.style.top=yPos+'%';
+  const b=document.createElement('button');b.className='room-pin '+extraClass;
+  b.textContent=roomNo;b.dataset.mapped='true';b.style.left=xPos+'%';b.style.top=yPos+'%';
   b.title='Room '+roomNo+' • '+floor;b.setAttribute('aria-label','Room '+roomNo+', '+floor);
-  b.onclick=()=>{
-    const wasSelected=b.classList.contains('room-selected');
-    clearPinFocus();
-    roomPins.forEach(({b:q})=>{q.classList.remove('room-selected');if(q.dataset.cluster===clusterId)q.classList.remove('room-hidden')});
-    if(wasSelected){selectedRoomButton=null;hideRoomDestinationRoute();pan.classList.remove('open');return}
-    selectedRoomButton=b;
-    roomPins.forEach(({b:q})=>{if(q.dataset.cluster===clusterId){q.classList.toggle('room-selected',q===b);q.classList.toggle('room-hidden',q!==b)}});
-    document.getElementById('pavilionDetails').hidden=true;document.getElementById('shuttleSchedule').hidden=true;document.getElementById('dessertDetails').hidden=true;document.getElementById('havanaDetails').hidden=true;document.getElementById('takoyDetails').hidden=true;document.getElementById('akiraDetails').hidden=true;document.getElementById('charcoalDetails').hidden=true;document.getElementById('maudeDetails').hidden=true;document.getElementById('driftDetails').hidden=true;document.getElementById('embersDetails').hidden=true;document.getElementById('amalfiDetails').hidden=true;document.getElementById('scheduleNote').hidden=true;
-    stateEl.textContent='ROOM • '+floor.toUpperCase();ttl.textContent='Room '+roomNo;hrs.textContent=floor;
-    venueStatus.textContent='Guest Room';venueStatus.className='';act.textContent='Room selected';best.textContent='Now select a restaurant or activity';pan.classList.add('open');
-  };
-  m.appendChild(b);roomPins.push({b,roomNo,floor});
+  b.onclick=()=>selectRoom(b,roomNo,floor);
+  roomPins.push({b,roomNo,floor});
 }
 for(let i=0;i<22;i++){
   const n=i+1,t=i/21,y=52.8-(25.4*t),centerX=71.0-(1.8*t)+(0.4*Math.sin(Math.PI*t));
   addRoomPin(n,'Ground Floor',centerX-0.85,y,'ground-floor');
   addRoomPin(100+n,'First Floor',centerX+0.85,y,'first-floor');
 }
-function addRoomCluster(startRoom,endRoom,floor,clusterId,xPos,yPos,extraClass){
-  const b=document.createElement('button');b.className='room-cluster '+extraClass;b.textContent=startRoom+'–'+endRoom;b.dataset.cluster=clusterId;
-  b.style.left=xPos+'%';b.style.top=yPos+'%';b.title=floor+' rooms '+startRoom+' to '+endRoom;
-  b.onclick=()=>{
-    clearPinFocus();selectedRoomButton=null;
-    const same=activeRoomCluster===clusterId;
-    activeRoomCluster=same?null:clusterId;
-    pan.classList.remove('open');
-    updateRoomPresentation();
-  };
-  m.appendChild(b);roomClusters.push({b,clusterId});
-}
-for(const floorDef of [{base:0,label:'Ground Floor',xOffset:-1.45,cls:'ground-floor',prefix:'g-'},{base:100,label:'First Floor',xOffset:1.45,cls:'first-floor',prefix:'f1-'}]){
-  for(let g=0;g<5;g++){
-    const localStart=g*5+1,localEnd=Math.min(localStart+4,22),mid=(localStart+localEnd)/2,t=(mid-1)/21;
-    const y=52.8-(25.4*t),centerX=71.0-(1.8*t)+(0.4*Math.sin(Math.PI*t));
-    addRoomCluster(floorDef.base+localStart,floorDef.base+localEnd,floorDef.label,floorDef.prefix+g,centerX+floorDef.xOffset,y,floorDef.cls);
-  }
+for(let roomNo=1;roomNo<=195;roomNo++){
+  if(roomPins.some(room=>room.roomNo===roomNo))continue;
+  const b=document.createElement('button'),floor='Map position unavailable';
+  b.textContent=roomNo;b.dataset.mapped='false';b.onclick=()=>selectRoom(b,roomNo,floor);
+  roomPins.push({b,roomNo,floor});
 }
 function updateRoomPresentation(){
-  const mobile=window.matchMedia('(max-width:700px)').matches;
-  if(!mobile){roomClusters.forEach(({b})=>b.style.display='none');roomPins.forEach(({b})=>{b.classList.remove('mobile-room-visible','room-hidden','room-selected')});activeRoomCluster=null;return}
-  roomClusters.forEach(({b,clusterId})=>{
-    b.style.display='grid';b.classList.toggle('cluster-selected',clusterId===activeRoomCluster);b.classList.toggle('cluster-hidden',activeRoomCluster&&clusterId!==activeRoomCluster);
-  });
-  roomPins.forEach(({b})=>{
-    const show=activeRoomCluster&&b.dataset.cluster===activeRoomCluster;
-    b.classList.toggle('mobile-room-visible',!!show);if(!show)b.classList.remove('room-selected','room-hidden');
-  });
+  roomPins.forEach(({b})=>b.classList.toggle('room-selected',b===selectedRoomButton));
 }
 function hideRoomDestinationRoute(){roomRoute.classList.remove('show');selectedDestinationButton=null;pins.forEach(({b})=>b.classList.remove('focus-selected'))}
 function elementPoint(el){return {x:parseFloat(el.style.left)*10,y:parseFloat(el.style.top)*7.12}}
@@ -364,7 +351,7 @@ function handleRoomDestinationSelection(destinationButton,p){
   if(selectedDestinationButton===destinationButton){hideRoomDestinationRoute();return}
   selectedDestinationButton=destinationButton;
   pins.forEach(({b})=>b.classList.toggle('focus-selected',b===destinationButton));
-  drawRoomDestinationRoute(selectedRoomButton,destinationButton);
+  if(selectedRoomButton.dataset.mapped==='true')drawRoomDestinationRoute(selectedRoomButton,destinationButton);else roomRoute.classList.remove('show');
 }
 function clearRoomFocus(){selectedRoomButton=null;activeRoomCluster=null;hideRoomDestinationRoute();roomPins.forEach(({b})=>b.classList.remove('room-selected','room-hidden','mobile-room-visible'));roomClusters.forEach(({b})=>b.classList.remove('cluster-selected','cluster-hidden'));updateRoomPresentation()}
 updateRoomPresentation();window.addEventListener('resize',updateRoomPresentation);
@@ -418,8 +405,18 @@ const mobileVenue=document.getElementById('mobileVenue');
 pins.forEach(({p})=>{const option=document.createElement('option');option.value=p[0];option.textContent=(p[0]==='pavilion-5'?'Events 5':p[0])+' · '+p[1];mobileVenue.appendChild(option)});
 mobileVenue.onchange=()=>{const target=pins.find(({p})=>p[0]===mobileVenue.value);if(target)target.b.click();mobileVenue.value=''};
 const mobileRoom=document.getElementById('mobileRoom');
-roomPins.forEach(({roomNo,floor})=>{const option=document.createElement('option');option.value=roomNo;option.textContent='Room '+roomNo+' · '+floor;mobileRoom.appendChild(option)});
-mobileRoom.onchange=()=>{const target=roomPins.find(({roomNo})=>String(roomNo)===mobileRoom.value);if(target)target.b.click()};
+function searchRoom(){
+  const value=mobileRoom.value.trim();
+  if(!/^\d{1,3}$/.test(value)||Number(value)<1||Number(value)>195){
+    mobileRoom.setCustomValidity('Enter a room number from 1 to 195.');mobileRoom.reportValidity();return false;
+  }
+  mobileRoom.setCustomValidity('');
+  const target=roomPins.find(({roomNo})=>roomNo===Number(value));
+  target.b.click();return true;
+}
+document.getElementById('roomSearchForm').onsubmit=event=>{event.preventDefault();searchRoom()};
+mobileRoom.oninput=()=>mobileRoom.setCustomValidity('');
+document.getElementById('clearRoomSearch').onclick=()=>{clearRoomFocus();mobileRoom.value='';document.getElementById('roomSearchStatus').textContent='';pan.classList.remove('open')};
 let mapZoom=100;
 function setMapZoom(value){mapZoom=Math.max(100,Math.min(400,value));m.style.setProperty('--map-zoom',mapZoom+'%');document.getElementById('zoomOut').disabled=mapZoom===100;document.getElementById('zoomIn').disabled=mapZoom===400}
 document.getElementById('zoomIn').onclick=()=>setMapZoom(mapZoom+50);
