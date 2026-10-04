@@ -174,6 +174,8 @@ header h1{font-size:14px;max-width:210px}.clock{min-width:88px}.clock small{font
 .shuttle-stop[data-stop="5"]{width:16px;height:16px;font-size:9px}
 .pin[data-venue="pavilion-5"]{width:16px!important;height:16px!important;font-size:9px!important;border-radius:4px}
 }
+.pin[data-venue="3"]{width:24px!important;height:24px!important;font-size:11px!important;border-width:1.5px}
+@media(max-width:700px){.pin[data-venue="3"]{width:16px!important;height:16px!important;font-size:9px!important;border-width:1px}}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -410,7 +412,7 @@ document.getElementById('zoomOut').onclick=()=>setMapZoom(mapZoom-50);
 document.getElementById('zoomFit').onclick=()=>{setMapZoom(100);document.querySelector('.stage').scrollTo({left:0,top:0})};
 
 const shuttleStops=[
-['Reception / Buggy Stand',46.3,81.1,0,30],['Recreation',32.65,70.4,180,120],['Embers Stop',37.26,7.1,450,120],['Bridge Stop',70.4,17.2,720,30],['Pavilion Stop',78.1,43.8,900,30]
+['Reception / Buggy Stand',46.3,81.1,0,30],['Recreation',32.65,70.4,180,120],['Embers Stop',37.26,7.1,450,120],['Bridge Stop',70.4,17.2,720,30],['Pavilion Stop',76.6,43.8,900,30]
 ];
 
 const shuttleButtons=[];let selectedShuttleStop=null;
