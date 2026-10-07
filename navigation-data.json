@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "nodes": [],
+  "edges": [],
+  "gpsToMap": null,
+  "notes": "Populate from staff GPS recordings and confirmed guest walking paths. Nodes: id, name, venueId or room, kind (shuttle or buggy-pickup), lat, lon. Edges: from, to, metres, confirmed, oneWay, mapPoints as [xPercent,yPercent]. gpsToMap: six affine coefficients converting longitude and latitude to map percentages."
+}
