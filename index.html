@@ -234,6 +234,10 @@ header{position:relative;z-index:30}
 
 .panel[data-restaurant-theme="embers"]{background-size:cover;background-position:center top;background-repeat:no-repeat;background-attachment:local}
 .panel[data-restaurant-theme="embers"] .preview{background:#000}
+.venue-music-player{width:100%;min-width:0}
+.venue-music-player iframe{display:block;width:100%;height:220px;min-height:200px;border:0;border-radius:10px}
+.venue-music-player p{font-size:14px;margin:0 0 8px}
+.venue-music-player a{display:inline-block;color:var(--venue-accent,#f2c85b);padding:10px 0;min-height:44px}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant demo music and shuttle chimes" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -574,6 +578,7 @@ const restaurantMusic={
  amalfi:{bpm:120,notes:[130.81,130.81,164.81,196,130.81,146.83,164.81,196],wave:'triangle'}
 };
 function stopRestaurantMusic(){
+ document.getElementById('embersMusicPlayer')?.remove();
  clearTimeout(musicTimer);musicTimer=null;
  activeMusicNodes.forEach(node=>{try{node.stop()}catch(error){}});
  activeMusicNodes.clear();musicTheme=null;
@@ -587,6 +592,20 @@ function syncRestaurantMusic(){
  const theme=document.getElementById('panel').dataset.restaurantTheme;
  const permitted=shuttleSoundEnabled&&!document.hidden&&pan.classList.contains('open')&&restaurantMusic[theme]&&shuttleAudioContext&&shuttleAudioContext.state==='running';
  if(!permitted){stopRestaurantMusic();return}
+ if(theme==='embers'){
+  if(document.getElementById('embersMusicPlayer'))return;
+  stopRestaurantMusic();musicTheme=theme;
+  const box=document.createElement('div');box.id='embersMusicPlayer';box.className='venue-music-player';
+  const label=document.createElement('p');label.textContent='Music reference · Monolink — Return to Oz (ARTBAT Remix)';
+  const iframe=document.createElement('iframe');iframe.title='Monolink Return to Oz ARTBAT Remix YouTube player';
+  iframe.src='https://www.youtube.com/embed/Lo0ELoepTCM?autoplay=1&playsinline=1&loop=1&playlist=Lo0ELoepTCM';
+  iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';iframe.allowFullscreen=true;
+  const note=document.createElement('small');note.textContent='If playback does not start, tap Play in the player.';
+  const link=document.createElement('a');link.href='https://www.youtube.com/watch?v=Lo0ELoepTCM';link.target='_blank';link.rel='noopener noreferrer';link.textContent='Listen on YouTube';
+  box.append(label,iframe,note,link);
+  document.getElementById('restaurantPreviewDemo').appendChild(box);
+  return;
+ }
  if(musicTheme===theme&&musicTimer!==null)return;
  stopRestaurantMusic();musicTheme=theme;musicStep=0;
  function tick(){
@@ -699,7 +718,7 @@ mapimg.onerror=()=>{const d=document.createElement('div');d.className='loading';
   section.replaceChildren();section.hidden=!item;if(!item)return;
   const level=item.occupancy<70?'green':item.occupancy<90?'yellow':'red';
   const status=item.occupancy<70?'Available':item.occupancy<90?'Busy':item.occupancy<100?'Almost full':'Full';
-  section.innerHTML='<small>DEMO ONLY · generated music · simulated occupancy '+item.occupancy+'%</small><div class="preview" aria-label="Ten-second black video placeholder"><span>10-second loop · video placeholder</span><div class="loop-track"><div class="loop-fill"></div></div></div><button type="button" class="menu-demo"><span class="menu-thumb" aria-hidden="true"><svg viewBox="0 0 64 64" width="52" height="52" focusable="false"><circle cx="32" cy="34" r="26" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="32" cy="34" r="20" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/><g transform="rotate(-12 32 30)"><rect x="19" y="9" width="26" height="38" rx="3" fill="var(--venue-card,#123d40)" stroke="currentColor" stroke-width="2"/><text x="32" y="21" text-anchor="middle" fill="currentColor" font-family="Arial,sans-serif" font-size="6" font-weight="bold">MENU</text><path d="M24 27h16m-16 6h16m-16 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></g></svg></span><span>Menu<small>Placeholder · no menu uploaded</small></span></button><div class="demo-hours"><small>Opening & closing times · prototype hours</small><span></span></div><button type="button" class="reserve-demo '+level+'">'+status+' · '+(item.occupancy===100?'Join waiting list':'Reserve a table')+'</button><p class="demo-message" role="status" hidden></p>';
+  section.innerHTML='<small>DEMO ONLY · music preview · simulated occupancy '+item.occupancy+'%</small><div class="preview" aria-label="Ten-second black video placeholder"><span>10-second loop · video placeholder</span><div class="loop-track"><div class="loop-fill"></div></div></div><button type="button" class="menu-demo"><span class="menu-thumb" aria-hidden="true"><svg viewBox="0 0 64 64" width="52" height="52" focusable="false"><circle cx="32" cy="34" r="26" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="32" cy="34" r="20" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/><g transform="rotate(-12 32 30)"><rect x="19" y="9" width="26" height="38" rx="3" fill="var(--venue-card,#123d40)" stroke="currentColor" stroke-width="2"/><text x="32" y="21" text-anchor="middle" fill="currentColor" font-family="Arial,sans-serif" font-size="6" font-weight="bold">MENU</text><path d="M24 27h16m-16 6h16m-16 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></g></svg></span><span>Menu<small>Placeholder · no menu uploaded</small></span></button><div class="demo-hours"><small>Opening & closing times · prototype hours</small><span></span></div><button type="button" class="reserve-demo '+level+'">'+status+' · '+(item.occupancy===100?'Join waiting list':'Reserve a table')+'</button><p class="demo-message" role="status" hidden></p>';
   section.querySelector('.demo-hours span').textContent=item.hours;
 
   if(item.video){const video=document.createElement('video');video.src=item.video;video.autoplay=true;video.muted=true;video.loop=true;video.playsInline=true;video.controls=true;section.querySelector('.preview').replaceChildren(video);}
