@@ -246,18 +246,18 @@ header{position:relative;z-index:30}
 .panel[data-restaurant-theme]>.grid>.card b{display:block;line-height:1.4}
 .panel[data-restaurant-theme="embers"] #activityCard{grid-column:1/-1}
 .panel[data-restaurant-theme]>.grid[id]>.card:last-child:nth-child(odd){grid-column:1/-1}
+#travelStart{grid-column:1/-1;width:100%;min-height:44px}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 <div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button data-f="amenity">Amenities</button><button data-f="event">Events</button></div>
-<div class="mobile-tools"><label for="mobileVenue">Destination</label><select id="mobileVenue"><option value="">Choose a destination</option></select><form id="roomSearchForm" class="room-search"><input id="mobileRoom" type="search" inputmode="numeric" placeholder="Search room 1–195" aria-label="Search room number 1 to 195" autocomplete="off" maxlength="3" required><span id="roomSearchStatus" role="status" aria-live="polite"></span></form></div><main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="roomRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Room to destination route"><line id="roomRouteLine" class="room-route-line" x1="0" y1="0" x2="0" y2="0"/><circle id="roomRouteStart" class="room-route-dot" cx="0" cy="0" r="7"/><circle id="roomRouteEnd" class="room-route-dot" cx="0" cy="0" r="7"/></svg></div></main>
+<div class="mobile-tools"><label for="travelStart">Starting point</label><select id="travelStart"><option value="">Choose starting point or search room</option></select><label for="mobileVenue">Destination</label><select id="mobileVenue"><option value="">Choose a destination</option></select><form id="roomSearchForm" class="room-search"><input id="mobileRoom" type="search" inputmode="numeric" placeholder="Search room 1–195" aria-label="Search room number 1 to 195" autocomplete="off" maxlength="3" required><span id="roomSearchStatus" role="status" aria-live="polite"></span></form></div><main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="roomRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Room to destination route"><line id="roomRouteLine" class="room-route-line" x1="0" y1="0" x2="0" y2="0"/><circle id="roomRouteStart" class="room-route-dot" cx="0" cy="0" r="7"/><circle id="roomRouteEnd" class="room-route-dot" cx="0" cy="0" r="7"/></svg></div></main>
 <style>
 .travel-nav{max-width:1200px;margin:12px auto;padding:18px;background:#0b292b;border:1px solid #ffffff30;border-radius:14px;color:#fff}.travel-nav h2{margin:0 0 12px;font-size:21px}.travel-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.travel-nav label{display:block;margin:0 0 6px;font-size:14px}.travel-nav select,.travel-nav input,.travel-nav button,.travel-nav a{min-height:44px;font:16px Arial;border-radius:9px;padding:10px}.travel-nav select,.travel-nav input{width:100%;background:#071b1d;color:#fff;border:1px solid #ffffff50}.travel-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.travel-nav button{border:1px solid #ffffff50;background:#164e50;color:#fff;cursor:pointer}.travel-nav button:disabled{opacity:.5;cursor:default}.travel-nav p{line-height:1.5;font-size:15px}.travel-nav a{display:inline-block;color:#172321;background:#f2c85b;text-decoration:none}.travel-nav .travel-primary{background:#1769ff}.travel-nav button[aria-pressed=true]{outline:2px solid #f2c85b}.navigation-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:8;pointer-events:none}.navigation-path{stroke:#f2c85b;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}.guest-dot{fill:#1769ff;stroke:#fff;stroke-width:3}.travel-nav-link{min-height:44px;padding:10px 14px;border:1px solid #ffffff40;border-radius:9px;background:#164e50;color:#fff;font-size:15px;cursor:pointer}@media(max-width:700px){.travel-nav{margin:8px;padding:14px}.travel-fields{grid-template-columns:1fr}.travel-actions{display:grid;grid-template-columns:1fr}.travel-actions button{width:100%}}
 </style>
-<button class="travel-nav-link" id="openTravelNav" type="button">Directions &amp; transport ↓</button>
-<section id="travelNav" class="travel-nav" aria-labelledby="travelTitle">
+<section id="travelNav" class="travel-nav" aria-labelledby="travelTitle" hidden>
 <h2 id="travelTitle">Choose how to get there</h2>
-<div class="travel-fields"><div><label for="travelStart">Starting point</label><select id="travelStart"><option value="">Choose a place</option></select><label for="travelRoom">Or enter your room</label><input id="travelRoom" type="number" inputmode="numeric" min="1" max="195" placeholder="Room 1–195"></div><div><label for="travelDestination">Destination</label><select id="travelDestination"><option value="">Choose a destination</option></select><div class="travel-actions"><button id="travelLocate" type="button">📍 Use my live location</button><button id="travelStop" type="button" hidden>Stop location sharing</button></div></div></div>
+<div class="travel-fields"><div><input id="travelRoom" type="hidden"></div><div><label for="travelDestination">Destination</label><select id="travelDestination"><option value="">Choose a destination</option></select></div></div>
 <div class="travel-actions"><button id="travelWalk" type="button" aria-pressed="false">🚶 Walk to destination</button><button id="travelShuttle" type="button" aria-pressed="false">🛺 Walk to nearest shuttle</button><button id="travelBuggy" type="button" aria-pressed="false" disabled>🛺 Request buggy · over 500 m</button></div>
 <p id="travelStatus" role="status" aria-live="polite">Choose your starting point and destination. Walking directions will appear when the recorded paths are available.</p>
 <p id="travelDistance">Buggy requests become available for a measured walking route over 500 metres.</p>
@@ -727,5 +727,68 @@ mapimg.onerror=()=>{const d=document.createElement('div');d.className='loading';
  }
  new MutationObserver(render).observe(title,{childList:true,characterData:true,subtree:true});render();
 })();
+// Navigation data contains confirmed guest paths only. Map coordinates use percentages.
+(()=>{
+const el=id=>document.getElementById(id),start=el('travelStart'),dest=el('travelDestination'),room=el('travelRoom'),status=el('travelStatus'),distance=el('travelDistance'),buggy=el('travelBuggy'),request=el('travelRequestLink');
+let data={nodes:[],edges:[],gpsToMap:null},mode=null;
+const svgNS='http://www.w3.org/2000/svg',overlay=document.createElementNS(svgNS,'svg');overlay.classList.add('navigation-overlay');overlay.setAttribute('viewBox','0 0 1000 712');overlay.setAttribute('aria-label','Walking directions');overlay.innerHTML='<defs><marker id="walkingArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f2c85b"/></marker></defs><polyline id="walkingPath" class="navigation-path" marker-end="url(#walkingArrow)"/><circle id="guestLocationDot" class="guest-dot" r="8" visibility="hidden"/>';m.appendChild(overlay);
+const line=el('walkingPath'),dot=el('guestLocationDot');
+const places=P.map(p=>({id:p[0],name:p[1]}));
+function fill(select){places.forEach(p=>{const option=document.createElement('option');option.value=p.id;option.textContent=p.name;select.appendChild(option)});}
+fill(start);fill(dest);
+function node(id){return data.nodes.find(n=>n.id===id)}
+function metres(a,b){const rad=Math.PI/180,p1=a.lat*rad,p2=b.lat*rad,dp=(b.lat-a.lat)*rad,dl=(b.lon-a.lon)*rad,h=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return 6371000*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
+function route(from,to){
+ if(!node(from)||!node(to))return null;
+ const costs=new Map([[from,0]]),previous=new Map(),remaining=new Set(data.nodes.map(n=>n.id));
+ while(remaining.size){let current=null;for(const id of remaining)if(costs.has(id)&&(current===null||costs.get(id)<costs.get(current)))current=id;if(current===null)break;remaining.delete(current);if(current===to)break;
+ for(const edge of data.edges){if(edge.confirmed!==true||!(edge.metres>0))continue;let other=null;if(edge.from===current)other=edge.to;else if(edge.to===current&&edge.oneWay!==true)other=edge.from;if(other===null||!remaining.has(other))continue;const cost=costs.get(current)+edge.metres;if(!costs.has(other)||cost<costs.get(other)){costs.set(other,cost);previous.set(other,{id:current,edge,reverse:edge.to===current});}}
+ }
+ if(!costs.has(to))return null;const edges=[],ids=[to];let current=to;while(current!==from){const p=previous.get(current);if(!p)return null;edges.unshift(p);current=p.id;ids.unshift(current)}return {metres:costs.get(to),ids,edges};
+}
+function origin(){
+ if(room.value)return data.nodes.find(n=>String(n.room)===room.value)||null;
+ return data.nodes.find(n=>n.id===start.value||n.venueId===start.value)||null;
+}
+function destination(){return data.nodes.find(n=>n.id===dest.value||n.venueId===dest.value)||null}
+function nearest(from,kind){return data.nodes.filter(n=>n.kind===kind).map(n=>({n,r:route(from.id,n.id)})).filter(x=>x.r).sort((a,b)=>a.r.metres-b.r.metres)[0]||null;}
+function draw(r){const points=[];for(const step of r.edges){let p=step.edge.mapPoints;if(!Array.isArray(p)||p.length<2){line.setAttribute('points','');return false;}p=step.reverse?[...p].reverse():p;points.push(...p);}if(r.edges.length===0){line.setAttribute('points','');return true;}line.setAttribute('points',points.map(p=>(p[0]*10)+','+(p[1]*7.12)).join(' '));return true;}
+function update(){
+ request.hidden=true;line.setAttribute('points','');buggy.disabled=true;
+ const selectedStart=room.value||start.value,selectedEnd=dest.value;
+ el('travelNav').hidden=!selectedStart||!selectedEnd||(!room.value&&start.value===dest.value);
+ if(el('travelNav').hidden)return;
+ ['travelWalk','travelShuttle','travelBuggy'].forEach((id,i)=>el(id).setAttribute('aria-pressed',String(mode===['walk','shuttle','buggy'][i])));
+ const from=origin(),to=destination();
+ if(!data.nodes.length){status.textContent='Recorded walking paths and pickup locations have not been added yet. Choose your room or starting place now; directions and live map guidance will be available after mapping.';return;}
+ if(!from){status.textContent='Choose a mapped starting place or room.';return;}
+ if(!to){status.textContent='Choose a mapped destination.';return;}
+ const walking=route(from.id,to.id);if(!walking){status.textContent='A confirmed walking route between these places is not available yet.';distance.textContent='Distance is unavailable; the 500-metre request rule cannot be checked.';return;}
+ buggy.disabled=walking.metres<=500;distance.textContent='Walking distance to destination: '+Math.round(walking.metres)+' m'+(walking.metres>500?' · buggy request available.':' · buggy requests apply to routes over 500 m.');
+ if(!mode){status.textContent='Choose walking, a shuttle stop, or a buggy request when available.';return;}
+ let target=to,r=walking;
+ if(mode==='shuttle'||mode==='buggy'){const closest=nearest(from,mode==='shuttle'?'shuttle':'buggy-pickup');if(!closest){status.textContent='No confirmed walking route to a '+(mode==='shuttle'?'shuttle stop':'buggy pickup point')+' is available yet.';return;}target=closest.n;r=closest.r;}
+ if(mode==='buggy'&&walking.metres<=500){status.textContent='Buggy requests are available for walking routes over 500 m. Choose walking or the shuttle instead.';return;}
+ const drawn=draw(r);roomRoute.classList.remove('show');status.textContent='Walk to '+target.name+' · '+Math.round(r.metres)+' m.'+(drawn?' Follow the arrow on the resort map.':' The path drawing has not been mapped yet.');
+ if(mode==='shuttle'){const stop=shuttleButtons.find(({index})=>shuttleStops[index][0].toLowerCase().includes(target.name.toLowerCase())||target.shuttleIndex===index);if(stop){const timing=shuttleTiming(stop.index);status.textContent+=' Next shuttle: '+shuttleTime(timing.next)+'.';}}
+ if(mode==='buggy'){request.href='https://wa.me/966538567816?text='+encodeURIComponent(['Buggy request','Pickup: '+target.name,'Starting point: '+from.name,'Destination: '+to.name].join('\n'));request.hidden=false;status.textContent+=' Continue in WhatsApp and wait for transport confirmation.';}
+}
+function selectManual(){update();}
+start.onchange=()=>{room.value='';selectManual()};room.oninput=()=>{start.value='';selectManual()};dest.onchange=update;
+el('travelWalk').onclick=()=>{mode='walk';update()};el('travelShuttle').onclick=()=>{mode='shuttle';update()};buggy.onclick=()=>{mode='buggy';update()};
+function syncTravelSelections(){
+ if(selectedRoomButton){room.value=selectedRoomButton.textContent.trim();start.value='';}
+ else room.value='';
+ const p=P.find(p=>p[1]===ttl.textContent);
+ if(p&&pan.classList.contains('open'))dest.value=p[0];
+ else if(!pan.classList.contains('open')||ttl.textContent.startsWith('Room '))dest.value='';
+ update();
+}
+new MutationObserver(syncTravelSelections).observe(ttl,{childList:true,characterData:true,subtree:true});
+new MutationObserver(syncTravelSelections).observe(pan,{attributes:true,attributeFilter:['class']});
+mobileRoom.addEventListener('input',()=>{if(!mobileRoom.value){room.value='';dest.value='';update();}});
+fetch('navigation-data.json').then(r=>{if(!r.ok)throw Error();return r.json()}).then(value=>{if(!Array.isArray(value.nodes)||!Array.isArray(value.edges))throw Error();data=value;for(const n of data.nodes){if(!places.some(p=>p.id===n.id||p.id===n.venueId)){const o=document.createElement('option');o.value=n.id;o.textContent=n.name;start.appendChild(o);dest.appendChild(o.cloneNode(true));}}update();}).catch(()=>update());
+})();
+
 </script>
 </body></html>
