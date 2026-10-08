@@ -432,7 +432,17 @@ P.forEach((p,i)=>{
 });
 const stateEl=document.getElementById('state');
 const roomPins=[],roomClusters=[];let activeRoomCluster=null;
+function shakeRoom(element){
+ if(!element||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ element.getAnimations().filter(a=>a.id==='room-tap-shake').forEach(a=>a.cancel());
+ const animation=element.animate([
+  {translate:'0 0'},{translate:'-4px 0'},{translate:'4px 0'},
+  {translate:'-3px 0'},{translate:'3px 0'},{translate:'0 0'}
+ ],{duration:360,easing:'ease-in-out'});
+ animation.id='room-tap-shake';
+}
 function selectRoom(b,roomNo,floor){
+  shakeRoom(b);
   clearPinFocus();selectedRoomButton=b;
   roomPins.forEach(({b:q})=>{q.classList.toggle('room-selected',q===b);q.classList.remove('room-hidden','mobile-room-visible')});
   document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);
@@ -442,8 +452,8 @@ function selectRoom(b,roomNo,floor){
   const mapped=b.dataset.mapped==='true';
   desc.textContent=mapped?'Select a restaurant or activity to view the route.':'This room can be used for buggy requests. Its exact map position is not available yet.';
   best.textContent=mapped?'Now select a restaurant or activity':'Available for buggy requests';
-  document.getElementById('roomSearchStatus').textContent='Room '+roomNo+' selected'+(mapped?'':'; map position unavailable.');
-  pan.classList.add('open');scrollToDetails();
+  const roomStatus=document.getElementById('roomSearchStatus');if(roomStatus)roomStatus.textContent='Room '+roomNo+' selected'+(mapped?'':'; map position unavailable.');
+  pan.classList.add('open');shakeRoom(pan);scrollToDetails();
 }
 function addRoomPin(roomNo,floor,xPos,yPos,extraClass){
   const b=document.createElement('button');b.className='room-pin '+extraClass;
