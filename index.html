@@ -248,11 +248,14 @@ header{position:relative;z-index:30}
 .panel[data-restaurant-theme]>.grid[id]>.card:last-child:nth-child(odd){grid-column:1/-1}
 #travelStart{grid-column:1/-1;width:100%;min-height:44px}
 .pin.focus-hidden{opacity:1;filter:none;pointer-events:auto}
+</style><style>
+.room-finder{max-width:1100px;margin:10px auto;padding:10px 14px;background:#102e30;border:1px solid #527071;border-radius:12px;color:#fff}.room-finder form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.room-finder input{flex:1;min-width:130px;padding:12px;border-radius:8px;border:1px solid #8ba2a1;font-size:16px}.room-finder button{padding:12px;border-radius:8px;border:1px solid #d8c28e;background:#edcf8a;color:#182524;cursor:pointer}.room-finder p{margin:8px 0 0;font-size:13px}.confirmed-room-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}.confirmed-room-overlay polygon{fill:#d6bd71;fill-opacity:.12;stroke:#f5dfa1;stroke-width:1.5;vector-effect:non-scaling-stroke;pointer-events:auto;cursor:pointer}.confirmed-room-overlay polygon.is-selected{fill-opacity:.55;stroke:#fff;stroke-width:3}.confirmed-room-label{position:absolute;transform:translate(-50%,-50%);z-index:5;font:700 8px/1.2 Arial;color:#172826;background:#f1d998;border:1px solid white;border-radius:4px;padding:2px 4px;cursor:pointer;box-shadow:0 1px 4px #0008}.confirmed-room-label.is-selected{outline:2px solid white;background:#fff0b6}.confirmed-room-choices{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.confirmed-room-choices[hidden]{display:none}.confirmed-room-choices button{min-width:44px;min-height:44px;padding:8px}
+@media(max-width:700px){.room-finder{margin:8px;padding:10px}.confirmed-room-label{display:none}.confirmed-room-overlay polygon{display:none}.confirmed-room-overlay polygon.is-selected{display:block}}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 <div class="filters"><button class="on" data-f="all">All</button><button data-f="open">🟢 Open now</button><button data-f="restaurant">Dining</button><button data-f="family">Family</button><button data-f="water">Water</button><button data-f="amenity">Amenities</button><button data-f="event">Events</button></div>
-<select id="travelStart" hidden aria-hidden="true"><option value=""></option></select><main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="roomRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Room to destination route"><line id="roomRouteLine" class="room-route-line" x1="0" y1="0" x2="0" y2="0"/><circle id="roomRouteStart" class="room-route-dot" cx="0" cy="0" r="7"/><circle id="roomRouteEnd" class="room-route-dot" cx="0" cy="0" r="7"/></svg></div></main>
+<select id="travelStart" hidden aria-hidden="true"><option value=""></option></select><section class="room-finder" aria-label="Find a room"><form id="confirmedRoomSearch"><label for="confirmedRoomNumber">Room</label><input id="confirmedRoomNumber" type="text" inputmode="numeric" pattern="[0-9]+" placeholder="Enter room number" autocomplete="off" required><button type="submit">Find room</button></form><p id="confirmedRoomStatus" role="status">Search a room to highlight its building.</p><div id="confirmedRoomChoices" class="confirmed-room-choices" hidden></div></section><main class="stage"><div class="map" id="map"><img id="mapimg" alt="Resort map" src="resort-map.webp"><svg class="route-overlay" id="roomRoute" viewBox="0 0 1000 712" preserveAspectRatio="none" aria-label="Room to destination route"><line id="roomRouteLine" class="room-route-line" x1="0" y1="0" x2="0" y2="0"/><circle id="roomRouteStart" class="room-route-dot" cx="0" cy="0" r="7"/><circle id="roomRouteEnd" class="room-route-dot" cx="0" cy="0" r="7"/></svg></div></main>
 <style>
 .travel-nav{max-width:1200px;margin:12px auto;padding:18px;background:#0b292b;border:1px solid #ffffff30;border-radius:14px;color:#fff}.travel-nav h2{margin:0 0 12px;font-size:21px}.travel-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.travel-nav label{display:block;margin:0 0 6px;font-size:14px}.travel-nav select,.travel-nav input,.travel-nav button,.travel-nav a{min-height:44px;font:16px Arial;border-radius:9px;padding:10px}.travel-nav select,.travel-nav input{width:100%;background:#071b1d;color:#fff;border:1px solid #ffffff50}.travel-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.travel-nav button{border:1px solid #ffffff50;background:#164e50;color:#fff;cursor:pointer}.travel-nav button:disabled{opacity:.5;cursor:default}.travel-nav p{line-height:1.5;font-size:15px}.travel-nav a{display:inline-block;color:#172321;background:#f2c85b;text-decoration:none}.travel-nav .travel-primary{background:#1769ff}.travel-nav button[aria-pressed=true]{outline:2px solid #f2c85b}.navigation-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:8;pointer-events:none}.navigation-path{stroke:#f2c85b;stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}.guest-dot{fill:#1769ff;stroke:#fff;stroke-width:3}.travel-nav-link{min-height:44px;padding:10px 14px;border:1px solid #ffffff40;border-radius:9px;background:#164e50;color:#fff;font-size:15px;cursor:pointer}@media(max-width:700px){.travel-nav{margin:8px;padding:14px}.travel-fields{grid-template-columns:1fr}.travel-actions{display:grid;grid-template-columns:1fr}.travel-actions button{width:100%}}
 </style>
@@ -462,19 +465,53 @@ function addRoomPin(roomNo,floor,xPos,yPos,extraClass){
   b.onclick=()=>selectRoom(b,roomNo,floor);
   roomPins.push({b,roomNo,floor});
 }
-for(let i=0;i<22;i++){
-  const n=i+1,t=i/21,y=52.8-(25.4*t),centerX=71.0-(1.8*t)+(0.4*Math.sin(Math.PI*t));
-  addRoomPin(n,'Ground Floor',centerX-0.85,y,'ground-floor');
-  addRoomPin(100+n,'First Floor',centerX+0.85,y,'first-floor');
+
+/* Building ranges and footprints from the user's annotated read test2.jpg.
+   These are building locations, not individual room doors. */
+const confirmedRoomBuildings=[
+ {id:'outer-78',ranges:[[78,83,'Ground Floor'],[178,183,'First Floor']],center:[493,680],outline:[[442,649],[468,629],[501,663],[516,687],[544,711],[526,732],[495,711],[470,697],[454,667]]},
+ {id:'outer-84',ranges:[[84,91,'Ground Floor'],[184,191,'First Floor']],center:[598,749],outline:[[549,721],[587,733],[638,747],[656,751],[647,778],[613,767],[575,757],[541,742]]},
+ {id:'outer-92',ranges:[[92,95,'Ground Floor'],[192,195,'First Floor']],center:[691,780],outline:[[660,770],[681,769],[683,764],[719,760],[727,787],[692,794],[691,798],[658,799]]},
+ {id:'second-257',ranges:[[257,260,'Second Floor']],center:[561,651],outline:[[533,632],[551,638],[561,635],[594,649],[582,674],[568,669],[564,674],[540,660],[527,651]]},
+ {id:'second-261',ranges:[[261,264,'Second Floor']],center:[620,681],outline:[[595,662],[621,672],[627,668],[651,678],[645,704],[616,695],[587,686]]},
+ {id:'second-265',ranges:[[265,269,'Second Floor']],center:[695,704],outline:[[661,687],[684,695],[696,693],[744,697],[748,720],[718,723],[710,731],[687,726],[682,716],[655,709]]}
+];
+const roomBuildingSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+roomBuildingSvg.setAttribute('viewBox','0 0 1487 1058');roomBuildingSvg.setAttribute('preserveAspectRatio','none');roomBuildingSvg.classList.add('confirmed-room-overlay');
+document.getElementById('map').appendChild(roomBuildingSvg);
+const roomChoices=document.getElementById('confirmedRoomChoices'),confirmedStatus=document.getElementById('confirmedRoomStatus');
+function highlightRoomBuilding(id){
+ confirmedRoomBuildings.forEach(c=>{c.shape.classList.toggle('is-selected',c.id===id);c.label.classList.toggle('is-selected',c.id===id)});
 }
-for(let roomNo=1;roomNo<=195;roomNo++){
-  if(roomPins.some(room=>room.roomNo===roomNo))continue;
-  const b=document.createElement('button'),floor='Map position unavailable';
-  b.textContent=roomNo;b.dataset.mapped='false';b.onclick=()=>selectRoom(b,roomNo,floor);
-  roomPins.push({b,roomNo,floor});
+function showBuildingRooms(c){
+ clearRoomFocus();highlightRoomBuilding(c.id);roomChoices.replaceChildren();roomChoices.hidden=false;
+ confirmedStatus.textContent=c.ranges.map(r=>r[2]+': '+r[0]+'–'+r[1]).join(' · ');
+ c.ranges.forEach(([from,to,floor])=>{for(let n=from;n<=to;n++){
+ const button=document.createElement('button');button.type='button';button.textContent=n;button.title=floor;
+ button.onclick=()=>findConfirmedRoom(n);roomChoices.appendChild(button);
+ }});
+ shakeRoom(c.label);
 }
+confirmedRoomBuildings.forEach(c=>{
+ c.shape=document.createElementNS('http://www.w3.org/2000/svg','polygon');c.shape.setAttribute('points',c.outline.map(p=>p.join(',')).join(' '));c.shape.onclick=()=>showBuildingRooms(c);roomBuildingSvg.appendChild(c.shape);
+ c.label=document.createElement('button');c.label.type='button';c.label.className='confirmed-room-label';c.label.style.left=(c.center[0]/1487*100)+'%';c.label.style.top=(c.center[1]/1058*100)+'%';
+ c.label.textContent=c.ranges.map(r=>r[0]+'–'+r[1]).join(' / ');c.label.setAttribute('aria-label','Building rooms '+c.label.textContent);c.label.onclick=()=>showBuildingRooms(c);document.getElementById('map').appendChild(c.label);
+ c.ranges.forEach(([from,to,floor])=>{for(let n=from;n<=to;n++){addRoomPin(n,floor,c.center[0]/1487*100,c.center[1]/1058*100,'');roomPins[roomPins.length-1].buildingId=c.id;}});
+});
+function findConfirmedRoom(value){
+ const n=Number(value),r=roomPins.find(r=>r.roomNo===n);
+ roomChoices.hidden=true;
+ if(!r){confirmedStatus.textContent='Room '+value+' has not been placed yet. Please choose a room from a confirmed building.';return;}
+ document.getElementById('confirmedRoomNumber').value=n;
+ selectRoom(r.b,r.roomNo,r.floor);highlightRoomBuilding(r.buildingId);
+ desc.textContent='This room is in the highlighted building. Select a restaurant or activity as your destination.';
+ confirmedStatus.textContent='Room '+n+' · '+r.floor+' · building highlighted';
+ const c=confirmedRoomBuildings.find(c=>c.id===r.buildingId);if(c)shakeRoom(c.label);
+}
+document.getElementById('confirmedRoomSearch').onsubmit=e=>{e.preventDefault();findConfirmedRoom(document.getElementById('confirmedRoomNumber').value.trim());};
 function updateRoomPresentation(){
-  roomPins.forEach(({b})=>b.classList.toggle('room-selected',b===selectedRoomButton));
+ roomPins.forEach(({b})=>b.classList.toggle('room-selected',b===selectedRoomButton));
+ const selected=roomPins.find(r=>r.b===selectedRoomButton);highlightRoomBuilding(selected?selected.buildingId:null);
 }
 function hideRoomDestinationRoute(){roomRoute.classList.remove('show');selectedDestinationButton=null;pins.forEach(({b})=>b.classList.remove('focus-selected'))}
 function elementPoint(el){return {x:parseFloat(el.style.left)*10,y:parseFloat(el.style.top)*7.12}}
