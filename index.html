@@ -261,7 +261,7 @@ header{position:relative;z-index:30}
 </style>
 <section id="travelNav" class="travel-nav" aria-labelledby="travelTitle" hidden>
 <h2 id="travelTitle">Choose how to get there</h2>
-<div class="travel-fields"><div><input id="travelRoom" type="hidden"></div><div><label for="travelDestination">Destination</label><select id="travelDestination"><option value="">Choose a destination</option></select></div></div>
+<div class="travel-fields"><div><label for="routeFrom">From</label><input id="routeFrom" list="routePlaces" placeholder="Room or place" autocomplete="off"><input id="travelRoom" type="hidden"></div><div><label for="routeTo">To</label><input id="routeTo" list="routePlaces" placeholder="Room or place" autocomplete="off"><select id="travelDestination" hidden><option value="">Choose a destination</option></select></div></div><datalist id="routePlaces"></datalist><p class="location-optional">Enter a room or place. Location access is optional.</p>
 <div class="travel-actions"><button id="travelWalk" type="button" aria-pressed="false">🚶 Walk to destination</button><button id="travelShuttle" type="button" aria-pressed="false">🛺 Walk to nearest shuttle</button><button id="travelBuggy" type="button" aria-pressed="false" disabled>🛺 Request buggy · over 500 m</button></div>
 <p id="travelStatus" role="status" aria-live="polite">Tap a starting point on the map, then tap your destination. Walking directions will appear when the recorded paths are available.</p>
 <p id="travelDistance">Choose a room and destination to compare travel options.</p>
@@ -774,7 +774,7 @@ function update(){
  request.hidden=true;line.setAttribute('points','');buggy.disabled=true;
  const selectedStart=room.value||start.value,selectedEnd=dest.value;
  el('travelNav').hidden=!selectedStart||!selectedEnd||(!room.value&&start.value===dest.value);
- if(el('travelNav').hidden)return;
+ if(el('travelNav').hidden){status.textContent='Enter both From and To to show a route. Location access is optional.';distance.textContent='';return;}
  ['travelWalk','travelShuttle','travelBuggy'].forEach((id,i)=>el(id).setAttribute('aria-pressed',String(mode===['walk','shuttle','buggy'][i])));
  const from=origin(),to=destination();
  if(!data.nodes.length){status.textContent='Recorded walking paths and pickup locations have not been added yet. Directions will be available after the walking paths have been mapped.';return;}
@@ -818,6 +818,7 @@ function selectManual(){update();}
 start.onchange=()=>{room.value='';selectManual()};room.oninput=()=>{start.value='';selectManual()};dest.onchange=update;
 el('travelWalk').onclick=()=>{mode='walk';update();if(line.getAttribute('points')){el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');el('directionToggle').focus({preventScroll:true});m.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}};el('travelShuttle').onclick=()=>{mode='shuttle';update()};buggy.onclick=()=>{mode='buggy';update()};
 function syncTravelSelections(){
+ if(el('routeFrom').value||el('routeTo').value)return;
  if(selectedRoomButton){room.value=selectedRoomButton.textContent.trim();start.value='';}
  else room.value='';
  const p=P.find(p=>p[1]===ttl.textContent);
@@ -836,6 +837,23 @@ pins.forEach(({b,p})=>b.addEventListener('click',()=>{
  update();
 }));
 loadRecordedPaths();
+
+const routeFrom=el('routeFrom'),routeTo=el('routeTo'),routePlaces=el('routePlaces');
+const choices=data.nodes.filter(n=>n.room!==undefined||n.venueId!==undefined||n.kind==='shuttle');
+const unique=new Map();choices.forEach(n=>{if(!unique.has(n.name.toLowerCase()))unique.set(n.name.toLowerCase(),n)});
+for(const n of unique.values()){const option=document.createElement('option');option.value=n.name;routePlaces.appendChild(option);for(const select of [start,dest]){const o=document.createElement('option');o.value=n.id;o.textContent=n.name;select.appendChild(o);}}
+function resolvePlace(value){const v=value.trim().toLowerCase(),number=v.match(/^(?:room\s*)?0*(\d+)$/);return number?choices.find(n=>String(n.room)===String(Number(number[1]))):unique.get(v);}
+function manualFields(){const from=resolvePlace(routeFrom.value),to=resolvePlace(routeTo.value);room.value='';start.value=from?from.id:'';dest.value=to?to.id:'';mode=null;update();if((routeFrom.value&&!from)||(routeTo.value&&!to)){status.textContent='Choose a suggested room or place with a mapped path.';}el('travelNav').hidden=false;}
+routeFrom.addEventListener('input',manualFields);routeTo.addEventListener('input',manualFields);
+document.addEventListener('resort-location',event=>{
+ if(routeFrom.value&&routeFrom.value!=='My location')return;
+ const p=event.detail;if(p.accuracy>60)return;
+ const near=data.nodes.filter(n=>n.kind==='junction').map(n=>({n,d:metres(p,n)})).sort((a,b)=>a.d-b.d)[0];
+ if(!near||near.d>60)return;
+ const id=near.n.id;if(!Array.from(start.options).some(o=>o.value===id)){const o=document.createElement('option');o.value=id;o.textContent='My location (approximate walkway)';start.appendChild(o);}
+ routeFrom.value='My location';room.value='';start.value=id;mode=null;update();el('travelNav').hidden=false;
+});
+
 })();
 
 </script>
@@ -895,10 +913,10 @@ loadRecordedPaths();
   status.textContent='Finding your location…';get('gpsStop').hidden=false;
   watch=navigator.geolocation.watchPosition(p=>{
    position={lat:p.coords.latitude,lon:p.coords.longitude,accuracy:p.coords.accuracy};
-   get('gpsNearest').disabled=false;render();
+   get('gpsNearest').disabled=false;render();document.dispatchEvent(new CustomEvent('resort-location',{detail:position}));
   },error=>{
    position=null;hideLocation();get('gpsNearest').disabled=true;maps.hidden=true;
-   status.textContent=error.code===1?'Location permission was denied. Enable location access in your browser and try again.':error.code===2?'Location is unavailable. Try again outdoors.':'Location request timed out. Please try again.';
+   status.textContent=error.code===1?'Location permission was denied. Enter From and To manually; location is optional.':error.code===2?'Location is unavailable. Try again outdoors.':'Location request timed out. Please try again.';
   },{enableHighAccuracy:true,maximumAge:5000,timeout:20000});
  };
  get('gpsStop').onclick=()=>{if(watch!==null)navigator.geolocation.clearWatch(watch);watch=null;position=null;hideLocation();maps.hidden=true;get('gpsGuidance').hidden=true;get('gpsStop').hidden=true;get('gpsNearest').disabled=true;status.textContent='Location stopped.';};
@@ -1048,4 +1066,4 @@ document.getElementById('travelNav').hidden=false;
  get('travelNav').appendChild(get('guestGps'));
 })();
 </script>
-</body></html>
+<style>#directionDrawer .travel-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#directionDrawer .travel-fields>div{min-width:0}#directionDrawer .travel-fields input{min-width:0;font-size:14px;padding:9px;width:100%}#travelDestination[hidden]{display:none!important}.location-optional{font-size:12px!important;margin:8px 0}</style></body></html>
