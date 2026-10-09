@@ -488,7 +488,7 @@ function showBuildingRooms(c){
 confirmedRoomBuildings.forEach(c=>{
  c.shape=document.createElementNS('http://www.w3.org/2000/svg','polygon');c.shape.setAttribute('points',c.outline.map(p=>p.join(',')).join(' '));c.shape.onclick=()=>showBuildingRooms(c);roomBuildingSvg.appendChild(c.shape);
  c.label=document.createElement('button');c.label.type='button';c.label.className='confirmed-room-label';c.label.style.left=(c.center[0]/1487*100)+'%';c.label.style.top=(c.center[1]/1058*100)+'%';
- c.label.textContent=c.ranges.map(r=>r[0]+'–'+r[1]).join(' / ');c.label.setAttribute('aria-label','Building rooms '+c.label.textContent);c.label.onclick=()=>showBuildingRooms(c);document.getElementById('map').appendChild(c.label);
+ c.label.textContent=c.ranges.map(r=>r[0]===r[1]?String(r[0]):r[0]+'–'+r[1]).join('\n');c.label.setAttribute('aria-label','Building rooms '+c.label.textContent.replace(/\\n/g,' / '));c.label.onclick=()=>showBuildingRooms(c);document.getElementById('map').appendChild(c.label);
  c.ranges.forEach(([from,to,floor])=>{for(let n=from;n<=to;n++){addRoomPin(n,floor,c.center[0]/1487*100,c.center[1]/1058*100,'');roomPins[roomPins.length-1].buildingId=c.id;}});
 });
 function findConfirmedRoom(value){
