@@ -923,4 +923,26 @@ el('directionBuggy').onclick=()=>{if(el('directionBuggy').disabled)return;el('tr
 })();
 </script>
 
+
+<style>
+#directionWalk,#directionBuggy,#directionDrawer #travelNav,#guestGps label[for="gpsDestination"],#gpsDestination{display:none!important}
+</style>
+<script>
+(()=>{
+ const el=id=>document.getElementById(id);
+ el('guestGpsTitle').textContent='Nearest buggy shuttle stop';
+ el('gpsStatus').textContent='Tap Use my location, then Nearest shuttle stop.';
+ el('directionNote').textContent='Enable your location to find the closest buggy shuttle stop.';
+ const original=el('directionShuttle').onclick;
+ el('directionShuttle').onclick=()=>{
+  if(el('gpsNearest').disabled){el('directionNote').textContent='Allow location access, then tap Nearest shuttle stop.';el('gpsStart').click();el('guestGps').scrollIntoView({block:'nearest'});}
+  else original();
+ };
+ const observer=new MutationObserver(()=>{
+  if(!el('gpsNearest').disabled){el('gpsNearest').click();el('directionNote').textContent='Your nearest shuttle stop is shown below. Distance is measured in a straight line; follow resort walkways.';}
+ });
+ observer.observe(el('gpsNearest'),{attributes:true,attributeFilter:['disabled']});
+})();
+</script>
+
 </body></html>
