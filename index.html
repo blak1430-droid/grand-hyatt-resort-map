@@ -880,4 +880,47 @@ fetch('navigation-data.json').then(r=>{if(!r.ok)throw Error();return r.json()}).
 })();
 </script>
 
+
+<style>
+#directionToggle{position:fixed;right:12px;top:48%;z-index:45;width:50px;height:50px;border:2px solid white;border-radius:50%;background:#1769ff;color:white;font-size:28px;cursor:pointer;box-shadow:0 3px 12px #0008}
+#directionDrawer{position:fixed;right:10px;top:65px;bottom:12px;width:min(420px,calc(100vw - 20px));overflow:auto;z-index:50;border:1px solid #ffffff50;border-radius:16px;padding:14px;background:#071b1df8;box-shadow:0 5px 30px #0009}
+#directionDrawer h2{margin:5px 0 12px}#directionClose{float:right;min-width:44px;min-height:44px;border:0;background:#164e50;border-radius:8px;color:white;font-size:25px;cursor:pointer}
+#directionDrawer .travel-nav{margin:12px 0;padding:12px}#directionDrawer .travel-actions{display:grid;grid-template-columns:1fr}#directionDrawer select{max-width:100%}
+#directionModes{display:grid;gap:8px;margin:12px 0}#directionModes button{min-height:48px;border:1px solid #ffffff50;background:#164e50;color:white;border-radius:10px;padding:10px;font-size:16px;text-align:left;cursor:pointer}#directionModes button:disabled{opacity:.5;cursor:default}
+#directionNote{font-size:14px;line-height:1.5;color:#bad0d1}
+</style>
+<button id="directionToggle" type="button" aria-label="Open directions" aria-expanded="false" aria-controls="directionDrawer">➤</button>
+<aside id="directionDrawer" aria-label="Directions" hidden>
+<button id="directionClose" type="button" aria-label="Close directions">×</button><h2>Directions</h2>
+<div id="directionModes"><button id="directionWalk" type="button">🚶 Walking directions</button><button id="directionShuttle" type="button">🛺 Nearest shuttle stop</button><button id="directionBuggy" type="button" disabled>🛺 Request buggy · walking distance over 500 m</button></div>
+<p id="directionNote" role="status">Choose a destination and enable your location. A buggy request becomes available when a confirmed walking route is over 500 m.</p>
+<div id="directionContent"></div>
+</aside>
+<script>
+(()=>{
+const el=id=>document.getElementById(id),drawer=el('directionDrawer'),toggle=el('directionToggle'),note=el('directionNote'),content=el('directionContent');
+content.appendChild(el('guestGps'));content.appendChild(el('travelNav'));
+function close(){drawer.hidden=true;toggle.setAttribute('aria-expanded','false');toggle.focus();}
+toggle.onclick=()=>{drawer.hidden=!drawer.hidden;toggle.setAttribute('aria-expanded',String(!drawer.hidden));if(!drawer.hidden)el('directionClose').focus();};
+el('directionClose').onclick=close;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!drawer.hidden)close();});
+el('directionWalk').onclick=()=>{
+ if(!el('travelNav').hidden){el('travelWalk').click();el('travelNav').scrollIntoView({block:'nearest'});note.textContent='Walking route uses confirmed resort paths when available.';return;}
+ if(!el('gpsDestination').value){note.textContent='Choose your destination below, then tap Use my location.';el('gpsDestination').focus();return;}
+ el('gpsDestination').dispatchEvent(new Event('change'));
+ note.textContent='GPS shows the direction to your destination. Confirmed walking paths still need to be mapped.';el('guestGps').scrollIntoView({block:'nearest'});
+};
+el('directionShuttle').onclick=()=>{
+ if(!el('gpsNearest').disabled){el('gpsNearest').click();note.textContent='The nearest stop is based on straight-line distance. Follow resort walkways.';}
+ else if(!el('travelNav').hidden){el('travelShuttle').click();note.textContent='Checking confirmed walking routes to shuttle stops.';}
+ else{note.textContent='Tap Use my location below to find your nearest shuttle stop.';el('gpsStart').click();}
+ el('guestGps').scrollIntoView({block:'nearest'});
+};
+function syncBuggy(){el('directionBuggy').disabled=el('travelBuggy').disabled||el('travelNav').hidden;}
+new MutationObserver(syncBuggy).observe(el('travelBuggy'),{attributes:true,attributeFilter:['disabled']});
+new MutationObserver(syncBuggy).observe(el('travelNav'),{attributes:true,attributeFilter:['hidden']});syncBuggy();
+el('directionBuggy').onclick=()=>{if(el('directionBuggy').disabled)return;el('travelBuggy').click();el('travelNav').scrollIntoView({block:'nearest'});note.textContent='Continue with the buggy request below.';};
+})();
+</script>
+
 </body></html>
