@@ -816,7 +816,7 @@ function loadRecordedPaths(){
 
 function selectManual(){update();}
 start.onchange=()=>{room.value='';selectManual()};room.oninput=()=>{start.value='';selectManual()};dest.onchange=update;
-el('travelWalk').onclick=()=>{mode='walk';update()};el('travelShuttle').onclick=()=>{mode='shuttle';update()};buggy.onclick=()=>{mode='buggy';update()};
+el('travelWalk').onclick=()=>{mode='walk';update();if(line.getAttribute('points')){el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');el('directionToggle').focus({preventScroll:true});m.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}};el('travelShuttle').onclick=()=>{mode='shuttle';update()};buggy.onclick=()=>{mode='buggy';update()};
 function syncTravelSelections(){
  if(selectedRoomButton){room.value=selectedRoomButton.textContent.trim();start.value='';}
  else room.value='';
