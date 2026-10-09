@@ -963,4 +963,17 @@ m.appendChild(button);
 });
 })();
 </script>
+
+<style>#gpsStatus{padding:12px;border:1px solid #ffffff50;border-radius:10px;background:#164e50;min-height:44px}#gpsStatus.gps-error{background:#642c25;border-color:#ffb6a8}</style>
+<script>
+(()=>{
+ const status=document.getElementById('gpsStatus'),button=document.getElementById('gpsStart'),note=document.getElementById('directionNote');
+ function update(){
+ const text=status.textContent,error=/denied|unavailable|timed out|outside/i.test(text),loading=/Finding your location/.test(text);
+ status.classList.toggle('gps-error',error);button.textContent=loading?'📍 Finding your location…':'📍 Use my location';
+ if(error||loading){note.textContent=text;if(/permission was denied/.test(text))note.textContent+=' Open your browser’s site settings, allow Location for this website, then try again.';}
+ }
+ new MutationObserver(update).observe(status,{childList:true,characterData:true,subtree:true});update();
+})();
+</script>
 </body></html>
