@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Walking Path Editor — Grand Hyatt</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#071b1d;color:#eef7f5;font:16px Arial}header,section{padding:14px}header{background:#103638}h1{font-size:22px;margin:0 0 8px}a{color:#b7e6ff}p{line-height:1.45;margin:8px 0}.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}button,input,select{font:inherit;min-height:44px;border:1px solid #789c9e;border-radius:8px;padding:8px;background:#143d40;color:white}button{cursor:pointer}button.primary{background:#f2c85b;color:#162426;font-weight:bold}button:disabled{opacity:.45}input{max-width:200px}#viewport{overflow:auto;height:62vh;background:#164e50;touch-action:pan-x pan-y}#map{position:relative;width:1200px;max-width:none;aspect-ratio:1487/1058}#map img{width:100%;height:100%;display:block;pointer-events:none}svg{position:absolute;inset:0;width:100%;height:100%}#status{padding:10px;background:#143d40;border-radius:8px}label{display:flex;gap:6px;align-items:center;flex-wrap:wrap}small{color:#b6d1d1}.selected{outline:3px solid #f2c85b}#routes button{margin:4px}
+</style>
+<header><h1>Walking path editor</h1><a href="./">Guest map</a><p>Tap the actual guest walkways, including every turn. Reuse a yellow point to connect paths. Pan by dragging; zoom with + / −.</p><small>Draft markings only. Export and send the file for review before guest directions are enabled.</small></header>
+<section><div class="tools"><button id="new" class="primary">New path</button><button id="finish" disabled>Finish path</button><button id="undo" disabled>Undo point</button><button id="cancel" disabled>Cancel path</button><button id="plus" aria-label="Zoom in">+</button><button id="minus" aria-label="Zoom out">−</button><button id="export">Export markings</button><label>Import <input id="import" type="file" accept=".json,application/json"></label></div><p id="status" role="status" aria-live="polite">Start a new path, then tap its starting point.</p></section>
+<div id="viewport"><div id="map"><img src="resort-map.webp" alt="Resort map for tracing guest walkways"><svg id="overlay" viewBox="0 0 1487 1058" aria-label="Walking path markings"></svg></div></div>
+<section><b>Selected point</b><p>Tap an existing yellow point outside drawing mode to label a building exit, shuttle stop, or destination.</p><div class="tools"><label>Name <input id="name" placeholder="e.g. Rooms 120–125 exit"></label><label>Type <select id="kind"><option value="junction">Junction</option><option value="building-exit">Building exit</option><option value="destination">Destination entrance</option><option value="shuttle">Shuttle stop</option></select></label><label>Room numbers <input id="rooms" placeholder="e.g. 120,121,122"></label><button id="savePoint" disabled>Save point label</button></div><p id="pointInfo"></p><h2>Saved paths</h2><div id="routes"></div><small>Autosave uses this browser on this device. Export a backup before changing devices or clearing browser data. Shared junctions must use the same point to form a connected route.</small></section>
+<script>
+(()=>{
+const $=id=>document.getElementById(id),key='hyatt-walking-draft-v1',ns='http://www.w3.org/2000/svg';
+let data={version:1,status:'draft',coordinateSystem:'map-percent',nodes:[],paths:[]},active=null,selected=null,history=[],width=1200;
+try{const saved=JSON.parse(localStorage.getItem(key));if(valid(saved))data=saved}catch(e){}
+function valid(d){return d&&d.version===1&&Array.isArray(d.nodes)&&Array.isArray(d.paths)&&d.nodes.every(n=>typeof n.id==='string'&&Number.isFinite(n.x)&&Number.isFinite(n.y)&&n.x>=0&&n.x<=100&&n.y>=0&&n.y<=100)&&d.paths.every(p=>Array.isArray(p.nodeIds)&&p.nodeIds.length>=2&&p.nodeIds.every(id=>d.nodes.some(n=>n.id===id)))}
+function id(){return 'n-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)}
+function persist(){try{localStorage.setItem(key,JSON.stringify(data))}catch(e){$('status').textContent='Browser autosave is unavailable. Export your markings to keep them.'}}
+function element(type,attrs){const e=document.createElementNS(ns,type);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);$('overlay').appendChild(e);return e}
+function node(id){return data.nodes.find(n=>n.id===id)}
+function drawPath(ids,color){element('polyline',{points:ids.map(id=>{const n=node(id);return n.x*14.87+','+n.y*10.58}).join(' '),fill:'none',stroke:color,'stroke-width':5,'stroke-linejoin':'round','stroke-linecap':'round'})}
+function render(){
+$('overlay').replaceChildren();
+data.paths.forEach(p=>drawPath(p.nodeIds,'#44e4ef'));if(active)drawPath(active,'#ff9059');
+data.nodes.forEach(n=>{element('circle',{cx:n.x*14.87,cy:n.y*10.58,r:n.id===selected?10:7,fill:'#f2c85b',stroke:n.id===selected?'#ff9059':'#071b1d','stroke-width':3});if(n.name){const t=element('text',{x:n.x*14.87+10,y:n.y*10.58-10,fill:'white',stroke:'#071b1d','stroke-width':3,'paint-order':'stroke','font-size':16});t.textContent=n.name}});
+$('new').disabled=active!==null;$('finish').disabled=!active||active.length<2;$('undo').disabled=!active||!active.length;$('cancel').disabled=active===null;
+$('savePoint').disabled=!selected;$('routes').replaceChildren();
+data.paths.forEach((p,i)=>{const line=document.createElement('div');const t=document.createElement('span');t.textContent=p.name+' · '+p.nodeIds.length+' points ';const b=document.createElement('button');b.textContent='Delete';b.onclick=()=>{if(confirm('Delete '+p.name+'?')){data.paths.splice(i,1);prune();persist();render()}};line.append(t,b);$('routes').append(line)});
+}
+function prune(){const used=new Set(data.paths.flatMap(p=>p.nodeIds).concat(active||[]));data.nodes=data.nodes.filter(n=>used.has(n.id));if(selected&&!node(selected))selected=null}
+function select(n){selected=n.id;$('name').value=n.name||'';$('kind').value=n.kind||'junction';$('rooms').value=(n.rooms||[]).join(',');$('pointInfo').textContent='Point '+n.id+' · map position '+n.x.toFixed(2)+'%, '+n.y.toFixed(2)+'%';render()}
+$('new').onclick=()=>{active=[];history=[];selected=null;$('status').textContent='Tap the starting point, then every turn. Tap existing yellow points to join paths.';render()};
+$('overlay').addEventListener('click',e=>{
+const r=$('overlay').getBoundingClientRect(),x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;
+const nearest=data.nodes.map(n=>({n,d:Math.hypot((n.x-x)*r.width/100,(n.y-y)*r.height/100)})).sort((a,b)=>a.d-b.d)[0];
+let n=nearest&&nearest.d<18?nearest.n:null;
+if(active===null){if(n)select(n);return}
+if(!n){n={id:id(),x,y,kind:'junction',name:'',rooms:[]};data.nodes.push(n)}
+if(active[active.length-1]===n.id)return;
+active.push(n.id);history.push(n.id);select(n);$('status').textContent=active.length+' points marked. Continue along the walkway, or finish this path.';
+});
+$('undo').onclick=()=>{active.pop();prune();selected=active.length?active[active.length-1]:null;render()};
+$('cancel').onclick=()=>{active=null;prune();persist();render();$('status').textContent='Unsaved path cancelled.'};
+$('finish').onclick=()=>{const name=prompt('Name this path (e.g. Rooms 120–125 to Embers):','Path '+(data.paths.length+1));if(name===null)return;data.paths.push({id:id(),name:name.trim()||'Unnamed path',nodeIds:[...active],confirmed:false});active=null;persist();render();$('status').textContent='Path saved on this device. Start another path from a shared yellow point, or export your markings.'};
+$('savePoint').onclick=()=>{const n=node(selected);if(!n)return;const rooms=$('rooms').value.split(',').map(x=>x.trim()).filter(Boolean);if(rooms.some(x=>!/^\d+$/.test(x))){$('status').textContent='Enter room numbers separated by commas.';return}n.name=$('name').value.trim();n.kind=$('kind').value;n.rooms=rooms;persist();render();$('status').textContent='Point label saved.'};
+function zoom(factor){const v=$('viewport'),old=width; width=Math.max(700,Math.min(4000,width*factor));$('map').style.width=width+'px';v.scrollLeft=(v.scrollLeft+v.clientWidth/2)*width/old-v.clientWidth/2;v.scrollTop=(v.scrollTop+v.clientHeight/2)*width/old-v.clientHeight/2}
+$('plus').onclick=()=>zoom(1.25);$('minus').onclick=()=>zoom(.8);
+$('export').onclick=()=>{if(active){$('status').textContent='Finish or cancel the current path before exporting.';return}const result={...data,status:'draft',exportedAt:new Date().toISOString(),notes:'Staff-traced walkway draft. Verify entrances, restrictions, GPS alignment and walking distances before publishing routes.'};const url=URL.createObjectURL(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='hyatt-walking-paths.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$('status').textContent='Export downloaded. Send hyatt-walking-paths.json to add reviewed paths to the guest map.'};
+$('import').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const incoming=JSON.parse(await file.text());if(!valid(incoming))throw Error();if((data.paths.length||active)&&!confirm('Replace the current markings with this file?'))return;data=incoming;active=null;selected=null;persist();render();$('status').textContent='Markings imported.'}catch(e){$('status').textContent='Could not import this file. Choose a valid walking-path editor export.'}finally{$('import').value=''}};
+render();
+})();
+</script></html>
