@@ -1030,4 +1030,22 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!drawer.hidden)clos
 </style><script>
 document.getElementById('directionNote').textContent='Select a room using the bed icon, then choose a destination below. Walking estimates use your recorded paths; shuttle journey times still need confirmation.';
 document.getElementById('travelNav').hidden=false;
-</script></body></html>
+</script>
+<style>
+#directionModes,#directionNote,#guestGpsTitle{display:none!important}
+#directionDrawer #guestGps{margin:12px 0 0;padding:0;border:0;background:transparent}
+#directionDrawer #travelNav{margin:0;padding:0;border:0;background:transparent}
+#directionDrawer #travelTitle{display:none}
+</style>
+<script>
+(()=>{
+ const get=id=>document.getElementById(id);
+ get('directionDrawer').querySelector('h2').textContent='Choose how to get there';
+ get('directionDrawer').setAttribute('aria-label','Choose how to get there');
+ get('directionToggle').setAttribute('aria-label','Choose how to get there');
+ get('gpsNearest').textContent='🛺 Nearest buggy shuttle stop';
+ get('travelShuttle').textContent='🛺 Walk to shuttle from selected room';
+ get('travelNav').appendChild(get('guestGps'));
+})();
+</script>
+</body></html>
