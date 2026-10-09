@@ -945,4 +945,18 @@ el('directionBuggy').onclick=()=>{if(el('directionBuggy').disabled)return;el('tr
 })();
 </script>
 
+
+<script>
+(()=>{
+const stops=[{"number":4,"name":"SLS Bridge","x":1011,"y":195},{"number":5,"name":"Second Floor Entrance","x":1001,"y":425},{"number":6,"name":"Spa","x":568,"y":333},{"number":7,"name":"Restaurants Plaza","x":714,"y":527}];
+stops.forEach(stop=>{
+const button=document.createElement('button');button.type='button';button.className='shuttle-stop';button.dataset.stop=stop.number;button.style.left=(stop.x/1487*100)+'%';button.style.top=(stop.y/1058*100)+'%';button.textContent='🛺';button.title=stop.number+' · '+stop.name;button.setAttribute('aria-label',button.title);
+button.onclick=()=>{
+clearPinFocus();clearRoomFocus();document.querySelectorAll('.panel .grid[id]').forEach(e=>e.hidden=true);document.getElementById('shuttleSchedule').hidden=true;document.getElementById('scheduleNote').hidden=true;
+ttl.textContent=stop.name;desc.textContent='Buggy shuttle point '+stop.number+'. GPS location and service times will be added once confirmed.';pan.classList.add('open');scrollToDetails();
+};
+m.appendChild(button);
+});
+})();
+</script>
 </body></html>
