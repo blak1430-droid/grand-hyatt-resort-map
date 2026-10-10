@@ -309,7 +309,12 @@ header{position:relative;z-index:30}
 </style><style>
 .pin[aria-label="Reception"]{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;font-size:23px!important}
 @media(max-width:700px){.pin[aria-label="Reception"]{font-size:19px!important}}
-</style><style>.pin[aria-label="Bus Drop-off"]{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;font-size:23px!important}@media(max-width:700px){.pin[aria-label="Bus Drop-off"]{font-size:19px!important}}</style></head>
+</style><style>.pin[aria-label="Bus Drop-off"]{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;font-size:23px!important}@media(max-width:700px){.pin[aria-label="Bus Drop-off"]{font-size:19px!important}}</style><style>
+.pin.standalone-activity-icon{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;width:34px!important;height:34px!important;padding:0!important;display:grid;place-items:center;line-height:1;font-size:24px!important;transform:translate(-50%,-50%);margin:0;touch-action:manipulation}
+.pin.standalone-activity-icon::before,.pin.standalone-activity-icon::after{display:none!important}
+.pin.standalone-activity-icon:focus-visible{outline:2px solid white;outline-offset:2px}
+@media(max-width:700px){.pin.standalone-activity-icon{width:32px!important;height:32px!important;font-size:20px!important}}
+</style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 
@@ -424,6 +429,7 @@ P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-footprint':'');
   if(['Indoor Pool','Fitness Center','Yoga Studio'].includes(p[1]))b.classList.add('wellness-marker');
+  if(['Camp Hyatt','Hideaway','Family Pool','Kids Pool & Splash','Beach Volleyball','Wama Water Activities','Indoor Pool','Fitness Center','Yoga Studio'].includes(p[1]))b.classList.add('standalone-activity-icon');
   if(['Reception','Bus Drop-off','Camp Hyatt','Hideaway','Kids Pool & Splash','Wama Water Activities','Family Pool','Beach Volleyball'].includes(p[1]))b.classList.add('compact-guest-icon');
   b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[2]==='restaurant'||p[0]==='pavilion-5'?'':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
