@@ -278,7 +278,7 @@ header{position:relative;z-index:30}
 /* Shared restaurant presentation; uploaded venue videos will replace black previews. */
 .panel[data-restaurant-theme]{background:#000!important;--venue-text:#fff;--venue-muted:#bad0d1;--venue-card:#151515;--venue-border:#ffffff30;--venue-accent:#fff}
 .panel[data-restaurant-theme] .preview{background:#000!important;background-image:none!important}
-</style></head>
+</style><style>.grand-club-footprint .marble-shell{position:relative!important;inset:auto!important;width:23px!important;height:23px!important;display:block;filter:drop-shadow(0 1px 2px #0008)}@media(max-width:700px){.grand-club-footprint .marble-shell{width:18px!important;height:18px!important}}</style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 
@@ -396,6 +396,7 @@ P.forEach((p,i)=>{
   if(['Reception','Bus Drop-off','Camp Hyatt','Hideaway','Kids Pool & Splash','Wama Water Activities','Family Pool','Beach Volleyball'].includes(p[1]))b.classList.add('compact-guest-icon');
   b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[2]==='restaurant'||p[0]==='pavilion-5'?'':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
+  if(p[1]==='Grand Club'){b.querySelector('span').innerHTML="<svg class=\"marble-shell\" viewBox=\"0 0 64 64\" aria-hidden=\"true\"><defs><linearGradient id=\"shellMarble\" x2=\"1\" y2=\"1\"><stop stop-color=\"#fffdf6\"/><stop offset=\".5\" stop-color=\"#d9d5cd\"/><stop offset=\"1\" stop-color=\"#fffaf0\"/></linearGradient></defs><path d=\"M25 53L20 45C8 43 4 33 7 24C9 17 16 14 20 16C20 7 28 5 32 11C37 5 45 8 45 16C52 13 58 19 58 26C62 36 55 43 44 45L39 53Z\" fill=\"url(#shellMarble)\" stroke=\"#9c927f\" stroke-width=\"2\"/><path d=\"M32 47L13 25M32 47L23 18M32 47V14M32 47L42 18M32 47L53 25M22 32L28 29L27 22M39 25L42 31L37 36M16 35L22 38L25 36\" fill=\"none\" stroke=\"#b4afa6\" stroke-width=\"1.4\" opacity=\".8\"/><path d=\"M25 49H39\" stroke=\"#c1b39b\" stroke-width=\"2\"/></svg>";}
   if(p[0]==='3'||p[0]==='pavilion-5'){
     b.classList.add('restaurant-photo-marker');
     const photo=p[0]==='3'?'assets/cafe-maude-restaurant-photo.svg':'assets/pavilion-photo.svg';
