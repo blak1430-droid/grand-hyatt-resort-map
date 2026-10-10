@@ -337,7 +337,7 @@ function fitRestaurantFootprint(button,p){
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),polygon=document.createElementNS(ns,'polygon'),label=document.createElement('span');
   svg.setAttribute('viewBox', '0 0 '+width+' '+height);svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');
   polygon.setAttribute('points',points.map(q=>(q[0]-left)+','+(q[1]-top)).join(' '));
-  const restaurantPhotos={'1':'assets/amalfi-restaurant-photo.svg','2':'assets/embers-restaurant-photo.svg','5':'assets/charcoal-restaurant-photo.svg','6':'assets/akira-back-restaurant-photo.svg','7':'assets/al-takoy-restaurant-photo.svg','8':'assets/havana-social-restaurant-photo.svg','9':'assets/drift-restaurant-photo.svg'};
+  const restaurantPhotos={'1':'assets/amalfi-restaurant-photo.svg','2':'assets/embers-restaurant-photo.svg','4':'assets/2am-restaurant-photo.svg','5':'assets/charcoal-restaurant-photo.svg','6':'assets/akira-back-restaurant-photo.svg','7':'assets/al-takoy-restaurant-photo.svg','8':'assets/havana-social-restaurant-photo.svg','9':'assets/drift-restaurant-photo.svg'};
   if(restaurantPhotos[p[0]]){
     const defs=document.createElementNS(ns,'defs'),clip=document.createElementNS(ns,'clipPath'),shape=polygon.cloneNode(true),photo=document.createElementNS(ns,'image');
     clip.id='restaurant-photo-clip-'+p[0];clip.appendChild(shape);defs.appendChild(clip);svg.appendChild(defs);
