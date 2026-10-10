@@ -253,6 +253,13 @@ header{position:relative;z-index:30}
 @media(max-width:700px){.room-finder{margin:8px;padding:10px}.confirmed-room-label{display:none}.confirmed-room-overlay polygon{display:none}.confirmed-room-overlay polygon.is-selected{display:block}}
 </style><style>.restaurant-photo-marker span{background:#071b1dcc;border-radius:50%;min-width:1.4em;line-height:1.4;text-align:center;text-shadow:0 1px 3px #000}.restaurant-photo-marker svg polygon{fill:none!important}</style><style>/* Restaurant names replace numbered map labels. */
 .pin[data-t="restaurant"] span{background:#071b1dcc;border-radius:3px;padding:2px 3px;min-width:0;line-height:1.15;font-size:clamp(7px,1.1cqw,11px);white-space:normal;text-align:center}
+</style><style>
+.pin[data-t="restaurant"]{--restaurant-outline:#808890;border-color:var(--restaurant-outline)!important;box-shadow:none!important;animation:none!important}
+.pin[data-t="restaurant"].open{--restaurant-outline:#3bb884}
+.pin[data-t="restaurant"].soon{--restaurant-outline:#f2cb46}
+.pin[data-t="restaurant"] svg>polygon{fill:none!important;stroke:var(--restaurant-outline)!important;stroke-width:2!important;vector-effect:non-scaling-stroke}
+.pin[data-t="restaurant"]:not(.restaurant-footprint){border:2px solid var(--restaurant-outline)!important}
+.pin[data-t="restaurant"]::before,.pin[data-t="restaurant"]::after{display:none!important}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -562,7 +569,7 @@ function refresh(){
     if(p[2]!='restaurant')return;
     const s=placeState(p);
     b.classList.remove('open','soon','closed','dj-live','cigar-live');b.classList.add(s.key);b.dataset.s=s.key;
-    if(p[0]=='2'&&isEmberDjLive()){b.classList.remove('open','soon','closed');b.classList.add('dj-live');b.dataset.s='live'}
+
   });
 }
 
