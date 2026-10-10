@@ -371,6 +371,12 @@ P.forEach((p,i)=>{
   if(['Indoor Pool','Fitness Center','Yoga Studio'].includes(p[1]))b.classList.add('wellness-marker');
   b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0]==='pavilion-5'?'5':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
+  if(p[0]==='3'){
+    b.classList.add('restaurant-photo-marker');
+    b.style.setProperty('background-image','url("assets/cafe-maude-restaurant-photo.svg")','important');
+    b.style.setProperty('background-size','cover','important');b.style.setProperty('background-position','center','important');
+    const label=document.createElement('span');label.textContent='3';b.replaceChildren(label);
+  }
   b.onclick=()=>{
     document.getElementById('campDetails').hidden=p[1]!=='Camp Hyatt';
     document.getElementById('poolDetails').hidden=p[1]!=='Indoor Pool';
