@@ -314,7 +314,7 @@ header{position:relative;z-index:30}
 .pin.standalone-activity-icon::before,.pin.standalone-activity-icon::after{display:none!important}
 .pin.standalone-activity-icon:focus-visible{outline:2px solid white;outline-offset:2px}
 @media(max-width:700px){.pin.standalone-activity-icon{width:32px!important;height:32px!important;font-size:20px!important}}
-</style></head>
+</style><style>.shuttle-stop,.shuttle-stop.scheduled-here,.shuttle-stop.scheduled-waiting{background:transparent!important;border:0!important;box-shadow:none!important;width:28px;height:28px;padding:0;display:grid;place-items:center}.shuttle-stop svg{width:24px;height:24px;pointer-events:none}@media(max-width:700px){.shuttle-stop{width:24px;height:24px}.shuttle-stop svg{width:21px;height:21px}}</style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 
@@ -780,7 +780,7 @@ const details=document.querySelector('#shuttleStopTimetable details'),expanded=d
 }
 }
 shuttleStops.forEach(([name,x,y],index)=>{
-const button=document.createElement('button');button.className='shuttle-stop';button.dataset.stop=String(index+1);button.style.left=x+'%';button.style.top=y+'%';button.innerHTML="<svg viewBox=\"0 0 32 32\" width=\"22\" height=\"22\" aria-hidden=\"true\" style=\"pointer-events:none\"><path d=\"M6 8H26V16H6Z M4 19H28V22H4Z\" fill=\"#4ca5ff\" stroke=\"#d8edff\" stroke-width=\"1.5\"/><path d=\"M9 8V16M16 8V16M23 8V16M8 22V28M24 22V28M5 15V19M27 15V19\" stroke=\"#d8edff\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg>";
+const button=document.createElement('button');button.className='shuttle-stop';button.dataset.stop=String(index+1);button.style.left=x+'%';button.style.top=y+'%';button.innerHTML="<svg viewBox=\"0 0 32 32\" width=\"22\" height=\"22\" aria-hidden=\"true\" style=\"pointer-events:none\"><path d=\"M4 8H23L26 11H3Z\" fill=\"#2389ee\"/><path d=\"M7 11V20M22 11V20\" stroke=\"#2389ee\" stroke-width=\"2\"/><path d=\"M5 21H28V25H4V20H10V17H17V21H22V18H26Z\" fill=\"#2389ee\"/><circle cx=\"9\" cy=\"26\" r=\"3\" fill=\"#4daaff\"/><circle cx=\"25\" cy=\"26\" r=\"3\" fill=\"#4daaff\"/><path d=\"M25 17L28 14\" stroke=\"#2389ee\" stroke-width=\"2\"/></svg>";
 button.onclick=()=>{chimeOnShuttleTap();selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='Two buggies visit all seven stops, each returning to Reception in 30 minutes, spaced 15 minutes apart.';hrs.textContent='24 hours';venueStatus.textContent='Two buggies · 30-minute loops · 15-minute arrivals';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF '+shuttleStops.length;act.textContent='Scheduled shuttle demo';best.textContent='Reception → all seven stops → Reception';renderShuttleTimetable(index);pan.classList.add('open');scrollToDetails()};m.appendChild(button);shuttleButtons.push({button,index});
 });
 refreshShuttleDemo();setInterval(refreshShuttleDemo,1000);
