@@ -595,7 +595,7 @@ const shuttleStops=[
 ];
 
 const shuttleButtons=[];let selectedShuttleStop=null;
-const shuttleServicePeriods=[[0,86400,1800]];
+const shuttleServicePeriods=[[0,86400,900]];
 function shuttleInterval(now){return shuttleServicePeriods.find(([start,end])=>now>=start&&now<end)[2]}
 function showShuttleLoop(){clearPinFocus();clearRoomFocus();}
 function shuttleSeconds(){const z=riyadhParts();return Number(z.hour)*3600+Number(z.minute)*60+Number(z.second)}
@@ -623,7 +623,7 @@ function shuttleDuration(seconds){seconds=Math.max(0,Math.ceil(seconds));return 
 function shuttlePhase(index){return shuttleTiming(index).phase}
 function renderShuttleTimetable(index){
 const {now,next,due}=shuttleTiming(index);
-document.getElementById('shuttleStopTimetable').innerHTML='<div class="card shuttle-primary-timer"><small>Next buggy · Stop '+(index+1)+' of 7</small><b>'+(due?'🟢 Scheduled arrival':'Next arrival in '+shuttleDuration(next-now))+'</b></div><p>One buggy · 30-minute cycle · 3 seconds at each stop</p><p>'+shuttleStops.map((s,i)=>(i+1)+'. '+s[0]).join(' → ')+' → Reception</p><p>Next scheduled arrival: '+shuttleTime(next)+'. Timings are estimates along the drawn route, not live GPS tracking.</p><details><summary>Full-day timetable</summary><div class="shuttle-day-times">'+shuttleArrivals(index).filter(a=>a.time>=0&&a.time<86400).map(a=>'<span>'+shuttleTime(a.time)+'</span>').join('')+'</div></details>';
+document.getElementById('shuttleStopTimetable').innerHTML='<div class="card shuttle-primary-timer"><small>Next buggy · Stop '+(index+1)+' of 7</small><b>'+(due?'🟢 Scheduled arrival':'Next arrival in '+shuttleDuration(next-now))+'</b></div><p>Two buggies · each completes a 30-minute cycle · arrivals every 15 minutes · 3 seconds at each stop</p><p>'+shuttleStops.map((s,i)=>(i+1)+'. '+s[0]).join(' → ')+' → Reception</p><p>Next scheduled arrival: '+shuttleTime(next)+'. Timings are estimates along the drawn route, not live GPS tracking.</p><details><summary>Full-day timetable</summary><div class="shuttle-day-times">'+shuttleArrivals(index).filter(a=>a.time>=0&&a.time<86400).map(a=>'<span>'+shuttleTime(a.time)+'</span>').join('')+'</div></details>';
 }
 
 const shuttleSoundBtn=document.getElementById('siteSoundBtn');
@@ -734,7 +734,7 @@ shuttleButtons.forEach(({button,index})=>{
 const name=shuttleStops[index][0],{due,status,interval}=shuttleTiming(index);
 button.dataset.arrivalInitialized='true';
 button.dataset.present=String(due);button.classList.toggle('scheduled-here',status==='arrival');button.classList.toggle('scheduled-waiting',status==='waiting');
-button.title=(index+1)+' · '+name+ ' · One buggy · 30-minute loop'+(status==='arrival'?' · Scheduled arrival':status==='waiting'?' · Waiting':'');
+button.title=(index+1)+' · '+name+ ' · Two buggies · 30-minute loops · 15-minute arrivals'+(status==='arrival'?' · Scheduled arrival':status==='waiting'?' · Waiting':'');
 button.setAttribute('aria-label',button.title+'; select to view the timer');
 });
 if(selectedShuttleStop!==null&&pan.classList.contains('open')&&!document.getElementById('shuttleSchedule').hidden&&ttl.textContent===shuttleStops[selectedShuttleStop][0]){
@@ -743,7 +743,7 @@ const details=document.querySelector('#shuttleStopTimetable details'),expanded=d
 }
 shuttleStops.forEach(([name,x,y],index)=>{
 const button=document.createElement('button');button.className='shuttle-stop';button.dataset.stop=String(index+1);button.style.left=x+'%';button.style.top=y+'%';button.textContent='🛺';
-button.onclick=()=>{chimeOnShuttleTap();selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='One buggy visits all seven stops and returns to Reception in 30 minutes.';hrs.textContent='24 hours';venueStatus.textContent='One buggy · 30-minute loop';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF '+shuttleStops.length;act.textContent='Scheduled shuttle demo';best.textContent='Reception → all seven stops → Reception';renderShuttleTimetable(index);pan.classList.add('open');scrollToDetails()};m.appendChild(button);shuttleButtons.push({button,index});
+button.onclick=()=>{chimeOnShuttleTap();selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='Two buggies visit all seven stops, each returning to Reception in 30 minutes, spaced 15 minutes apart.';hrs.textContent='24 hours';venueStatus.textContent='Two buggies · 30-minute loops · 15-minute arrivals';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF '+shuttleStops.length;act.textContent='Scheduled shuttle demo';best.textContent='Reception → all seven stops → Reception';renderShuttleTimetable(index);pan.classList.add('open');scrollToDetails()};m.appendChild(button);shuttleButtons.push({button,index});
 });
 refreshShuttleDemo();setInterval(refreshShuttleDemo,1000);
 
@@ -1236,7 +1236,7 @@ for(let i=1;i<points.length;i++)lengths.push(lengths[i-1]+Math.hypot((points[i][
 const total=lengths[lengths.length-1],travelSeconds=1800-7*3;
 stopNodes.forEach((node,i)=>{shuttleStops[i][3]=lengths[node]/total*travelSeconds+i*3;shuttleStops[i][4]=3;});
 shuttleArrivalCache.clear();
-const buggy=document.createElement('div');buggy.className='loop-buggy';buggy.textContent='🛺';buggy.setAttribute('role','img');buggy.setAttribute('aria-label','One scheduled buggy · 30-minute loop simulation');m.appendChild(buggy);
+const buggies=[0,900].map((offset,index)=>{const buggy=document.createElement('div');buggy.className='loop-buggy';buggy.textContent='🛺';buggy.dataset.buggy=String(index+1);buggy.setAttribute('role','img');buggy.setAttribute('aria-label','Buggy '+(index+1)+' · scheduled 30-minute loop simulation');buggy.title='Buggy '+(index+1);if(index===1)buggy.style.borderColor='#f2c85b';m.appendChild(buggy);return {buggy,offset};});
 function loopDistance(phase){
  let pauses=0;
  for(let i=0;i<stopNodes.length;i++){
@@ -1247,6 +1247,6 @@ function loopDistance(phase){
  }
  return (phase-pauses)/travelSeconds*total;
 }
-function move(){const distance=loopDistance(shuttleSeconds()%1800);let i=1;while(i<lengths.length-1&&lengths[i]<distance)i++;const t=(distance-lengths[i-1])/(lengths[i]-lengths[i-1]||1);buggy.style.left=(points[i-1][0]+t*(points[i][0]-points[i-1][0]))+'%';buggy.style.top=(points[i-1][1]+t*(points[i][1]-points[i-1][1]))+'%';}move();refreshShuttleDemo();setInterval(move,1000);
+function move(){buggies.forEach(({buggy,offset})=>{const distance=loopDistance((shuttleSeconds()+offset)%1800);let i=1;while(i<lengths.length-1&&lengths[i]<distance)i++;const t=(distance-lengths[i-1])/(lengths[i]-lengths[i-1]||1);buggy.style.left=(points[i-1][0]+t*(points[i][0]-points[i-1][0]))+'%';buggy.style.top=(points[i-1][1]+t*(points[i][1]-points[i-1][1]))+'%';});}move();refreshShuttleDemo();setInterval(move,1000);
 })();
 </script></body></html>
