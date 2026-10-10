@@ -270,6 +270,10 @@ header{position:relative;z-index:30}
 .pin[data-t="restaurant"].open.restaurant-footprint svg{filter:drop-shadow(0 0 3px #58ffb1) drop-shadow(0 0 7px #31e993)}
 .pin[data-t="restaurant"].open svg>polygon{stroke:#67ffb4!important;stroke-width:3!important}
 .pin[data-t="restaurant"].open:not(.restaurant-footprint){box-shadow:0 0 5px #58ffb1,0 0 12px #31e993!important;border-color:#67ffb4!important}
+</style><style>
+.pin.compact-guest-icon{width:20px!important;height:20px!important;font-size:10px!important;border-radius:6px;border-width:1px;box-shadow:0 2px 5px #0006}
+.pin.compact-guest-icon::before{content:'';position:absolute;inset:-8px;background:transparent;pointer-events:auto}
+@media(max-width:700px){.pin.compact-guest-icon{width:18px!important;height:18px!important;font-size:9px!important}.pin.compact-guest-icon::before{inset:-13px}}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -388,6 +392,7 @@ P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-footprint':'');
   if(['Indoor Pool','Fitness Center','Yoga Studio'].includes(p[1]))b.classList.add('wellness-marker');
+  if(['Reception','Bus Drop-off','Camp Hyatt','Hideaway','Kids Pool & Splash','Wama Water Activities','Family Pool','Beach Volleyball'].includes(p[1]))b.classList.add('compact-guest-icon');
   b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[2]==='restaurant'||p[0]==='pavilion-5'?'':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
   if(p[0]==='3'||p[0]==='pavilion-5'){
