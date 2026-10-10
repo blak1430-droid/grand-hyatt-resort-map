@@ -262,7 +262,7 @@ header{position:relative;z-index:30}
 <section id="travelNav" class="travel-nav" aria-labelledby="travelTitle" hidden>
 <h2 id="travelTitle">Choose how to get there</h2>
 <div class="travel-fields"><div><label for="routeFrom">From</label><input id="routeFrom" list="routePlaces" placeholder="Room or place" autocomplete="off"><input id="travelRoom" type="hidden"></div><div><label for="routeTo">To</label><input id="routeTo" list="destinationPlaces" placeholder="Room or place" autocomplete="off"><select id="travelDestination" hidden><option value="">Choose a destination</option></select></div></div><datalist id="routePlaces"></datalist><datalist id="destinationPlaces"></datalist><p class="location-optional">Enter a room or place. Location access is optional.</p>
-<div class="travel-actions"><button id="travelWalk" type="button" aria-pressed="false">🚶 Walk to destination</button><button id="travelShuttle" type="button" aria-pressed="false">🛺 Walk to nearest shuttle</button><button id="travelBuggy" type="button" aria-pressed="false" disabled>🛺 Request buggy · over 500 m</button></div>
+<div class="travel-actions"><button id="travelWalk" type="button" aria-pressed="false">🚶 Walking / elevators</button><button id="travelBallroom" type="button" aria-pressed="false" hidden>🛗 Ballroom Elevator · direct to restaurant floor</button><button id="travelShuttle" type="button" aria-pressed="false">🛺 Walk to nearest shuttle</button><button id="travelBuggy" type="button" aria-pressed="false" disabled>🛺 Request buggy · over 500 m</button></div>
 <p id="travelStatus" role="status" aria-live="polite">Tap a starting point on the map, then tap your destination. Walking directions will appear when the recorded paths are available.</p>
 <p id="travelDistance">Choose a room and destination to compare travel options.</p>
 <a id="travelRequestLink" hidden target="_blank" rel="noopener noreferrer">Continue request in WhatsApp</a>
@@ -769,14 +769,65 @@ function origin(){
 }
 function destination(){return data.nodes.find(n=>n.id===dest.value||n.venueId===dest.value)||null}
 function nearest(from,kind){return data.nodes.filter(n=>n.kind===kind).map(n=>({n,r:route(from.id,n.id)})).filter(x=>x.r).sort((a,b)=>a.r.metres-b.r.metres)[0]||null;}
-function draw(r){const points=[];for(const step of r.edges){let p=step.edge.mapPoints;if(!Array.isArray(p)||p.length<2){line.setAttribute('points','');return false;}p=step.reverse?[...p].reverse():p;points.push(...p);}if(r.edges.length===0){line.setAttribute('points','');return true;}line.setAttribute('points',points.map(p=>(p[0]*10)+','+(p[1]*7.12)).join(' '));return true;}
+
+const elevatorMapping={"nodes":[{"id":"n-mv2dkx14-b16nlm","x":59.392,"y":63.819069961630206,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2dl3iw-cjevk6","x":51.05371428571429,"y":46.54844544351147,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2dnda8-nhd8ve","x":31.012571428571427,"y":56.93138042166619,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2dng9c-kf0nt0","x":38.985142857142854,"y":51.482909591545386,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2dtxe8-f9km84","x":38.61942857142857,"y":17.496785575888268,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2du0x4-a43oug","x":44.690285714285714,"y":29.52454193672096,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2dwx28-7zm9fc","x":65.60914285714286,"y":26.23489917136501,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2dwyew-nqzxpe","x":57.343999999999994,"y":35.1786154396765,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e3g7s-3uzzzm","x":45.202285714285715,"y":31.333847261584225,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e3oqg-cpwqc7","x":43.15428571428571,"y":34.623490026940175,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e3qm8-g8gx9f","x":43.373714285714286,"y":38.73554348363511,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e3u0o-3m4xr6","x":45.64114285714286,"y":40.071960857060965,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e61ts-byfqxn","x":56.17371428571428,"y":36.206630666591124,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e638w-an9whp","x":56.83200000000001,"y":40.729889468955555,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e647c-smwy14","x":56.46628571428571,"y":45.15034693490261,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e65uo-rcujx8","x":55.51542857142857,"y":46.79516831758058,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e6734-dnkp0j","x":53.68685714285715,"y":44.84194292565049,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e683c-wopjkh","x":52.07771428571428,"y":45.25314827131998,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e7njc-1bc5lt","x":40.74057142857143,"y":49.57080440084967,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e7or4-2cnx4g","x":43.44685714285714,"y":50.70161910144078,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e7r21-3evxf8","x":45.27542857142857,"y":51.421228456362385,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e7t74-vjoahz","x":47.32342857142857,"y":49.26240039159755,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e7um0-tqcwjn","x":46.81142857142857,"y":46.79516831758058,"kind":"junction","name":"","rooms":[]},{"id":"n-mv2e7w49-6w5n2k","x":46.226285714285716,"y":43.19712154297252,"kind":"junction","name":"","rooms":[]}],"paths":[{"id":"n-mv2dm5vs-ewbvc9","name":"ballroom elevertor main for 5th ,6th floor","nodeIds":["n-mv2dkx14-b16nlm","n-mv2dl3iw-cjevk6"],"confirmed":false},{"id":"n-mv2dpgso-1b7ids","name":"front of room 177 there is an enternce there is elevetor take you to 4th floor called south elevtor","nodeIds":["n-mv2dnda8-nhd8ve","n-mv2dng9c-kf0nt0"],"confirmed":false},{"id":"n-mv2dw6ds-cxcenb","name":"front of room 151 there is an enternce there is elevetor take you to 4th floor called west elevtor","nodeIds":["n-mv2dtxe8-f9km84","n-mv2du0x4-a43oug"],"confirmed":false},{"id":"n-mv2dyfzc-h21sm9","name":"front of room 123 there is an enternce there is elevetor take you to 4th floor called north elevtor","nodeIds":["n-mv2dwx28-7zm9fc","n-mv2dwyew-nqzxpe"],"confirmed":false},{"id":"n-mv2e558w-10h6in","name":"west elevertor to  restaurant","nodeIds":["n-mv2e3g7s-3uzzzm","n-mv2e3oqg-cpwqc7","n-mv2e3qm8-g8gx9f","n-mv2e3u0o-3m4xr6"],"confirmed":false},{"id":"n-mv2e7d2o-w201tj","name":"north elevetor to restaurants","nodeIds":["n-mv2dwyew-nqzxpe","n-mv2e61ts-byfqxn","n-mv2e638w-an9whp","n-mv2e647c-smwy14","n-mv2e65uo-rcujx8","n-mv2e6734-dnkp0j","n-mv2e683c-wopjkh"],"confirmed":false},{"id":"n-mv2ea1i0-8sp919","name":"south elevtor to restaurant","nodeIds":["n-mv2dng9c-kf0nt0","n-mv2e7njc-1bc5lt","n-mv2e7or4-2cnx4g","n-mv2e7r21-3evxf8","n-mv2e7t74-vjoahz","n-mv2e7um0-tqcwjn","n-mv2e7w49-6w5n2k"],"confirmed":false},{"id":"n-mv2f122o-vndzbs","name":"fourth-to-fifth floor stairs","nodeIds":["n-mv2e65uo-rcujx8","n-mv2e6734-dnkp0j","n-mv2e683c-wopjkh"],"confirmed":false},{"id":"n-mv2f1ju8-3c66s6","name":"fourth-to-fifth floor stairs","nodeIds":["n-mv2e7or4-2cnx4g","n-mv2e7r21-3evxf8"],"confirmed":false},{"id":"n-mv2f1ts0-gkt2id","name":"fourth-to-fifth floor stairs","nodeIds":["n-mv2e3qm8-g8gx9f","n-mv2e3u0o-3m4xr6"],"confirmed":false},{"id":"n-mv2f9uko-qbjaqw","name":"west eleverter glass door to out door","nodeIds":["n-mv2du0x4-a43oug","n-mv2e3g7s-3uzzzm"],"confirmed":false}],"specs":[{"key":"south","name":"South Elevator","entrance":"n-mv2dnda8-nhd8ve","exit":"n-mv2dng9c-kf0nt0","path":"n-mv2ea1i0-8sp919","stair":"n-mv2f1ju8-3c66s6","room":177},{"key":"west","name":"West Elevator","entrance":"n-mv2dtxe8-f9km84","exit":"n-mv2du0x4-a43oug","path":"n-mv2e558w-10h6in","stair":"n-mv2f1ts0-gkt2id","room":151},{"key":"north","name":"North Elevator","entrance":"n-mv2dwx28-7zm9fc","exit":"n-mv2dwyew-nqzxpe","path":"n-mv2e7d2o-w201tj","stair":"n-mv2f122o-vndzbs","room":123},{"key":"ballroom","name":"Ballroom Elevator","entrance":"n-mv2dkx14-b16nlm","exit":"n-mv2dl3iw-cjevk6"}]};
+let elevatorApproaches=[];
+const restaurantFloors={'4':5,'5':5,'6':5,'7':5,'8':6};
+function elevatorRestaurantRoute(from,to,preference='auto'){
+ const floor=restaurantFloors[to.venueId];if(!floor)return null;
+ const candidates=[];
+ const point=id=>elevatorMapping.nodes.find(n=>n.id===id);
+ for(const lift of elevatorApproaches){
+  if(preference==='ballroom'&&lift.key!=='ballroom')continue;
+  const approach=route(from.id,lift.nodeId);if(!approach)continue;
+  const sections=[{label:'Approach to '+lift.name+' · 1st floor',points:approach.edges.flatMap(step=>step.reverse?[...step.edge.mapPoints].reverse():step.edge.mapPoints)}];
+  let metresWalk=approach.metres;
+  const instructions=['Walk from '+from.name+' to '+lift.name+' on the 1st floor'+(lift.room?' (entrance opposite Room '+lift.room+')':' at the ballroom')+'.'];
+  let stairs=lift.key!=='ballroom';
+  if(stairs){
+   const p=elevatorMapping.paths.find(p=>p.id===lift.path),stair=elevatorMapping.paths.find(p=>p.id===lift.stair);
+   let ids=[...p.nodeIds];if(ids[0]!==lift.exit)ids.unshift(lift.exit);
+   const pts=ids.map(point);for(let i=1;i<pts.length;i++)metresWalk+=metres(pts[i-1],pts[i]);
+   sections.push({label:lift.name+' · 4th floor → stairs → 5th floor',points:pts.map(n=>[n.x,n.y]),stairPoints:stair.nodeIds.map(point).map(n=>[n.x,n.y])});
+   instructions.push('Take '+lift.name+' to the 4th floor. Exit through the glass doors. Follow the highlighted path to the stairs and go up to the 5th-floor restaurant area.');
+   if(floor===6)instructions.push('At 2 am Dessert Bar, take the stairs or elevator to the 6th-floor restaurant area. This final connection is confirmed by staff but is not drawn on the map.');
+  }else{
+   instructions.push('Take the Ballroom Elevator directly to the '+floor+'th-floor restaurant area.');
+   sections.push({label:'Ballroom Elevator arrival · '+floor+'th floor',points:[[point(lift.exit).x,point(lift.exit).y]]});
+  }
+  instructions.push('Continue within the shared '+floor+'th-floor restaurant area to '+to.name+'.');
+  candidates.push({metres:metresWalk,edges:approach.edges,mixed:true,sections,instructions,stairs,lift:lift.name,floor});
+ }
+ return candidates.sort((a,b)=>a.metres-b.metres)[0]||null;
+}
+const mixedOverlay=document.createElementNS('http://www.w3.org/2000/svg','g');
+mixedOverlay.id='elevatorRouteOverlay';line.parentNode.appendChild(mixedOverlay);
+function drawElevatorRoute(r){
+ mixedOverlay.replaceChildren();line.setAttribute('points','');
+ const ns='http://www.w3.org/2000/svg';
+ function label(points,text){
+  if(!points.length)return;
+  const last=points[points.length-1],t=document.createElementNS(ns,'text');
+  t.setAttribute('x',last[0]*10+8);t.setAttribute('y',last[1]*7.12-12);
+  t.setAttribute('font-size','13');t.setAttribute('fill','white');t.setAttribute('stroke','#071b1d');t.setAttribute('stroke-width','3');t.setAttribute('paint-order','stroke');
+  t.textContent=text;mixedOverlay.appendChild(t);
+ }
+ for(const section of r.sections){
+  if(section.points.length>1){const p=document.createElementNS(ns,'polyline');p.setAttribute('points',section.points.map(p=>p[0]*10+','+p[1]*7.12).join(' '));p.setAttribute('fill','none');p.setAttribute('stroke','#53d9ff');p.setAttribute('stroke-width','4');p.setAttribute('stroke-linejoin','round');p.setAttribute('stroke-linecap','round');mixedOverlay.appendChild(p);}
+  label(section.points,section.label);
+  if(section.stairPoints){const p=document.createElementNS(ns,'polyline');p.setAttribute('points',section.stairPoints.map(p=>p[0]*10+','+p[1]*7.12).join(' '));p.setAttribute('fill','none');p.setAttribute('stroke','#ffc85a');p.setAttribute('stroke-width','6');mixedOverlay.appendChild(p);}
+ }
+ return true;
+}
+
+function draw(r){if(r.mixed)return drawElevatorRoute(r);const points=[];for(const step of r.edges){let p=step.edge.mapPoints;if(!Array.isArray(p)||p.length<2){line.setAttribute('points','');return false;}p=step.reverse?[...p].reverse():p;points.push(...p);}if(r.edges.length===0){line.setAttribute('points','');return true;}line.setAttribute('points',points.map(p=>(p[0]*10)+','+(p[1]*7.12)).join(' '));return true;}
 function update(){
- request.hidden=true;line.setAttribute('points','');buggy.disabled=true;
+ request.hidden=true;line.setAttribute('points','');mixedOverlay.replaceChildren();buggy.disabled=true;el('travelBallroom').setAttribute('aria-pressed','false');
  const selectedStart=room.value||start.value,selectedEnd=dest.value;
  el('travelNav').hidden=!selectedStart||(mode!=='shuttle'&&(!selectedEnd||(!room.value&&start.value===dest.value)));
  if(el('travelNav').hidden){status.textContent='Enter both From and To to show a route. Location access is optional.';distance.textContent='';return;}
  ['travelWalk','travelShuttle','travelBuggy'].forEach((id,i)=>el(id).setAttribute('aria-pressed',String(mode===['walk','shuttle','buggy'][i])));
- const from=origin(),to=destination();
+ const from=origin(),to=destination();el('travelBallroom').hidden=!to||!restaurantFloors[to.venueId];
  if(!data.nodes.length){status.textContent='Recorded walking paths and pickup locations have not been added yet. Directions will be available after the walking paths have been mapped.';return;}
  if(!from){status.textContent='Choose a mapped starting place or room.';return;}
  if(mode==='shuttle'){
@@ -789,13 +840,14 @@ function update(){
   el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');return;
  }
  if(!to){status.textContent='Choose a mapped destination.';return;}
- // Staff-confirmed mixed-mode itinerary; do not invent geometry across unmapped floor connections.
- if(String(from.room)==='134'&&/Charcoal/i.test(to.name)&&mode!=='buggy'){
-  mode='walk';
-  el('travelWalk').setAttribute('aria-pressed','true');
-  roomRoute.classList.remove('show');
-  distance.textContent='Elevator + stairs · staff estimate: under 5 minutes, excluding elevator waiting. Distance not yet verified.';
-  status.textContent='From Room 134, walk to the West Elevator entrance on the 1st floor (opposite Room 151). Take the elevator to the 4th floor. Exit through the glass doors and turn right. Take the stairs to the 5th floor, then continue to Charcoal. This route includes stairs and is not step-free. The full map line is not shown because the elevator, corridor and stair connections still need joining.';
+ if(restaurantFloors[to.venueId]&&mode!=='buggy'){
+  const itinerary=elevatorRestaurantRoute(from,to,mode==='ballroom'?'ballroom':'auto');
+  if(!itinerary){status.textContent='No mapped approach to an elevator is available from this starting place.';distance.textContent='';return;}
+  mode=mode==='ballroom'?'ballroom':'walk';el('travelWalk').setAttribute('aria-pressed',String(mode==='walk'));el('travelBallroom').setAttribute('aria-pressed',String(mode==='ballroom'));
+  draw(itinerary);roomRoute.classList.remove('show');
+  distance.textContent='Walking portion: about '+Math.ceil(itinerary.metres/WALK_METRES_PER_MINUTE)+' min · '+Math.round(itinerary.metres)+' m. Elevator waiting, rides, stairs and movement within the restaurant area add time.';
+  status.textContent=itinerary.instructions.join(' ')+' '+(itinerary.stairs?'Elevator + stairs; this route includes steps.':'Uses the Ballroom Elevator; step-free access along the full approach has not been verified.')+' Selected by shortest mapped walking distance, not total journey time. Building exits and entrance connections are approximate.';
+  el('gpsStatus').textContent='Route via '+itinerary.lift+' to '+to.name+'. '+(itinerary.stairs?'Includes stairs. ':'')+'See the directions above for floor changes.';
   return;
  }
  const walking=route(from.id,to.id);if(!walking){status.textContent='A confirmed walking route between these places is not available yet.';distance.textContent='Walking time is unavailable for this route.';return;}
@@ -853,9 +905,26 @@ function loadRecordedPaths(){
  for(const p of P){let near;if(p[1]==='Embers')near={n:embers,d:1};else if(/Drift/i.test(p[1]))near={n:endpoint('to drift'),d:1};else if(/Charcoal/i.test(p[1]))near={n:endpoint('charcaol'),d:1};else if(p[0]==='3')near=closest(p[3],p[4],data.edges.filter(e=>node(e.from)?.kind==='junction'&&node(e.to)?.kind==='junction'));else continue;if(!near.n)continue;data.nodes.push({id:'venue-'+p[0],venueId:p[0],name:p[1],...(p[0]==='3'?{approximateApproach:true,floor:'3rd floor'}:{})});data.edges.push({from:'venue-'+p[0],to:near.n.id,metres:near.d,confirmed:true,mapPoints:[[near.n.x,near.n.y],[near.n.x,near.n.y]]});}
  const stops=[['Reception',46.3,81.1],['Recreation',32.65,70.4],['Embers',37.26,7.1],['SLS Bridge',1011/1487*100,195/1058*100],['Second Floor Entrance',1001/1487*100,425/1058*100],['Spa',568/1487*100,333/1058*100],['Restaurants Plaza',714/1487*100,527/1058*100]];
  stops.forEach(([name,x,y],i)=>{const near=closest(x,y);if(!near||near.d>60)return;data.nodes.push({id:'stop-'+i,name,x,y,...gps(x,y),kind:'shuttle',shuttleIndex:i,approximateExit:true});data.edges.push({from:'stop-'+i,to:near.n.id,metres:Math.max(1,near.d),confirmed:true,mapPoints:[[near.n.x,near.n.y],[near.n.x,near.n.y]]});});
+
+ // First-floor approaches are attached only to the existing walking network.
+ // Upper-floor corridors remain separate so map crossings cannot create floor shortcuts.
+ for(const spec of elevatorMapping.specs){
+  const entrance=elevatorMapping.nodes.find(n=>n.id===spec.entrance);
+  const near=closest(entrance.x,entrance.y,data.edges.filter(e=>node(e.from)?.kind==='junction'&&node(e.to)?.kind==='junction'));
+  if(!near||near.d>60)continue;
+  const id='elevator-entrance-'+spec.key;
+  data.nodes.push({id,name:spec.name+' entrance',kind:'elevatorEntrance',floor:1,x:entrance.x,y:entrance.y,...gps(entrance.x,entrance.y)});
+  data.edges.push({from:id,to:near.n.id,metres:Math.max(.01,near.d),confirmed:true,approximate:true,mapPoints:[[entrance.x,entrance.y],[near.n.x,near.n.y]]});
+  elevatorApproaches.push({...spec,nodeId:id});
+ }
+ elevatorMapping.nodes.forEach(n=>Object.assign(n,gps(n.x,n.y)));
+ for(const p of P.filter(p=>restaurantFloors[p[0]])){
+  if(!data.nodes.some(n=>n.venueId===p[0]))data.nodes.push({id:'venue-'+p[0],venueId:p[0],name:p[1],floor:restaurantFloors[p[0]],kind:'restaurantArea'});
+ }
  update();
 }
 
+el('travelBallroom').onclick=()=>{mode='ballroom';update();if(mixedOverlay.childNodes.length){el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');}};
 function selectManual(){update();}
 start.onchange=()=>{room.value='';selectManual()};room.oninput=()=>{start.value='';selectManual()};dest.onchange=update;
 el('travelWalk').onclick=()=>{mode='walk';update();if(line.getAttribute('points')){el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');el('directionToggle').focus({preventScroll:true});m.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}};el('travelShuttle').onclick=()=>{mode='shuttle';update()};buggy.onclick=()=>{mode='buggy';update()};
