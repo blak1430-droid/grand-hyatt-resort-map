@@ -260,6 +260,8 @@ header{position:relative;z-index:30}
 .pin[data-t="restaurant"] svg>polygon{fill:none!important;stroke:var(--restaurant-outline)!important;stroke-width:2!important;vector-effect:non-scaling-stroke}
 .pin[data-t="restaurant"]:not(.restaurant-footprint){border:2px solid var(--restaurant-outline)!important}
 .pin[data-t="restaurant"]::before,.pin[data-t="restaurant"]::after{display:none!important}
+</style><style>/* Keep the shuttle route hidden; stops and requested directions remain available. */
+#drawnShuttleRoute{display:none!important}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
