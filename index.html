@@ -922,18 +922,18 @@ function loadRecordedPaths(){
  stops.forEach(([name,x,y],i)=>{const near=closest(x,y,data.edges.filter(e=>e.network==='shuttle'));if(!near||near.d>60)return;data.nodes.push({id:'stop-'+i,name,x,y,...gps(x,y),kind:'shuttle',shuttleIndex:i,approximateExit:true});data.edges.push({from:'stop-'+i,to:near.n.id,metres:Math.max(1,near.d),confirmed:true,mapPoints:[[x,y],[near.n.x,near.n.y]]});});
  // Show the exact shuttle route drawn in the editor, independently of walking directions.
  let shuttleRoute=el('drawnShuttleRoute');
- if(!shuttleRoute){shuttleRoute=document.createElementNS(svgNS,'g');shuttleRoute.id='drawnShuttleRoute';shuttleRoute.setAttribute('aria-label','Buggy shuttle route');overlay.insertBefore(shuttleRoute,line);}
+ if(!shuttleRoute){shuttleRoute=document.createElementNS(svgNS,'g');shuttleRoute.id='drawnShuttleRoute';shuttleRoute.setAttribute('aria-label','Buggy shuttle route');shuttleRoute.style.filter='drop-shadow(0 0 2px #063f43)';overlay.insertBefore(shuttleRoute,line);}
  shuttleRoute.replaceChildren();
  const routeNodes=new Map(recordedPaths.nodes.map(n=>[n.id,n]));
  for(const path of recordedPaths.paths.filter(p=>p.nodeIds.every(id=>shuttleNodeIds.has(id)))){
   const route=document.createElementNS(svgNS,'polyline');
   route.setAttribute('points',path.nodeIds.map(id=>{const n=routeNodes.get(id);return (n.x*10)+','+(n.y*7.12);}).join(' '));
-  route.setAttribute('fill','none');route.setAttribute('stroke','#32d4d0');route.setAttribute('stroke-width','3');route.setAttribute('stroke-linejoin','round');route.setAttribute('stroke-linecap','round');route.setAttribute('vector-effect','non-scaling-stroke');shuttleRoute.appendChild(route);
+  route.setAttribute('fill','none');route.setAttribute('stroke','#32d4d0');route.setAttribute('stroke-width','5');route.setAttribute('stroke-linejoin','round');route.setAttribute('stroke-linecap','round');route.setAttribute('vector-effect','non-scaling-stroke');shuttleRoute.appendChild(route);
  }
  for(const edge of data.edges.filter(e=>e.from.startsWith('stop-'))){
   const connector=document.createElementNS(svgNS,'polyline');
   connector.setAttribute('points',edge.mapPoints.map(p=>(p[0]*10)+','+(p[1]*7.12)).join(' '));
-  connector.setAttribute('fill','none');connector.setAttribute('stroke','#32d4d0');connector.setAttribute('stroke-width','2');connector.setAttribute('stroke-dasharray','3 3');connector.setAttribute('vector-effect','non-scaling-stroke');shuttleRoute.appendChild(connector);
+  connector.setAttribute('fill','none');connector.setAttribute('stroke','#32d4d0');connector.setAttribute('stroke-width','5');connector.setAttribute('stroke-linecap','round');connector.setAttribute('vector-effect','non-scaling-stroke');shuttleRoute.appendChild(connector);
  }
 
 
