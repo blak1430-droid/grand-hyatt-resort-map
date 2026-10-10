@@ -308,7 +308,7 @@ const P=[
 ['6','Akira Back','restaurant',50.6,43.8,'Contemporary Japanese cuisine','Immersive dinner experience','19:00','Late',null,'Akira Back celebrates the ever-evolving world of Japanese cuisine, elevating dining to an art form. Culinary excellence, exceptional service, and an immersive atmosphere come together for an unforgettable experience.'],
 ['7','Al Takoy','restaurant',47.9,45.7,'Hawaiian-inspired flavors & tacos','Laid-back dining & music','19:00','Late',null,'Al Takoy is fun, dynamic, and laid-back, pairing toe-tapping music with flavorful dishes enjoyed one taco at a time. Inspired by Hawaii’s melting pot of cultures, it brings global influences together through a shared love of food.'],
 ['8','Havana Social','restaurant',50.14,32.23,'1950s Cuban bar concept','Late-night socializing','20:00','03:00',null,'Havana Social evokes an early-1950s, pre-revolution Cuban bar with the character of a once-chic, now weathered hidden jewel. Developed by Soho Hospitality, the original Bangkok venue is tucked into a back alley in the city’s bustling nightlife district, telling the story of a bar rediscovered decades after its doors closed.'],
-['🔑','Grand Club','amenity',53.43,38.45,'Grand Club Chef Selection','Eligible Members','15:00','16:00','club'],
+['🔑','Grand Club','amenity',53.43,38.45,'Private lounge','Eligible Members','','','club'],
 ['9','Drift','restaurant',23.4,91.8,'A flow of flavors, vibes & ambiance','Relaxing in your own mood','10:00','Sunset',null,'Drift celebrates your personal mood, letting the flow of the moment carry you wherever you want to be. Its Flow Factor brings together flowing vibes, flavors, and ambiance for a relaxed experience at your own pace.'],
 ['🧒','Camp Hyatt','family',32.2,89.5,'Kids activities','Ages 4–12','08:00','20:00','scheduled'],
 ['🎧','Hideaway','family',25.1,70.6,'Teen activities','Ages 12–17','08:00','20:00','scheduled'],
@@ -329,9 +329,6 @@ function riyadhParts(){
   return Object.fromEntries(parts.map(p=>[p.type,p.value]));
 }
 function mins(t){const [h,m]=t.split(':').map(Number);return h*60+m}
-function isEmberDjLive(){const z=riyadhParts(),now=Number(z.hour)*60+Number(z.minute);return (now>=22*60&&now<23*60)}
-function isEmberDjSoon(){const z=riyadhParts(),now=Number(z.hour)*60+Number(z.minute);return !isEmberDjLive()&&now>=21*60}
-function isGrandClubChefLive(){const z=riyadhParts(),now=Number(z.hour)*60+Number(z.minute);return (now>=15*60&&now<16*60)}
 function venueState(open,close){
   const z=riyadhParts(),now=Number(z.hour)*60+Number(z.minute),o=mins(open),c=close==='Late'?null:mins(close);
   if(close==='Sunset')return {key:'scheduled',label:'10:00 – Sunset',cls:''};
@@ -432,7 +429,6 @@ P.forEach((p,i)=>{
     }
     const s=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):state;
     ttl.textContent=p[1];act.textContent=p[5];best.textContent=p[6];desc.textContent=p[10]||'Demo schedule for concept testing. Replace with confirmed operating hours when available.';
-    if(p[0]=='2'){act.textContent=isEmberDjLive()?'🔥 LIVE DJ • 22:00–23:00':isEmberDjSoon()?'DJ starts at 22:00':'DJ • 22:00–23:00';best.textContent=''}
     if(p[1]=='Camp Hyatt'){
       ttl.textContent='Camp Hyatt';desc.textContent='Weekly activities for ages 4–12. Please sign up for each session you attend.';
       hrs.textContent=p[7]+' – '+p[8];venueStatus.textContent=s.label;venueStatus.className=s.cls;
@@ -458,7 +454,7 @@ P.forEach((p,i)=>{
       act.textContent='Fitness & training';best.textContent='Access with your room key card';stateEl.textContent='● Open 24 hours';
       document.getElementById('scheduleNote').hidden=true;pan.classList.add('open');scrollToDetails();return;
     }
-    if(p[1]=='Grand Club'){ttl.textContent='Grand Club';act.textContent=isGrandClubChefLive()?'LIVE • Grand Club Chef Selection':'Grand Club Chef Selection • 15:00–16:00';best.textContent='Eligible Members';hrs.textContent='15:00 – 16:00';venueStatus.textContent=isGrandClubChefLive()?'Live now':'Private lounge';venueStatus.className=isGrandClubChefLive()?'status-open':'';stateEl.textContent=isGrandClubChefLive()?'● Live now':'◆ Grand Club';pan.classList.add('open');scrollToDetails();return}
+    if(p[1]=='Grand Club'){ttl.textContent='Grand Club';act.textContent='Private lounge';best.textContent='Eligible Members';hrs.textContent='Please check with the team';venueStatus.textContent='Private lounge';venueStatus.className='';stateEl.textContent='◆ Grand Club';document.getElementById('scheduleNote').hidden=true;pan.classList.add('open');scrollToDetails();return}
     if(p[2]=='restaurant'){
       hrs.textContent=['2','5'].includes(p[0])?'Breakfast · Lunch · Dinner':p[7]+' – '+p[8];
       venueStatus.textContent=s.label;venueStatus.className=s.cls;
@@ -581,7 +577,7 @@ function refresh(){
   const z=riyadhParts();clock.textContent=z.hour+':'+z.minute+':'+z.second;
   pins.forEach(({b,p})=>{
 
-    if(p[1]=='Grand Club'){b.classList.remove('chef-live');if(isGrandClubChefLive()){b.classList.add('chef-live');b.dataset.s='live'}else{b.dataset.s='chill'};return}
+    if(p[1]=='Grand Club'){b.classList.remove('chef-live');b.dataset.s='chill';return}
     if(['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])){
       const s=placeState(p);b.classList.remove('open','soon','closed','live');b.classList.add(s.key);b.dataset.s=s.key;return
     }
