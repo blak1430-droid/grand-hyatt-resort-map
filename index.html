@@ -286,6 +286,16 @@ header{position:relative;z-index:30}
 #grandClubPearl{display:none;width:56px;height:56px;margin:12px auto;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff 0%,#fffcf7 25%,#e3dbea 55%,#bba9ce 78%,#faf5ff 100%);box-shadow:0 0 18px #eadcff88}
 .panel.open:has(#ttl) #grandClubPearl.visible{display:block;animation:pearlReveal .65s ease-out}
 @media(prefers-reduced-motion:reduce){.shell-pearl,.grand-club-footprint.focus-selected .marble-shell,#grandClubPearl.visible{animation:none!important}}
+</style><style>
+/* Shell frame and pearl accents for Grand Club details. */
+#panel.grand-club-shell-panel{border:7px solid #ded9d1;border-radius:48% 48% 24px 24px / 42px 42px 24px 24px;background:radial-gradient(ellipse at 50% 0,#f7f0e624,transparent 65%),#071b1d;box-shadow:0 0 0 2px #a99d89,0 0 0 4px #eee9df55,0 8px 28px #0009;padding:32px 20px 24px}
+#panel.grand-club-shell-panel h2{text-align:center;padding:0 30px}
+#panel.grand-club-shell-panel::before,#panel.grand-club-shell-panel::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff 15%,#eee5f2 50%,#bcaacb 80%,#fff);box-shadow:0 0 7px #f4e9ff88;pointer-events:none}
+#panel.grand-club-shell-panel::before{left:10px;top:72px}
+#panel.grand-club-shell-panel::after{right:10px;bottom:22px}
+#panel.grand-club-shell-panel .card{border:1px solid #e2d8c344;background:linear-gradient(135deg,#f6f0e618,#cab7d110);position:relative}
+#panel.grand-club-shell-panel .card::after{content:'';position:absolute;right:6px;top:6px;width:6px;height:6px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#d5c5df);pointer-events:none}
+@media(max-width:700px){#panel.grand-club-shell-panel{border-width:5px;padding:28px 16px 20px}}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -1266,4 +1276,6 @@ function move(){buggies.forEach(({buggy,offset})=>{const distance=loopDistance((
 })();
 </script><script>
 (()=>{const pearl=document.createElement('div');pearl.id='grandClubPearl';pearl.setAttribute('aria-hidden','true');document.getElementById('ttl').after(pearl);const sync=()=>pearl.classList.toggle('visible',document.getElementById('ttl').textContent==='Grand Club');new MutationObserver(sync).observe(document.getElementById('ttl'),{childList:true,subtree:true,characterData:true});sync();})();
+</script><script>
+(()=>{const panel=document.getElementById('panel'),title=document.getElementById('ttl');const sync=()=>panel.classList.toggle('grand-club-shell-panel',title.textContent==='Grand Club');new MutationObserver(sync).observe(title,{childList:true,subtree:true,characterData:true});sync();})();
 </script></body></html>
