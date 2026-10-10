@@ -251,7 +251,9 @@ header{position:relative;z-index:30}
 </style><style>
 .room-finder{max-width:1100px;margin:10px auto;padding:10px 14px;background:#102e30;border:1px solid #527071;border-radius:12px;color:#fff}.room-finder form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.room-finder input{flex:1;min-width:130px;padding:12px;border-radius:8px;border:1px solid #8ba2a1;font-size:16px}.room-finder button{padding:12px;border-radius:8px;border:1px solid #d8c28e;background:#edcf8a;color:#182524;cursor:pointer}.room-finder p{margin:8px 0 0;font-size:13px}.confirmed-room-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}.confirmed-room-overlay polygon{fill:#d6bd71;fill-opacity:.12;stroke:#f5dfa1;stroke-width:1.5;vector-effect:non-scaling-stroke;pointer-events:auto;cursor:pointer}.confirmed-room-overlay polygon.is-selected{fill-opacity:.55;stroke:#fff;stroke-width:3}.confirmed-room-label{white-space:pre;text-align:center;position:absolute;transform:translate(-50%,-50%);z-index:5;font:700 8px/1.2 Arial;color:#172826;background:#f1d998;border:1px solid white;border-radius:4px;padding:2px 4px;cursor:pointer;box-shadow:0 1px 4px #0008}.confirmed-room-label.is-selected{outline:2px solid white;background:#fff0b6}.confirmed-room-choices{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.confirmed-room-choices[hidden]{display:none}.confirmed-room-choices button{min-width:44px;min-height:44px;padding:8px}
 @media(max-width:700px){.room-finder{margin:8px;padding:10px}.confirmed-room-label{display:none}.confirmed-room-overlay polygon{display:none}.confirmed-room-overlay polygon.is-selected{display:block}}
-</style><style>.restaurant-photo-marker span{background:#071b1dcc;border-radius:50%;min-width:1.4em;line-height:1.4;text-align:center;text-shadow:0 1px 3px #000}.restaurant-photo-marker svg polygon{fill:none!important}</style></head>
+</style><style>.restaurant-photo-marker span{background:#071b1dcc;border-radius:50%;min-width:1.4em;line-height:1.4;text-align:center;text-shadow:0 1px 3px #000}.restaurant-photo-marker svg polygon{fill:none!important}</style><style>/* Restaurant names replace numbered map labels. */
+.pin[data-t="restaurant"] span{background:#071b1dcc;border-radius:3px;padding:2px 3px;min-width:0;line-height:1.15;font-size:clamp(7px,1.1cqw,11px);white-space:normal;text-align:center}
+</style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 
@@ -333,7 +335,7 @@ function fitRestaurantFootprint(button,p){
   button.style.width=width/700*100+'%';button.style.height=height/498*100+'%';
   button.classList.add('restaurant-footprint');
   if(p[0]==='4')button.classList.add('larger-restaurant-marker');
-  button.setAttribute('aria-label',p[0]+' — '+p[1]);button.title=p[1];
+  button.setAttribute('aria-label',p[1]);button.title=p[1];
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),polygon=document.createElementNS(ns,'polygon'),label=document.createElement('span');
   svg.setAttribute('viewBox', '0 0 '+width+' '+height);svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');
   polygon.setAttribute('points',points.map(q=>(q[0]-left)+','+(q[1]-top)).join(' '));
@@ -345,7 +347,7 @@ function fitRestaurantFootprint(button,p){
     photo.setAttribute('preserveAspectRatio','xMidYMid slice');photo.setAttribute('clip-path','url(#'+clip.id+')');svg.appendChild(photo);
     polygon.style.fill='none';button.classList.add('restaurant-photo-marker');
   }
-  svg.appendChild(polygon);label.textContent=p[0];button.replaceChildren(svg,label);
+  svg.appendChild(polygon);label.textContent=p[2]==='restaurant'?p[1]:p[0];button.replaceChildren(svg,label);
 }
 
 function scrollToDetails(){
@@ -369,14 +371,14 @@ P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-footprint':'');
   if(['Indoor Pool','Fitness Center','Yoga Studio'].includes(p[1]))b.classList.add('wellness-marker');
-  b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[0]==='pavilion-5'?'5':p[0];b.setAttribute('aria-label',p[1]);b.title=p[1];
+  b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[2]==='restaurant'?p[1]:(p[0]==='pavilion-5'?'5':p[0]);b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
   if(p[0]==='3'||p[0]==='pavilion-5'){
     b.classList.add('restaurant-photo-marker');
     const photo=p[0]==='3'?'assets/cafe-maude-restaurant-photo.svg':'assets/pavilion-photo.svg';
     b.style.setProperty('background-image','url("'+photo+'")','important');
     b.style.setProperty('background-size','cover','important');b.style.setProperty('background-position','center','important');
-    const label=document.createElement('span');label.textContent=p[0]==='3'?'3':'5';b.replaceChildren(label);
+    const label=document.createElement('span');label.textContent=p[0]==='3'?p[1]:'5';b.replaceChildren(label);
   }
   b.onclick=()=>{
     document.getElementById('campDetails').hidden=p[1]!=='Camp Hyatt';
