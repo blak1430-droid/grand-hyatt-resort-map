@@ -274,6 +274,10 @@ header{position:relative;z-index:30}
 .pin.compact-guest-icon{width:20px!important;height:20px!important;font-size:10px!important;border-radius:6px;border-width:1px;box-shadow:0 2px 5px #0006}
 .pin.compact-guest-icon::before{content:'';position:absolute;inset:-8px;background:transparent;pointer-events:auto}
 @media(max-width:700px){.pin.compact-guest-icon{width:18px!important;height:18px!important;font-size:9px!important}.pin.compact-guest-icon::before{inset:-13px}}
+</style><style>
+/* Shared restaurant presentation; uploaded venue videos will replace black previews. */
+.panel[data-restaurant-theme]{background:#000!important;--venue-text:#fff;--venue-muted:#bad0d1;--venue-card:#151515;--venue-border:#ffffff30;--venue-accent:#fff}
+.panel[data-restaurant-theme] .preview{background:#000!important;background-image:none!important}
 </style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
@@ -764,17 +768,23 @@ mapimg.onerror=()=>{const d=document.createElement('div');d.className='loading';
  const data={
  'Embers':{occupancy:50,hours:'Breakfast 06:30–10:30 · Lunch 12:30–15:00 · Dinner 18:30–23:00',video:''},
  'Amalfi Restaurant':{occupancy:80,hours:'10:00–20:00',video:''},
- 'Drift':{occupancy:100,hours:'10:00–Sunset',video:''}
+ 'Drift':{occupancy:100,hours:'10:00–Sunset',video:''},
+ 'Café Maude':{occupancy:null,hours:'10:00–22:00',video:''},
+ '2 am Dessert Bar':{occupancy:null,hours:'18:00–03:00',video:''},
+ 'Charcoal':{occupancy:null,hours:'Breakfast 06:30–10:30 · Lunch 12:00–15:00 · Dinner 18:00–24:00',video:''},
+ 'Akira Back':{occupancy:null,hours:'19:00–Late',video:''},
+ 'Al Takoy':{occupancy:null,hours:'19:00–Late',video:''},
+ 'Havana Social':{occupancy:null,hours:'20:00–03:00',video:''}
  };
  const title=document.getElementById('ttl'),section=document.getElementById('restaurantPreviewDemo');
  function render(){
   const item=data[title.textContent];
-  const panel=document.getElementById('panel'),themes={'Embers':'embers','Amalfi Restaurant':'amalfi','Drift':'drift'};
+  const panel=document.getElementById('panel'),themes={'Embers':'embers','Amalfi Restaurant':'amalfi','Drift':'drift','Café Maude':'maude','2 am Dessert Bar':'dessert','Charcoal':'charcoal','Akira Back':'akira','Al Takoy':'takoy','Havana Social':'havana'};
   if(item)panel.dataset.restaurantTheme=themes[title.textContent];else delete panel.dataset.restaurantTheme;
   section.replaceChildren();section.hidden=!item;if(!item)return;
-  const level=item.occupancy<70?'green':item.occupancy<90?'yellow':'red';
-  const status=item.occupancy<70?'Available':item.occupancy<90?'Busy':item.occupancy<100?'Almost full':'Full';
-  section.innerHTML='<small>DEMO ONLY · music preview · simulated occupancy '+item.occupancy+'%</small><div class="preview" aria-label="Ten-second black video placeholder"><span>10-second loop · video placeholder</span><div class="loop-track"><div class="loop-fill"></div></div></div><button type="button" class="menu-demo"><span class="menu-thumb" aria-hidden="true"><svg viewBox="0 0 64 64" width="52" height="52" focusable="false"><circle cx="32" cy="34" r="26" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="32" cy="34" r="20" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/><g transform="rotate(-12 32 30)"><rect x="19" y="9" width="26" height="38" rx="3" fill="var(--venue-card,#123d40)" stroke="currentColor" stroke-width="2"/><text x="32" y="21" text-anchor="middle" fill="currentColor" font-family="Arial,sans-serif" font-size="6" font-weight="bold">MENU</text><path d="M24 27h16m-16 6h16m-16 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></g></svg></span><span>Menu<small>Placeholder · no menu uploaded</small></span></button><div class="demo-hours"><small>Opening & closing times · prototype hours</small><span></span></div><button type="button" class="reserve-demo '+level+'">'+status+' · '+(item.occupancy===100?'Join waiting list':'Reserve a table')+'</button><p class="demo-message" role="status" hidden></p>';
+  const level=item.occupancy===null?'green':item.occupancy<70?'green':item.occupancy<90?'yellow':'red';
+  const status=item.occupancy===null?'Reservation preview':item.occupancy<70?'Available':item.occupancy<90?'Busy':item.occupancy<100?'Almost full':'Full';
+  section.innerHTML='<small>DEMO ONLY · music preview · simulated occupancy '+(item.occupancy===null?'unavailable':item.occupancy+'%')+'</small><div class="preview" aria-label="Ten-second black video placeholder"><span>10-second loop · video placeholder</span><div class="loop-track"><div class="loop-fill"></div></div></div><button type="button" class="menu-demo"><span class="menu-thumb" aria-hidden="true"><svg viewBox="0 0 64 64" width="52" height="52" focusable="false"><circle cx="32" cy="34" r="26" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="32" cy="34" r="20" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/><g transform="rotate(-12 32 30)"><rect x="19" y="9" width="26" height="38" rx="3" fill="var(--venue-card,#123d40)" stroke="currentColor" stroke-width="2"/><text x="32" y="21" text-anchor="middle" fill="currentColor" font-family="Arial,sans-serif" font-size="6" font-weight="bold">MENU</text><path d="M24 27h16m-16 6h16m-16 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></g></svg></span><span>Menu<small>Placeholder · no menu uploaded</small></span></button><div class="demo-hours"><small>Opening & closing times · prototype hours</small><span></span></div><button type="button" class="reserve-demo '+level+'">'+status+' · '+(item.occupancy===100?'Join waiting list':'Reserve a table')+'</button><p class="demo-message" role="status" hidden></p>';
   section.querySelector('.demo-hours span').textContent=item.hours;
 
   if(item.video){const video=document.createElement('video');video.src=item.video;video.autoplay=true;video.muted=true;video.loop=true;video.playsInline=true;video.controls=true;section.querySelector('.preview').replaceChildren(video);}
