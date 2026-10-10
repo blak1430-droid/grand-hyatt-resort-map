@@ -589,11 +589,13 @@ function refresh(){
 }
 
 const shuttleStops=[
-['Reception / Buggy Stand',46.3,81.1,0,30],['Recreation',32.65,70.4,180,120],['Embers Stop',37.26,7.1,450,120]
+['Reception / Buggy Stand',46.3,81.1,0,5],['Recreation',32.65,70.4,89,5],['Embers Stop',37.26,7.1,305,5],
+['SLS Bridge',1011/1487*100,195/1058*100,466,5],['Second Floor Entrance',1001/1487*100,425/1058*100,665,5],
+['Spa',568/1487*100,333/1058*100,857,5],['Restaurants Plaza',714/1487*100,527/1058*100,1359,5]
 ];
 
 const shuttleButtons=[];let selectedShuttleStop=null;
-const shuttleServicePeriods=[[0,21600,1800],[21600,54000,900],[54000,75600,600],[75600,86400,1800]];
+const shuttleServicePeriods=[[0,86400,1800]];
 function shuttleInterval(now){return shuttleServicePeriods.find(([start,end])=>now>=start&&now<end)[2]}
 function showShuttleLoop(){clearPinFocus();clearRoomFocus();}
 function shuttleSeconds(){const z=riyadhParts();return Number(z.hour)*3600+Number(z.minute)*60+Number(z.second)}
@@ -601,8 +603,7 @@ function shuttleTime(seconds){seconds=((seconds%86400)+86400)%86400;return Strin
 const shuttleArrivalCache=new Map();
 function shuttleArrivals(index){
 if(shuttleArrivalCache.has(index))return shuttleArrivalCache.get(index);
-const returnOffsets=[null,720,null],visits=[{offset:shuttleStops[index][3],direction:index===shuttleStops.length-1?'Turnaround · toward Reception':'Toward Embers',hold:shuttleStops[index][4]}];
-if(index>0&&index<shuttleStops.length-1)visits.push({offset:returnOffsets[index],direction:'Toward Reception',hold:shuttleStops[index][4]});
+const visits=[{offset:shuttleStops[index][3],direction:'30-minute loop · returns to Reception',hold:shuttleStops[index][4]}];
 const times=[];
 for(const day of [-86400,0,86400]){
 for(const [start,end,interval] of shuttleServicePeriods){
@@ -621,8 +622,8 @@ return {now,next:next.time,nextDirection:next.direction,phase,due,status,waitRem
 function shuttleDuration(seconds){return Math.floor(seconds/60)+'m '+String(seconds%60).padStart(2,'0')+'s'}
 function shuttlePhase(index){return shuttleTiming(index).phase}
 function renderShuttleTimetable(index){
-const {now,next,nextDirection,due,status,waitRemaining,interval}=shuttleTiming(index);
-document.getElementById('shuttleStopTimetable').innerHTML='<div class="card shuttle-primary-timer"><small>Shuttle timer</small><b>'+(status==='arrival'?'🟢 Scheduled arrival · Here':status==='waiting'?'🟡 Waiting · '+shuttleDuration(waitRemaining):'⚫ Next arrival in '+shuttleDuration(next-now))+'</b></div><div class="grid"><div class="card"><small>Service</small><b>06:00–15:00 · 2 shuttle buggies<br>15:00–21:00 · 3 shuttle buggies<br>21:00–06:00 · 1 shuttle buggy</b></div><div class="card"><small>Departures from Reception</small><b>'+(interval===900?'Every 15 min':interval===600?'Every 10 min':'Every 30 min')+'</b></div><div class="card"><small>Next scheduled arrival</small><b>'+shuttleTime(next)+(next>=86400?' · tomorrow':'')+'<br>'+nextDirection+'</b></div></div><p>Outward: Reception → Recreation → Embers.<br>Return: Embers → Recreation → Reception.</p><p>Estimated 16-minute 30-second round trip using the existing travel timings: 10 minutes travel plus 6 minutes 30 seconds waiting. Recreation includes 2 minutes waiting in each direction; Embers includes 2 minutes at the turnaround; Reception includes 30 seconds. Morning 06:00–15:00: two shuttle buggies departing every 15 minutes; remaining buggies handle requests. From 15:00–21:00: three shuttle buggies departing every 10 minutes. Overnight: one buggy departing every 30 minutes.</p><p>⚫ Black: no scheduled buggy at the stop; next arrival countdown.<br>🟢 Green: arrival / here for the first 5 seconds.<br>🟡 Yellow: waiting; countdown to departure.<br>Indicators follow the timetable, not live vehicle tracking.</p><details><summary>Full-day timetable · both directions</summary><div class="shuttle-day-times">'+shuttleArrivals(index).filter(a=>a.time>=0&&a.time<86400).map(a=>'<span class="'+(a.time===next?'next-arrival':'')+'">'+shuttleTime(a.time)+'<br><small>'+a.direction+'</small></span>').join('')+'</div></details>';
+const {now,next,due}=shuttleTiming(index);
+document.getElementById('shuttleStopTimetable').innerHTML='<div class="card shuttle-primary-timer"><small>Next buggy · Stop '+(index+1)+' of 7</small><b>'+(due?'🟢 Scheduled arrival':'Next arrival in '+shuttleDuration(next-now))+'</b></div><p>One buggy · 30-minute cycle · every 30 minutes</p><p>'+shuttleStops.map((s,i)=>(i+1)+'. '+s[0]).join(' → ')+' → Reception</p><p>Next scheduled arrival: '+shuttleTime(next)+'. Timings are estimates along the drawn route, not live GPS tracking.</p><details><summary>Full-day timetable</summary><div class="shuttle-day-times">'+shuttleArrivals(index).filter(a=>a.time>=0&&a.time<86400).map(a=>'<span>'+shuttleTime(a.time)+'</span>').join('')+'</div></details>';
 }
 
 const shuttleSoundBtn=document.getElementById('siteSoundBtn');
@@ -733,7 +734,7 @@ shuttleButtons.forEach(({button,index})=>{
 const name=shuttleStops[index][0],{due,status,interval}=shuttleTiming(index);
 button.dataset.arrivalInitialized='true';
 button.dataset.present=String(due);button.classList.toggle('scheduled-here',status==='arrival');button.classList.toggle('scheduled-waiting',status==='waiting');
-button.title=(index+1)+' · '+name+ (interval===900?' · Outward & return · Morning service · 2 shuttle buggies':interval===600?' · Outward & return · Day service':' · Outward & return · Night service')+(status==='arrival'?' · Scheduled arrival':status==='waiting'?' · Waiting':'');
+button.title=(index+1)+' · '+name+ ' · One buggy · 30-minute loop'+(status==='arrival'?' · Scheduled arrival':status==='waiting'?' · Waiting':'');
 button.setAttribute('aria-label',button.title+'; select to view the timer');
 });
 if(selectedShuttleStop!==null&&pan.classList.contains('open')&&!document.getElementById('shuttleSchedule').hidden&&ttl.textContent===shuttleStops[selectedShuttleStop][0]){
@@ -742,7 +743,7 @@ const details=document.querySelector('#shuttleStopTimetable details'),expanded=d
 }
 shuttleStops.forEach(([name,x,y],index)=>{
 const button=document.createElement('button');button.className='shuttle-stop';button.dataset.stop=String(index+1);button.style.left=x+'%';button.style.top=y+'%';button.textContent='🛺';
-button.onclick=()=>{chimeOnShuttleTap();selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='Outward and return shuttle arrivals through all three stops, with extra waiting at Recreation and Embers.';hrs.textContent='24 hours';venueStatus.textContent='15 min 06:00–15:00 · 10 min 15:00–21:00 · 30 min overnight';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF '+shuttleStops.length;act.textContent='Scheduled shuttle demo';best.textContent='Recreation & Embers waiting priority';renderShuttleTimetable(index);pan.classList.add('open');scrollToDetails()};m.appendChild(button);shuttleButtons.push({button,index});
+button.onclick=()=>{chimeOnShuttleTap();selectedShuttleStop=index;showShuttleLoop();document.querySelectorAll('.panel .grid[id]').forEach(el=>el.hidden=true);document.getElementById('shuttleSchedule').hidden=false;document.getElementById('scheduleNote').hidden=true;ttl.textContent=name;desc.textContent='One buggy visits all seven stops and returns to Reception in 30 minutes.';hrs.textContent='24 hours';venueStatus.textContent='One buggy · 30-minute loop';venueStatus.className='';stateEl.textContent='SHUTTLE STOP '+(index+1)+' OF '+shuttleStops.length;act.textContent='Scheduled shuttle demo';best.textContent='Reception → all seven stops → Reception';renderShuttleTimetable(index);pan.classList.add('open');scrollToDetails()};m.appendChild(button);shuttleButtons.push({button,index});
 });
 refreshShuttleDemo();setInterval(refreshShuttleDemo,1000);
 
@@ -1163,19 +1164,7 @@ el('directionBuggy').onclick=()=>{if(el('directionBuggy').disabled)return;el('tr
 </script>
 
 
-<script>
-(()=>{
-const stops=[{"number":4,"name":"SLS Bridge","x":1011,"y":195},{"number":5,"name":"Second Floor Entrance","x":1001,"y":425},{"number":6,"name":"Spa","x":568,"y":333},{"number":7,"name":"Restaurants Plaza","x":714,"y":527}];
-stops.forEach(stop=>{
-const button=document.createElement('button');button.type='button';button.className='shuttle-stop';button.dataset.stop=stop.number;button.style.left=(stop.x/1487*100)+'%';button.style.top=(stop.y/1058*100)+'%';button.textContent='🛺';button.title=stop.number+' · '+stop.name;button.setAttribute('aria-label',button.title);
-button.onclick=()=>{
-clearPinFocus();clearRoomFocus();document.querySelectorAll('.panel .grid[id]').forEach(e=>e.hidden=true);document.getElementById('shuttleSchedule').hidden=true;document.getElementById('scheduleNote').hidden=true;
-ttl.textContent=stop.name;desc.textContent=[4,5,6,7].includes(stop.number)?'Buggy shuttle point '+stop.number+' · GPS location confirmed. Use the directions arrow to find your nearest stop.':'Buggy shuttle point '+stop.number+'. GPS location and service times will be added once confirmed.';pan.classList.add('open');scrollToDetails();
-};
-m.appendChild(button);
-});
-})();
-</script>
+
 
 <style>#gpsStatus{padding:12px;border:1px solid #ffffff50;border-radius:10px;background:#164e50;min-height:44px}#gpsStatus.gps-error{background:#642c25;border-color:#ffb6a8}</style>
 <script>
@@ -1237,4 +1226,12 @@ document.getElementById('travelNav').hidden=false;
  get('travelNav').appendChild(get('guestGps'));
 })();
 </script>
-<style>#directionDrawer .travel-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#directionDrawer .travel-fields>div{min-width:0}#directionDrawer .travel-fields input{min-width:0;font-size:14px;padding:9px;width:100%}#travelDestination[hidden]{display:none!important}.location-optional{font-size:12px!important;margin:8px 0}</style><style>#travelShuttle{display:none!important}</style></body></html>
+<style>#directionDrawer .travel-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#directionDrawer .travel-fields>div{min-width:0}#directionDrawer .travel-fields input{min-width:0;font-size:14px;padding:9px;width:100%}#travelDestination[hidden]{display:none!important}.location-optional{font-size:12px!important;margin:8px 0}</style><style>#travelShuttle{display:none!important}</style><style>#drawnShuttleRoute{display:none!important}.loop-buggy{position:absolute;transform:translate(-50%,-50%);z-index:10;pointer-events:none;background:#fff;color:#071b1d;border:2px solid #16a765;border-radius:50%;width:25px;height:25px;display:grid;place-items:center;box-shadow:0 0 9px #16a765;font-size:14px}</style>
+<script>
+(()=>{
+const points=[[46.916666666666664,82.44914670346623],[43.833333333333336,78.81829717858263],[30.25,67.45725189104364],[26.083333333333332,61.33333070023159],[23.333333333333332,53.95450747224234],[21.25,47.0441809571413],[22.833333333333332,36.98823403847083],[24.333333333333336,27.852548137150812],[27,21.4776461814687],[30.833333333333336,11.170718497928165],[35.083333333333336,9.296731646375342],[42.833333333333336,8.47686239882098],[50.416666666666664,7.539868973044568],[58.75,10.467973428595858],[65.41666666666667,15.972809805032279],[68.08333333333333,19.653855661607203],[71.25,26.09568546382004],[74.33333333333333,36.56993276368738],[74.75,44.88574941745305],[74.41666666666666,53.20156607121871],[73.41666666666666,56.99973610601569],[69.25,55.477121789129015],[66.83333333333333,53.486010759354144],[68.08333333333333,48.56679527402797],[67.75,43.764703966923854],[66.83333333333333,40.25097862026231],[64.58333333333334,33.240260335365186],[62.916666666666664,28.203920671816967],[59.916666666666664,24.338822790489264],[55.666666666666664,21.176469978493873],[49.583333333333336,18.48261387938669],[45.75,18.48261387938669],[39.5,21.996339226048235],[40.833333333333336,24.690195325155422],[39.416666666666664,27.618299780706707],[37.833333333333336,31.13202512736826],[36.41666666666667,34.17725376114159],[35.16666666666667,36.05124061269442],[32.58333333333333,35.934116434472365],[32.25,40.267711028688275],[32.25,43.4133314322577],[33.666666666666664,52.19764479891157],[36,56.53123939312748],[39.33333333333333,60.16208891801107],[43,62.855945017118266],[46.666666666666664,63.91006262111672],[51.583333333333336,63.090193373562364],[54.58333333333333,61.918951591341845],[60.083333333333336,56.64836357134953],[62.74999999999999,51.61202390780131],[63.916666666666664,45.87293917492079],[64.5,41.070847867816674],[63.74999999999999,35.917384026046406],[62.33333333333333,32.63790703582896],[61.16666666666667,29.02378991937133],[57.166666666666664,25.51006457270978],[51.083333333333336,25.392940394487727],[45.83333333333333,25.861437107375934],[42.333333333333336,27.384051424262605],[40.91666666666667,29.96078334514774],[41,33.70875704825339],[42.25,40.50195938513238],[45,48.58352768245393],[45.5,51.86300467267137],[47.083333333333336,52.214377207337535],[48.083333333333336,49.754769464674446],[45,48.58352768245393],[42.25,40.50195938513238],[41,33.70875704825339],[40.91666666666667,29.96078334514774],[42.333333333333336,27.384051424262605],[45.83333333333333,25.861437107375934],[51.083333333333336,25.392940394487727],[57.166666666666664,25.51006457270978],[61.16666666666667,29.02378991937133],[62.33333333333333,32.63790703582896],[63.74999999999999,35.917384026046406],[66.83333333333333,40.25097862026231],[67.75,43.764703966923854],[68.08333333333333,48.56679527402797],[66.83333333333333,53.486010759354144],[63.916666666666664,58.30483447488422],[61.25000000000001,62.989801603766274],[56.41666666666667,66.38640277220577],[53.083333333333336,67.90901708909244],[49.666666666666664,69.78300394064526],[46.33333333333333,71.07136990108783],[44.083333333333336,72.1254875050863],[43.833333333333336,78.81829717858263],[43.25,83.53672912431662],[45.33333333333333,85.17646761942534],[46.916666666666664,82.44914670346623]],lengths=[0];
+for(let i=1;i<points.length;i++)lengths.push(lengths[i-1]+Math.hypot((points[i][0]-points[i-1][0])*1.487,points[i][1]-points[i-1][1]));
+const buggy=document.createElement('div');buggy.className='loop-buggy';buggy.textContent='🛺';buggy.setAttribute('role','img');buggy.setAttribute('aria-label','One scheduled buggy · 30-minute loop simulation');m.appendChild(buggy);
+function move(){const distance=(shuttleSeconds()%1800)/1800*lengths[lengths.length-1];let i=1;while(i<lengths.length-1&&lengths[i]<distance)i++;const t=(distance-lengths[i-1])/(lengths[i]-lengths[i-1]||1);buggy.style.left=(points[i-1][0]+t*(points[i][0]-points[i-1][0]))+'%';buggy.style.top=(points[i-1][1]+t*(points[i][1]-points[i-1][1]))+'%';}move();setInterval(move,1000);
+})();
+</script></body></html>
