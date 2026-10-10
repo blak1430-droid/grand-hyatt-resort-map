@@ -251,7 +251,7 @@ header{position:relative;z-index:30}
 </style><style>
 .room-finder{max-width:1100px;margin:10px auto;padding:10px 14px;background:#102e30;border:1px solid #527071;border-radius:12px;color:#fff}.room-finder form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.room-finder input{flex:1;min-width:130px;padding:12px;border-radius:8px;border:1px solid #8ba2a1;font-size:16px}.room-finder button{padding:12px;border-radius:8px;border:1px solid #d8c28e;background:#edcf8a;color:#182524;cursor:pointer}.room-finder p{margin:8px 0 0;font-size:13px}.confirmed-room-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}.confirmed-room-overlay polygon{fill:#d6bd71;fill-opacity:.12;stroke:#f5dfa1;stroke-width:1.5;vector-effect:non-scaling-stroke;pointer-events:auto;cursor:pointer}.confirmed-room-overlay polygon.is-selected{fill-opacity:.55;stroke:#fff;stroke-width:3}.confirmed-room-label{white-space:pre;text-align:center;position:absolute;transform:translate(-50%,-50%);z-index:5;font:700 8px/1.2 Arial;color:#172826;background:#f1d998;border:1px solid white;border-radius:4px;padding:2px 4px;cursor:pointer;box-shadow:0 1px 4px #0008}.confirmed-room-label.is-selected{outline:2px solid white;background:#fff0b6}.confirmed-room-choices{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.confirmed-room-choices[hidden]{display:none}.confirmed-room-choices button{min-width:44px;min-height:44px;padding:8px}
 @media(max-width:700px){.room-finder{margin:8px;padding:10px}.confirmed-room-label{display:none}.confirmed-room-overlay polygon{display:none}.confirmed-room-overlay polygon.is-selected{display:block}}
-</style></head>
+</style><style>.restaurant-photo-marker span{background:#071b1dcc;border-radius:50%;min-width:1.4em;line-height:1.4;text-align:center;text-shadow:0 1px 3px #000}.restaurant-photo-marker svg polygon{fill:none!important}</style></head>
 <body>
 <header><div><h1>Grand Hyatt Resort Experience Map</h1><div class="sub">Interactive guest-experience concept • walking routes will be added after path approval</div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME • 24H</small><b id="clock">--:--:--</b></div><div class="demo">DEMO DATA</div></div></header>
 
@@ -337,6 +337,14 @@ function fitRestaurantFootprint(button,p){
   const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg'),polygon=document.createElementNS(ns,'polygon'),label=document.createElement('span');
   svg.setAttribute('viewBox', '0 0 '+width+' '+height);svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');
   polygon.setAttribute('points',points.map(q=>(q[0]-left)+','+(q[1]-top)).join(' '));
+  const restaurantPhotos={'1':'assets/amalfi-restaurant-photo.svg','2':'assets/embers-restaurant-photo.svg','9':'assets/drift-restaurant-photo.svg'};
+  if(restaurantPhotos[p[0]]){
+    const defs=document.createElementNS(ns,'defs'),clip=document.createElementNS(ns,'clipPath'),shape=polygon.cloneNode(true),photo=document.createElementNS(ns,'image');
+    clip.id='restaurant-photo-clip-'+p[0];clip.appendChild(shape);defs.appendChild(clip);svg.appendChild(defs);
+    photo.setAttribute('href',restaurantPhotos[p[0]]);photo.setAttribute('width',width);photo.setAttribute('height',height);
+    photo.setAttribute('preserveAspectRatio','xMidYMid slice');photo.setAttribute('clip-path','url(#'+clip.id+')');svg.appendChild(photo);
+    polygon.style.fill='none';button.classList.add('restaurant-photo-marker');
+  }
   svg.appendChild(polygon);label.textContent=p[0];button.replaceChildren(svg,label);
 }
 
