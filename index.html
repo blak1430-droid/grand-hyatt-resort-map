@@ -347,7 +347,7 @@ function fitRestaurantFootprint(button,p){
     photo.setAttribute('preserveAspectRatio','xMidYMid slice');photo.setAttribute('clip-path','url(#'+clip.id+')');svg.appendChild(photo);
     polygon.style.fill='none';button.classList.add('restaurant-photo-marker');
   }
-  svg.appendChild(polygon);label.textContent=p[2]==='restaurant'?p[1]:p[0];button.replaceChildren(svg,label);
+  svg.appendChild(polygon);label.textContent=p[0];button.replaceChildren(...(p[2]==='restaurant'?[svg]:[svg,label]));
 }
 
 function scrollToDetails(){
@@ -371,14 +371,14 @@ P.forEach((p,i)=>{
   let b=document.createElement('button'),state=p[2]=='restaurant'||['Kids Pool & Splash','Camp Hyatt','Hideaway'].includes(p[1])?placeState(p):{key:p[9]||'chill',label:p[9]||'Available'};
   b.className='pin '+state.key+(p[2]=='restaurant'?'':' activity')+(p[2]=='amenity'?' amenity-pin':'')+(p[2]=='event'?' event-pin':'')+(p[1]=='Grand Club'?' grand-club-footprint':'');
   if(['Indoor Pool','Fitness Center','Yoga Studio'].includes(p[1]))b.classList.add('wellness-marker');
-  b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[2]==='restaurant'?p[1]:(p[0]==='pavilion-5'?'5':p[0]);b.setAttribute('aria-label',p[1]);b.title=p[1];
+  b.dataset.venue=p[0];b.dataset.t=p[2];b.dataset.s=state.key;b.style.left=p[3]+'%';b.style.top=p[4]+'%';b.textContent=p[2]==='restaurant'?'':(p[0]==='pavilion-5'?'5':p[0]);b.setAttribute('aria-label',p[1]);b.title=p[1];
   if((p[2]==='restaurant'&&p[0]!=='3')||p[1]==='Grand Club')fitRestaurantFootprint(b,p);
   if(p[0]==='3'||p[0]==='pavilion-5'){
     b.classList.add('restaurant-photo-marker');
     const photo=p[0]==='3'?'assets/cafe-maude-restaurant-photo.svg':'assets/pavilion-photo.svg';
     b.style.setProperty('background-image','url("'+photo+'")','important');
     b.style.setProperty('background-size','cover','important');b.style.setProperty('background-position','center','important');
-    const label=document.createElement('span');label.textContent=p[0]==='3'?p[1]:'5';b.replaceChildren(label);
+    const label=document.createElement('span');label.textContent='5';b.replaceChildren(...(p[0]==='3'?[]:[label]));
   }
   b.onclick=()=>{
     document.getElementById('campDetails').hidden=p[1]!=='Camp Hyatt';
