@@ -789,6 +789,15 @@ function update(){
   el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');return;
  }
  if(!to){status.textContent='Choose a mapped destination.';return;}
+ // Staff-confirmed mixed-mode itinerary; do not invent geometry across unmapped floor connections.
+ if(String(from.room)==='134'&&/Charcoal Tandoor/i.test(to.name)&&mode!=='buggy'){
+  mode='walk';
+  el('travelWalk').setAttribute('aria-pressed','true');
+  roomRoute.classList.remove('show');
+  distance.textContent='Elevator + stairs · staff estimate: under 5 minutes, excluding elevator waiting. Distance not yet verified.';
+  status.textContent='From Room 134, walk to the West Elevator entrance on the 1st floor (opposite Room 151). Take the elevator to the 4th floor. Exit through the glass doors and turn right. Take the stairs to the 5th floor, then continue to Charcoal Tandoor. This route includes stairs and is not step-free. The full map line is not shown because the elevator, corridor and stair connections still need joining.';
+  return;
+ }
  const walking=route(from.id,to.id);if(!walking){status.textContent='A confirmed walking route between these places is not available yet.';distance.textContent='Walking time is unavailable for this route.';return;}
  buggy.disabled=false;distance.textContent='Walking distance to destination: '+Math.round(walking.metres)+' m'+(walking.metres>500?' · buggy request available.':' · buggy requests apply to routes over 500 m.');
  const minutes=Math.ceil(walking.metres/WALK_METRES_PER_MINUTE);
