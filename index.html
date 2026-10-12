@@ -330,7 +330,7 @@ header{position:relative;z-index:30}
 .shuttle-stop:focus-visible{outline:2px solid #fff!important;outline-offset:2px;border-radius:6px}
 @media(max-width:700px){.shuttle-stop{width:30px!important;height:34px!important}.shuttle-stop svg.shuttle-sign{width:20px!important;height:27px!important}}
 </style><style>.restaurant-demo .preview video{display:block;width:100%;height:100%;object-fit:contain;background:#000}</style>
-</head>
+<style>.reservation-whatsapp-link{display:inline-block;color:#f5ead1;min-height:44px;padding:10px 0;font-weight:600}</style></head>
 <body>
 <header class="resort-header"><div class="brand"><span class="brand-mark" aria-hidden="true">GH</span><div><div class="brand-eyebrow">GRAND HYATT · THE RED SEA</div><h1>Explore the resort</h1><div class="sub">Dining, experiences &amp; effortless journeys</div></div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME · 24H</small><b id="clock">--:--:--</b></div></div></header>
 <nav class="resort-toolbar" aria-label="Explore and navigate"><div class="explore-field"><label for="resortExplore">Discover a place</label><select id="resortExplore"><option value="">Dining, pools &amp; experiences</option></select></div><div id="resortActions" class="resort-actions"></div><div class="map-zoom" role="group" aria-label="Map zoom"><button id="resortZoomOut" type="button" aria-label="Zoom out">−</button><button id="resortZoomIn" type="button" aria-label="Zoom in">+</button><button id="resortZoomFit" type="button" aria-label="Show the whole map">Fit</button></div></nav>
@@ -1371,8 +1371,8 @@ const footer=document.createElement('div');footer.className='map-footer';footer.
 <form id="tableReservationForm">
 <label for="reservationRoom">Room number</label><input id="reservationRoom" name="room" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="6" placeholder="Enter your room number" autocomplete="off" required>
 <label for="reservationTransport">Transportation</label><select id="reservationTransport" name="transport" required><option value="">Choose how you will get there</option><option value="walking">Walking</option><option value="shuttle">Buggy shuttle</option><option value="buggy">Buggy request</option></select>
-<button class="reservation-submit" type="submit">Preview reservation request</button>
-<p class="reservation-note" id="reservationDemoNote">Preview only. Reservation and transportation requests are not sent to the restaurant or drivers.</p>
+<button class="reservation-submit" type="submit">Send via WhatsApp</button>
+<p class="reservation-note" id="reservationDemoNote">Opens WhatsApp with your request. Tap Send there. Your reservation and transport are confirmed only after a reply.</p>
 </form><div id="reservationResult" role="status" aria-live="polite"></div>
 </dialog>
 <script>
@@ -1380,7 +1380,7 @@ const footer=document.createElement('div');footer.className='map-footer';footer.
 const get=id=>document.getElementById(id),dialog=get('tableReservationDialog'),form=get('tableReservationForm');let waiting=false,restaurant='',opener=null;
 window.openTableReservation=(name,full)=>{restaurant=name;waiting=full;opener=document.activeElement;form.reset();get('reservationRoom').value=get('confirmedRoomNumber')?.value||'';get('reservationRestaurant').textContent=name;get('reservationTitle').textContent=full?'Join waiting list':'Reserve a table';get('reservationResult').textContent='';dialog.showModal();get('reservationRoom').focus()};
 get('reservationClose').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{if(opener?.isConnected)opener.focus()});
-form.addEventListener('submit',event=>{event.preventDefault();const room=get('reservationRoom').value,transport=get('reservationTransport');get('reservationResult').textContent=(waiting?'Waiting-list request preview':'Reservation request preview')+'\nRestaurant: '+restaurant+'\nRoom: '+room+'\nTransportation: '+transport.options[transport.selectedIndex].text+'\nPreview only — no booking or transport request has been submitted.'});
+form.addEventListener('submit',event=>{event.preventDefault();const room=get('reservationRoom').value,transport=get('reservationTransport');const message=(waiting?'Restaurant waiting-list request':'Restaurant table reservation request')+'\nRestaurant: '+restaurant+'\nRoom number: '+room+'\nTransportation: '+transport.options[transport.selectedIndex].text+'\nPlease confirm availability and transportation.';const url='https://wa.me/966538567816?text='+encodeURIComponent(message);const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open WhatsApp';link.className='reservation-whatsapp-link';get('reservationResult').replaceChildren(document.createTextNode('Tap Send in WhatsApp to submit your request. If WhatsApp did not open, use the link below. '),link);window.open(url,'_blank','noopener,noreferrer')});
 })();
 </script>
 </body></html>
