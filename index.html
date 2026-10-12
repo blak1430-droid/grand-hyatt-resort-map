@@ -843,7 +843,7 @@ mapimg.onerror=()=>{const d=document.createElement('div');d.className='loading';
   if(item.video){const video=document.createElement('video');video.src=item.video;video.autoplay=true;video.muted=true;video.loop=true;video.playsInline=true;video.controls=true;video.preload='metadata';video.setAttribute('aria-label',title.textContent+' · 10-second looping video');const preview=section.querySelector('.preview');preview.setAttribute('aria-label',title.textContent+' video preview');preview.replaceChildren(video);}
   const message=section.querySelector('.demo-message');
   section.querySelector('.menu-demo').onclick=()=>{message.hidden=false;message.textContent='Demo menu — no menu has been uploaded.';};
-  section.querySelector('.reserve-demo').onclick=()=>{message.hidden=false;message.textContent=item.occupancy===100?'You have been added to the waiting list. Demo only — no real request was submitted.':'Demo only — no reservation was made.';};
+  section.querySelector('.reserve-demo').onclick=()=>window.openTableReservation(title.textContent,item.occupancy===100);
  }
  new MutationObserver(render).observe(title,{childList:true,characterData:true,subtree:true});render();
 })();
@@ -1356,4 +1356,31 @@ const footer=document.createElement('div');footer.className='map-footer';footer.
 @media(max-width:700px){.pin.standalone-activity-icon[aria-label="Indoor Pool"]{width:10px!important;height:10px!important}}
 </style><script>
 (()=>{const pool=document.querySelector('.pin[aria-label="Indoor Pool"]');if(pool){const icon=document.createElement('span');icon.className='pool-icon-art';icon.setAttribute('aria-hidden','true');icon.textContent=pool.textContent;pool.replaceChildren(icon)}})();
-</script></body></html>
+</script>
+<style>
+#tableReservationDialog{width:min(440px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow-y:auto;margin:auto;padding:24px;border:1px solid #688884;border-radius:22px;background:#102f32;color:#f5f7f3;box-shadow:0 20px 70px #0007}
+#tableReservationDialog::backdrop{background:#071e30aa}
+.reservation-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.reservation-heading h2{font:28px/1.2 Georgia,serif;color:#f5ead1;margin:5px 0 8px}.reservation-heading button{flex-shrink:0;width:44px;height:44px;border:1px solid #658482;border-radius:50%;background:#23494b;color:white;font-size:24px;cursor:pointer}
+#reservationRestaurant{margin:0 0 20px;color:#e5cea0;font-size:15px}
+#tableReservationForm label{display:block;font-size:14px;margin:16px 0 8px;color:#d5e2df}#tableReservationForm input,#tableReservationForm select{display:block;width:100%;min-height:48px;padding:12px;border:1px solid #718f8b;border-radius:10px;background:#193e41;color:white;font-size:16px}
+#tableReservationForm .reservation-submit{width:100%;min-height:48px;margin-top:20px;border:0;border-radius:12px;background:#ddc38a;color:#173538;font-size:15px;font-weight:700;cursor:pointer}.reservation-note{font-size:12px;line-height:1.5;color:#bfd2cf;margin:12px 0 0}#reservationResult{margin-top:18px;padding:14px;border:1px solid #658482;border-radius:12px;background:#20494b;font-size:14px;line-height:1.6;white-space:pre-line}#reservationResult:empty{display:none}
+</style>
+<dialog id="tableReservationDialog" aria-labelledby="reservationTitle" aria-describedby="reservationRestaurant reservationDemoNote">
+<div class="reservation-heading"><h2 id="reservationTitle">Reserve a table</h2><button id="reservationClose" type="button" aria-label="Close table reservation">×</button></div>
+<p id="reservationRestaurant"></p>
+<form id="tableReservationForm">
+<label for="reservationRoom">Room number</label><input id="reservationRoom" name="room" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="6" placeholder="Enter your room number" autocomplete="off" required>
+<label for="reservationTransport">Transportation</label><select id="reservationTransport" name="transport" required><option value="">Choose how you will get there</option><option value="walking">Walking</option><option value="shuttle">Buggy shuttle</option><option value="buggy">Buggy request</option></select>
+<button class="reservation-submit" type="submit">Preview reservation request</button>
+<p class="reservation-note" id="reservationDemoNote">Preview only. Reservation and transportation requests are not sent to the restaurant or drivers.</p>
+</form><div id="reservationResult" role="status" aria-live="polite"></div>
+</dialog>
+<script>
+(()=>{
+const get=id=>document.getElementById(id),dialog=get('tableReservationDialog'),form=get('tableReservationForm');let waiting=false,restaurant='',opener=null;
+window.openTableReservation=(name,full)=>{restaurant=name;waiting=full;opener=document.activeElement;form.reset();get('reservationRoom').value=get('confirmedRoomNumber')?.value||'';get('reservationRestaurant').textContent=name;get('reservationTitle').textContent=full?'Join waiting list':'Reserve a table';get('reservationResult').textContent='';dialog.showModal();get('reservationRoom').focus()};
+get('reservationClose').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{if(opener?.isConnected)opener.focus()});
+form.addEventListener('submit',event=>{event.preventDefault();const room=get('reservationRoom').value,transport=get('reservationTransport');get('reservationResult').textContent=(waiting?'Waiting-list request preview':'Reservation request preview')+'\nRestaurant: '+restaurant+'\nRoom: '+room+'\nTransportation: '+transport.options[transport.selectedIndex].text+'\nPreview only — no booking or transport request has been submitted.'});
+})();
+</script>
+</body></html>
