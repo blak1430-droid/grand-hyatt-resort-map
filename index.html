@@ -329,7 +329,8 @@ header{position:relative;z-index:30}
 .shuttle-stop.scheduled-waiting .shuttle-sign-status{fill:#ffda72}
 .shuttle-stop:focus-visible{outline:2px solid #fff!important;outline-offset:2px;border-radius:6px}
 @media(max-width:700px){.shuttle-stop{width:30px!important;height:34px!important}.shuttle-stop svg.shuttle-sign{width:20px!important;height:27px!important}}
-</style></head>
+</style><style>.restaurant-demo .preview video{display:block;width:100%;height:100%;object-fit:contain;background:#000}</style>
+</head>
 <body>
 <header class="resort-header"><div class="brand"><span class="brand-mark" aria-hidden="true">GH</span><div><div class="brand-eyebrow">GRAND HYATT · THE RED SEA</div><h1>Explore the resort</h1><div class="sub">Dining, experiences &amp; effortless journeys</div></div></div><div class="headright"><button id="siteSoundBtn" title="Enable restaurant music and shuttle stop tap sounds" type="button" aria-pressed="false">🔇 Sound off</button><div class="clock"><small>SAUDI TIME · 24H</small><b id="clock">--:--:--</b></div></div></header>
 <nav class="resort-toolbar" aria-label="Explore and navigate"><div class="explore-field"><label for="resortExplore">Discover a place</label><select id="resortExplore"><option value="">Dining, pools &amp; experiences</option></select></div><div id="resortActions" class="resort-actions"></div><div class="map-zoom" role="group" aria-label="Map zoom"><button id="resortZoomOut" type="button" aria-label="Zoom out">−</button><button id="resortZoomIn" type="button" aria-label="Zoom in">+</button><button id="resortZoomFit" type="button" aria-label="Show the whole map">Fit</button></div></nav>
@@ -820,7 +821,7 @@ mapimg.onerror=()=>{const d=document.createElement('div');d.className='loading';
  const data={
  'Embers':{occupancy:50,hours:'Breakfast 06:30–10:30 · Lunch 12:30–15:00 · Dinner 18:30–23:00',video:''},
  'Amalfi Restaurant':{occupancy:80,hours:'10:00–20:00',video:''},
- 'Drift':{occupancy:100,hours:'10:00–Sunset',video:''},
+ 'Drift':{occupancy:100,hours:'10:00–Sunset',video:'assets/drift-loop.mp4'},
  'Café Maude':{occupancy:null,hours:'10:00–22:00',video:''},
  '2 am Dessert Bar':{occupancy:null,hours:'18:00–03:00',video:''},
  'Charcoal':{occupancy:null,hours:'Breakfast 06:30–10:30 · Lunch 12:00–15:00 · Dinner 18:00–24:00',video:''},
@@ -839,7 +840,7 @@ mapimg.onerror=()=>{const d=document.createElement('div');d.className='loading';
   section.innerHTML='<small>DEMO ONLY · music preview · simulated occupancy '+(item.occupancy===null?'unavailable':item.occupancy+'%')+'</small><div class="preview" aria-label="Ten-second black video placeholder"><span>10-second loop · video placeholder</span><div class="loop-track"><div class="loop-fill"></div></div></div><button type="button" class="menu-demo"><span class="menu-thumb" aria-hidden="true"><svg viewBox="0 0 64 64" width="52" height="52" focusable="false"><circle cx="32" cy="34" r="26" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="32" cy="34" r="20" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/><g transform="rotate(-12 32 30)"><rect x="19" y="9" width="26" height="38" rx="3" fill="var(--venue-card,#123d40)" stroke="currentColor" stroke-width="2"/><text x="32" y="21" text-anchor="middle" fill="currentColor" font-family="Arial,sans-serif" font-size="6" font-weight="bold">MENU</text><path d="M24 27h16m-16 6h16m-16 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></g></svg></span><span>Menu<small>Placeholder · no menu uploaded</small></span></button><div class="demo-hours"><small>Opening & closing times · prototype hours</small><span></span></div><button type="button" class="reserve-demo '+level+'">'+status+' · '+(item.occupancy===100?'Join waiting list':'Reserve a table')+'</button><p class="demo-message" role="status" hidden></p>';
   section.querySelector('.demo-hours span').textContent=item.hours;
 
-  if(item.video){const video=document.createElement('video');video.src=item.video;video.autoplay=true;video.muted=true;video.loop=true;video.playsInline=true;video.controls=true;section.querySelector('.preview').replaceChildren(video);}
+  if(item.video){const video=document.createElement('video');video.src=item.video;video.autoplay=true;video.muted=true;video.loop=true;video.playsInline=true;video.controls=true;video.preload='metadata';video.setAttribute('aria-label',title.textContent+' · 10-second looping video');const preview=section.querySelector('.preview');preview.setAttribute('aria-label',title.textContent+' video preview');preview.replaceChildren(video);}
   const message=section.querySelector('.demo-message');
   section.querySelector('.menu-demo').onclick=()=>{message.hidden=false;message.textContent='Demo menu — no menu has been uploaded.';};
   section.querySelector('.reserve-demo').onclick=()=>{message.hidden=false;message.textContent=item.occupancy===100?'You have been added to the waiting list. Demo only — no real request was submitted.':'Demo only — no reservation was made.';};
