@@ -1403,7 +1403,12 @@ const get=id=>document.getElementById(id),dialog=get('menuBookDialog'),book=get(
 function render(){const left=spread*2+1,right=left+1;get('menuPageLeft').querySelector('span').textContent=left;get('menuPageRight').querySelector('span').textContent=right;get('menuPageLeft').setAttribute('aria-label','Blank page '+left);get('menuPageRight').setAttribute('aria-label','Blank page '+right);get('menuPageStatus').textContent='Pages '+left+'–'+right+' of 10';get('menuPrevious').disabled=turning||spread===0;get('menuNext').disabled=turning||spread===4}
 window.openRestaurantMenu=name=>{opener=document.activeElement;spread=0;turning=false;render();get('menuBookTitle').textContent=name;book.classList.remove('turning');book.classList.add('opening');dialog.showModal();get('menuBookClose').focus()};
 function turn(direction){if(turning||spread+direction<0||spread+direction>4)return;turning=true;book.classList.remove('opening');get('menuTurnLeaf').classList.toggle('reverse',direction<0);book.classList.add('turning');render();timer=setTimeout(()=>{spread+=direction;turning=false;book.classList.remove('turning');render()},matchMedia('(prefers-reduced-motion: reduce)').matches?0:360)}
+let swipe=null;
+book.style.touchAction='pan-y';
+book.addEventListener('touchstart',event=>{if(event.touches.length!==1||turning){swipe=null;return}const t=event.touches[0];swipe={x:t.clientX,y:t.clientY}}, {passive:true});
+book.addEventListener('touchend',event=>{if(!swipe||event.touches.length){swipe=null;return}const t=event.changedTouches[0],dx=t.clientX-swipe.x,dy=t.clientY-swipe.y;swipe=null;if(Math.abs(dx)>=45&&Math.abs(dx)>Math.abs(dy)*1.5)turn(dx<0?1:-1)}, {passive:true});
+book.addEventListener('touchcancel',()=>{swipe=null}, {passive:true});
 get('menuPrevious').onclick=()=>turn(-1);get('menuNext').onclick=()=>turn(1);get('menuBookClose').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{clearTimeout(timer);turning=false;book.classList.remove('turning','opening');if(opener?.isConnected)opener.focus()});dialog.addEventListener('keydown',event=>{if(event.key==='ArrowRight'){event.preventDefault();turn(1)}if(event.key==='ArrowLeft'){event.preventDefault();turn(-1)}});render();
 })();
 </script>
-</body></html>
+<style>.menu-swipe-hint{display:none;text-align:center;margin:0;color:#786c52;font-size:12px}@media(pointer:coarse){.menu-swipe-hint{display:block}}</style><script>(()=>{const hint=document.createElement('p');hint.className='menu-swipe-hint';hint.textContent='Swipe left or right to turn pages';document.querySelector('.menu-book-nav').before(hint)})();</script></body></html>
