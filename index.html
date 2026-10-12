@@ -1349,4 +1349,11 @@ get('resortZoomIn').onclick=()=>setZoom(zoom+.5);get('resortZoomOut').onclick=()
 const footer=document.createElement('div');footer.className='map-footer';footer.innerHTML='<div class="map-legend" aria-label="Map legend"><span><i class="legend-dot" aria-hidden="true"></i> Open dining</span><span><i class="legend-dot closed-dot" aria-hidden="true"></i> Closed dining</span><span><i class="legend-stop" aria-hidden="true"></i> Buggy stop</span></div><span>Shuttle movement and arrival times are simulated.</span>';stage.after(footer);
 })();
 </script>
-</body></html>
+<style id="indoor-pool-hitbox-fix">
+.pin.standalone-activity-icon[aria-label="Indoor Pool"]{width:18px!important;height:18px!important;min-width:0!important;min-height:0!important;padding:0!important;overflow:visible;transform:translate(-15%,-15%)}
+.pin.standalone-activity-icon[aria-label="Indoor Pool"]::before,.pin.standalone-activity-icon[aria-label="Indoor Pool"]::after{display:none!important;pointer-events:none!important}
+.pin[aria-label="Indoor Pool"] .pool-icon-art{pointer-events:none;position:absolute;left:15%;top:15%;transform:translate(-50%,-50%);display:block;line-height:1}
+@media(max-width:700px){.pin.standalone-activity-icon[aria-label="Indoor Pool"]{width:10px!important;height:10px!important}}
+</style><script>
+(()=>{const pool=document.querySelector('.pin[aria-label="Indoor Pool"]');if(pool){const icon=document.createElement('span');icon.className='pool-icon-art';icon.setAttribute('aria-hidden','true');icon.textContent=pool.textContent;pool.replaceChildren(icon)}})();
+</script></body></html>
