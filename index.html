@@ -1046,7 +1046,7 @@ function loadRecordedPaths(){
 el('travelBallroom').onclick=()=>{mode='ballroom';update();if(mixedOverlay.childNodes.length){el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');}};
 function selectManual(){update();}
 start.onchange=()=>{room.value='';selectManual()};room.oninput=()=>{start.value='';selectManual()};dest.onchange=update;
-el('travelWalk').onclick=()=>{mode='walk';update();if(line.getAttribute('points')){el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');el('directionToggle').focus({preventScroll:true});m.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}};el('travelShuttle').onclick=()=>{mode='shuttle';update()};buggy.onclick=()=>{mode='buggy';update()};
+el('travelWalk').onclick=()=>{mode='walk';update();if(line.getAttribute('points')||mixedOverlay.childNodes.length){el('directionDrawer').hidden=true;el('directionToggle').setAttribute('aria-expanded','false');el('directionToggle').focus({preventScroll:true});m.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}};el('travelShuttle').onclick=()=>{mode='shuttle';update()};buggy.onclick=()=>{mode='buggy';update()};
 function syncTravelSelections(){
  if(el('routeFrom').value||el('routeTo').value)return;
  if(selectedRoomButton){room.value=selectedRoomButton.textContent.trim();start.value='';}
