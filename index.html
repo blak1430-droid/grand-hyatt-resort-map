@@ -1411,4 +1411,60 @@ book.addEventListener('touchcancel',()=>{swipe=null}, {passive:true});
 get('menuPrevious').onclick=()=>turn(-1);get('menuNext').onclick=()=>turn(1);get('menuBookClose').onclick=()=>dialog.close();dialog.addEventListener('close',()=>{clearTimeout(timer);turning=false;book.classList.remove('turning','opening');if(opener?.isConnected)opener.focus()});dialog.addEventListener('keydown',event=>{if(event.key==='ArrowRight'){event.preventDefault();turn(1)}if(event.key==='ArrowLeft'){event.preventDefault();turn(-1)}});render();
 })();
 </script>
-<style>.menu-swipe-hint{display:none;text-align:center;margin:0;color:#786c52;font-size:12px}@media(pointer:coarse){.menu-swipe-hint{display:block}}</style><script>(()=>{const hint=document.createElement('p');hint.className='menu-swipe-hint';hint.textContent='Swipe left or right to turn pages';document.querySelector('.menu-book-nav').before(hint)})();</script></body></html>
+<style>.menu-swipe-hint{display:none;text-align:center;margin:0;color:#786c52;font-size:12px}@media(pointer:coarse){.menu-swipe-hint{display:block}}</style><script>(()=>{const hint=document.createElement('p');hint.className='menu-swipe-hint';hint.textContent='Swipe left or right to turn pages';document.querySelector('.menu-book-nav').before(hint)})();</script>
+<style>
+#roomServicesButton{width:100%;min-height:48px;margin:16px 0;border:0;border-radius:12px;background:#ddc38a;color:#173538;font-size:16px;font-weight:700;cursor:pointer}
+#roomServicesButton[hidden]{display:none}
+#roomServiceDialog{width:min(460px,calc(100% - 28px));max-height:90dvh;overflow:auto;border:1px solid #658482;border-radius:20px;padding:24px;background:#173538;color:#fff}
+#roomServiceDialog::backdrop{background:rgba(6,25,27,.75)}
+#roomServiceForm label{display:block;margin:16px 0 7px}
+#roomServiceForm input,#roomServiceForm select,#roomServiceForm textarea{width:100%;min-height:46px;padding:12px;border:1px solid #658482;border-radius:10px;background:#fff;color:#173538;font:16px Arial,sans-serif}
+#roomServiceForm textarea{resize:vertical}
+#roomServiceForm button[type=submit]{width:100%;min-height:48px;margin-top:20px;border:0;border-radius:12px;background:#ddc38a;color:#173538;font-size:16px;font-weight:700;cursor:pointer}
+#roomServiceResult{margin-top:16px;white-space:pre-line}
+#roomServiceResult a{display:block;color:#f5ead1;min-height:44px;padding:12px 0}
+</style>
+<dialog id="roomServiceDialog" aria-labelledby="roomServiceTitle">
+<div class="reservation-heading"><h2 id="roomServiceTitle">Room Services</h2><button id="roomServiceClose" type="button" aria-label="Close room services">×</button></div>
+<form id="roomServiceForm">
+<label for="roomServiceRoom">Room number</label><input id="roomServiceRoom" name="room" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="6" required autocomplete="off">
+<label for="roomServiceType">Service</label><select id="roomServiceType" name="service" required><option value="Laundry">Laundry pickup</option><option value="Maintenance">Room maintenance</option></select>
+<label id="roomServiceDetailsLabel" for="roomServiceDetails">Laundry pickup details (optional)</label><textarea id="roomServiceDetails" name="details" rows="3" maxlength="1000" placeholder="Add pickup instructions or preferred time"></textarea>
+<button type="submit">Send via WhatsApp</button>
+<p class="reservation-note">Opens WhatsApp with your request. Tap Send there. Service is confirmed only after a reply.</p>
+</form><div id="roomServiceResult" role="status" aria-live="polite"></div>
+</dialog>
+<script>
+(()=>{
+  const get=id=>document.getElementById(id),title=get('ttl'),dialog=get('roomServiceDialog'),form=get('roomServiceForm');
+  const button=document.createElement('button');button.id='roomServicesButton';button.type='button';button.textContent='Room Services';button.hidden=true;get('desc').after(button);
+  const sync=()=>{button.hidden=!/^Room [0-9]+$/.test(title.textContent.trim())};
+  new MutationObserver(sync).observe(title,{childList:true,subtree:true,characterData:true});sync();
+  let opener;
+  function updateType(){
+    const maintenance=get('roomServiceType').value==='Maintenance',details=get('roomServiceDetails');
+    details.required=maintenance;
+    get('roomServiceDetailsLabel').textContent=maintenance?'Describe the maintenance issue':'Laundry pickup details (optional)';
+    details.placeholder=maintenance?'For example: air conditioning, lighting, or a water leak':'Add pickup instructions or preferred time';
+    details.setCustomValidity('');get('roomServiceResult').replaceChildren();
+  }
+  button.onclick=()=>{
+    const match=title.textContent.trim().match(/^Room ([0-9]+)$/);if(!match)return;
+    opener=document.activeElement;form.reset();get('roomServiceRoom').value=match[1];updateType();dialog.showModal();get('roomServiceType').focus();
+  };
+  get('roomServiceClose').onclick=()=>dialog.close();
+  dialog.addEventListener('close',()=>{if(opener?.isConnected)opener.focus()});
+  get('roomServiceType').addEventListener('change',updateType);
+  get('roomServiceDetails').addEventListener('input',()=>get('roomServiceDetails').setCustomValidity(''));
+  form.addEventListener('submit',event=>{
+    event.preventDefault();
+    const service=get('roomServiceType').value,room=get('roomServiceRoom').value.trim(),details=get('roomServiceDetails').value.trim();
+    if(service==='Maintenance'&&!details){get('roomServiceDetails').setCustomValidity('Please describe the maintenance issue.');get('roomServiceDetails').reportValidity();return}
+    const message=[service==='Maintenance'?'Room maintenance request':'Laundry pickup request','Room: '+room,details?'Details: '+details:'Please arrange laundry pickup.','Please confirm receipt and the expected service time.'].join('\n');
+    const url='https://wa.me/966538567816?text='+encodeURIComponent(message),link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open WhatsApp';
+    get('roomServiceResult').replaceChildren(document.createTextNode('Tap Send in WhatsApp to submit your request.'),link);
+    window.open(url,'_blank','noopener,noreferrer');
+  });
+})();
+</script>
+</body></html>
