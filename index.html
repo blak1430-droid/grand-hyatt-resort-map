@@ -1066,6 +1066,7 @@ pins.forEach(({b,p})=>b.addEventListener('click',()=>{
 }));
 window.findNearestResortShuttle=()=>{mode='shuttle';update();if(!origin()){el('directionDrawer').hidden=false;el('directionToggle').setAttribute('aria-expanded','true');status.textContent='Enter your room or starting place in From, or use your location.';}};
 loadRecordedPaths();
+window.resortGuestRestaurants=P.filter(p=>p[2]==='restaurant').map(p=>({name:p[1],point:[p[3],p[4]]}));
 window.resortGuestWalkways=data.edges.filter(e=>e.confirmed&&e.metres>.2&&e.mapPoints?.length===2&&node(e.from)?.kind==='junction'&&node(e.to)?.kind==='junction');
 
 const routeFrom=el('routeFrom'),routeTo=el('routeTo'),routePlaces=el('routePlaces');
@@ -1463,53 +1464,57 @@ get('menuPrevious').onclick=()=>turn(-1);get('menuNext').onclick=()=>turn(1);get
 </script>
 <style>.guest-simulation-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.guest-simulation-controls button{min-height:36px;padding:7px 12px;border:1px solid #b3c5bd;border-radius:18px;background:white;color:#173b3e;font-size:12px;cursor:pointer}#guestSimulation[hidden]{display:none}</style><script>
 (()=>{
-function createGuestWalkers(edges,count,random=Math.random,stops=[]){
+function createGuestWalkers(edges,count,random=Math.random,stops=[],restaurants=[]){
  const adjacency=new Map();
  edges.forEach(e=>{for(const id of [e.from,e.to]){if(!adjacency.has(id))adjacency.set(id,[]);adjacency.get(id).push(e);}});
  const nodes=new Map();edges.forEach(e=>{nodes.set(e.from,e.mapPoints[0]);nodes.set(e.to,e.mapPoints.at(-1));});
  const nearest=(point)=>[...nodes.keys()].reduce((best,id)=>Math.hypot(nodes.get(id)[0]-point[0],nodes.get(id)[1]-point[1])<Math.hypot(nodes.get(best)[0]-point[0],nodes.get(best)[1]-point[1])?id:best,nodes.keys().next().value);
  stops=stops.map(s=>({...s,node:nearest(s.point)}));
+ restaurants=restaurants.map(r=>({...r,node:nearest(r.point)}));
  function toward(from,target){const queue=[from],seen=new Set(queue),first=new Map();for(let q=0;q<queue.length;q++){const id=queue[q];for(const edge of adjacency.get(id)||[]){const next=edge.from===id?edge.to:edge.from;if(seen.has(next))continue;seen.add(next);first.set(next,first.get(id)||edge);if(next===target)return first.get(next);queue.push(next);}}return null;}
  const components=new Map(),members=[];for(const root of nodes.keys()){if(components.has(root))continue;const group=[],queue=[root],id=members.length;components.set(root,id);for(let q=0;q<queue.length;q++){const at=queue[q];group.push(at);for(const e of adjacency.get(at)){const next=e.from===at?e.to:e.from;if(!components.has(next)){components.set(next,id);queue.push(next);}}}members.push(group);}
- let completed=0;
+ let completed=0,restaurantVisits=0;
+ function visitRestaurant(g){const choices=restaurants.filter(r=>components.get(r.node)===components.get(g.edge.from));if(!choices.length)return false;g.restaurant=choices[Math.floor(random()*choices.length)];g.goal=g.restaurant.node;g.state='walking to restaurant';return true;}
  const total=edges.reduce((sum,e)=>sum+e.metres,0);
  function chooseInitial(){let distance=random()*total;return edges.find(e=>(distance-=e.metres)<=0)||edges.at(-1);}
- const guests=Array.from({length:count},()=>({edge:chooseInitial(),reverse:random()<.5,distance:0,speed:.8+random()*.8,pause:0,state:'walking',decision:15+random()*150,goal:null,stop:null,ride:null,wait:0}));
+ const guests=Array.from({length:count},()=>({edge:chooseInitial(),reverse:random()<.5,distance:0,speed:.8+random()*.8,pause:0,state:'walking',decision:3+random()*30,goal:null,stop:null,ride:null,wait:0}));
  guests.forEach(g=>g.distance=random()*g.edge.metres);
  function advance(seconds,vehicles=[]){for(const g of guests){
-  if(g.state==='riding shuttle'){const vehicle=vehicles.find(v=>v.route===g.stop.route);if(vehicle){g.ride=vehicle.point;const destination=stops.find(s=>s.index===g.destination);if(Math.hypot(vehicle.point[0]-destination.point[0],vehicle.point[1]-destination.point[1])<1.8){g.edge=adjacency.get(destination.node)[0];g.reverse=g.edge.to===destination.node;g.distance=0;g.state='walking';g.ride=null;g.goal=null;g.decision=60+random()*180;completed++;}}continue;}
+  if(g.state==='dining'){g.wait-=seconds;if(g.wait<=0){g.state='walking';g.goal=null;g.decision=10+random()*40;}continue;}
+  if(g.state==='riding shuttle'){const vehicle=vehicles.find(v=>v.route===g.stop.route);if(vehicle){g.ride=vehicle.point;const destination=stops.find(s=>s.index===g.destination);if(Math.hypot(vehicle.point[0]-destination.point[0],vehicle.point[1]-destination.point[1])<1.8){g.edge=adjacency.get(destination.node)[0];g.reverse=g.edge.to===destination.node;g.distance=0;g.state='walking';g.ride=null;g.goal=null;g.decision=10+random()*40;completed++;visitRestaurant(g);}}continue;}
   if(g.state==='waiting shuttle'){const vehicle=vehicles.find(v=>v.route===g.stop.route&&Math.hypot(v.point[0]-g.stop.point[0],v.point[1]-g.stop.point[1])<1.8);if(vehicle){g.state='riding shuttle';g.ride=vehicle.point;}continue;}
-  if(g.state==='waiting buggy'){g.wait-=seconds;if(g.wait<=0){g.state='riding requested buggy';const group=members[components.get(g.edge.from)];g.goal=group[Math.floor(random()*group.length)];}continue;}
+  if(g.state==='waiting buggy'){g.wait-=seconds;if(g.wait<=0){g.state='riding requested buggy';const group=members[components.get(g.edge.from)];g.goal=group[Math.floor(random()*group.length)];const choices=restaurants.filter(r=>components.get(r.node)===components.get(g.edge.from));if(choices.length){g.restaurant=choices[Math.floor(random()*choices.length)];g.goal=g.restaurant.node;}}continue;}
   if(g.state==='walking'){g.decision-=seconds;if(g.decision<=0){
+    if(random()<.6&&visitRestaurant(g)){}else{
     const reachableStops=stops.filter(s=>components.get(s.node)===components.get(g.edge.from));if(reachableStops.length&&random()<.65){const p=position(g);g.stop=reachableStops.reduce((best,s)=>Math.hypot(s.point[0]-p[0],s.point[1]-p[1])<Math.hypot(best.point[0]-p[0],best.point[1]-p[1])?s:best,reachableStops[0]);g.goal=g.stop.node;g.state='walking to shuttle';g.destination=g.stop.index===g.stop.last?g.stop.first:g.stop.last;}
     else{g.state='waiting buggy';g.wait=10+random()*30;continue;}
-  }}
+  }}}
   if(g.pause>0){g.pause=Math.max(0,g.pause-seconds);continue;}
   g.distance+=(g.state==='riding requested buggy'?5:g.speed)*seconds;
   while(g.distance>=g.edge.metres){
    g.distance-=g.edge.metres;const at=g.reverse?g.edge.from:g.edge.to;
-   if(g.goal===at){g.distance=0;g.reverse=!g.reverse;if(g.state==='walking to shuttle'){g.state='waiting shuttle';}else{g.state='walking';g.goal=null;g.decision=60+random()*180;completed++;}break;}
+   if(g.goal===at){g.distance=0;g.reverse=!g.reverse;if(g.state==='walking to shuttle'){g.state='waiting shuttle';}else if(g.state==='walking to restaurant'||(g.state==='riding requested buggy'&&g.restaurant?.node===at)){g.state='dining';g.wait=90+random()*180;g.goal=null;restaurantVisits++;}else{g.state='walking';g.goal=null;g.decision=60+random()*180;completed++;}break;}
    const options=adjacency.get(at).filter(e=>e!==g.edge),next=(g.goal&&toward(at,g.goal))||(options.length?options[Math.floor(random()*options.length)]:g.edge);
    g.edge=next;g.reverse=next.to===at;
    if(g.state==='walking'&&random()<.08){g.pause=2+random()*6;g.distance=0;break;}
   }
  }}
  function position(g){if(g.ride)return g.ride;const t=g.reverse?1-g.distance/g.edge.metres:g.distance/g.edge.metres,a=g.edge.mapPoints[0],b=g.edge.mapPoints.at(-1);return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}
- return {guests,advance,position,completed:()=>completed};
+ return {guests,advance,position,completed:()=>completed,restaurantVisits:()=>restaurantVisits};
 }
 const edges=window.resortGuestWalkways||[];if(!edges.length)return;
 const stopSpecs=shuttleStops.map((s,i)=>{const route=shuttleRouteForStop(i);return {index:i,point:s.slice(1,3),route:shuttleRoutes.indexOf(route)+1,first:route.stops[0],last:route.stops.at(-1)};});
-const simulation=createGuestWalkers(edges,430,Math.random,stopSpecs),map=document.querySelector('.map'),canvas=document.createElement('canvas');
-canvas.id='guestSimulation';canvas.setAttribute('role','img');canvas.setAttribute('aria-label','Simulation of 430 guests walking, requesting buggies and riding shuttles');canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6';map.appendChild(canvas);
-const controls=document.createElement('div');controls.className='guest-simulation-controls';controls.innerHTML='<span>430 guests · transport simulation</span><button type="button" id="guestSimulationPause">Pause guests</button><button type="button" id="guestSimulationToggle" aria-pressed="true">Hide guests</button>';document.querySelector('.map-footer').appendChild(controls);const stats=document.createElement('span');stats.id='guestSimulationStats';controls.prepend(stats);let statsAt=0;
-const ctx=canvas.getContext('2d');let width=0,height=0,visible=true,paused=matchMedia('(prefers-reduced-motion: reduce)').matches,last=0,frame=0;
+const simulation=createGuestWalkers(edges,430,Math.random,stopSpecs,window.resortGuestRestaurants||[]),map=document.querySelector('.map'),canvas=document.createElement('canvas');
+canvas.id='guestSimulation';canvas.setAttribute('role','img');canvas.setAttribute('aria-label','Simulation of 430 red guests walking to restaurant approaches, dining, requesting buggies and riding shuttles');canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6';map.appendChild(canvas);
+const controls=document.createElement('div');controls.className='guest-simulation-controls';controls.innerHTML='<span>430 red guests · restaurant & transport simulation</span><button type="button" id="guestSimulationPause">Pause guests</button><button type="button" id="guestSimulationToggle" aria-pressed="true">Hide guests</button>';document.querySelector('.map-footer').appendChild(controls);const stats=document.createElement('span');stats.id='guestSimulationStats';controls.prepend(stats);const speedControl=document.createElement('label');speedControl.innerHTML='Simulation speed <select id="guestSimulationSpeed" aria-label="Guest simulation speed"><option value="1">1×</option><option value="8" selected>8×</option><option value="20">20×</option></select>';controls.appendChild(speedControl);let statsAt=0;
+const ctx=canvas.getContext('2d');let width=0,height=0,visible=true,paused=false,last=0,frame=0;
 const pause=document.getElementById('guestSimulationPause'),toggle=document.getElementById('guestSimulationToggle');
 function sync(){pause.textContent=paused?'Resume guests':'Pause guests';pause.setAttribute('aria-pressed',String(paused));}
 pause.onclick=()=>{paused=!paused;last=0;sync();};sync();
 toggle.onclick=()=>{visible=!visible;canvas.hidden=!visible;toggle.textContent=visible?'Hide guests':'Show guests';toggle.setAttribute('aria-pressed',String(visible));last=0;};
 function resize(){const rect=map.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);width=rect.width;height=rect.height;canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);draw();}
-function draw(){ctx.clearRect(0,0,width,height);for(const g of simulation.guests){const [x,y]=simulation.position(g);ctx.beginPath();ctx.arc(x/100*width,y/100*height,Math.max(1.3,Math.min(2.4,width/500)),0,Math.PI*2);ctx.fillStyle=g.state.startsWith('riding')?'#42c5ff':g.state.startsWith('waiting')?'#e77765':'#f3c266';ctx.fill();ctx.lineWidth=.7;ctx.strokeStyle='#173b3e';ctx.stroke();}}
-function tick(now){frame=requestAnimationFrame(tick);if(document.hidden||!visible){last=0;return;}if(last&&now-last<50)return;const delta=last?Math.min((now-last)/1000,.15):0;last=now;if(!paused)simulation.advance(delta,[...document.querySelectorAll('.loop-buggy')].map(b=>({route:Number(b.dataset.route),point:[parseFloat(b.style.left),parseFloat(b.style.top)]})));draw();if(now-statsAt>1000){statsAt=now;const counts={walking:0,waiting:0,riding:0};simulation.guests.forEach(g=>counts[g.state.startsWith('riding')?'riding':g.state.startsWith('waiting')?'waiting':'walking']++);stats.textContent=counts.walking+' walking · '+counts.waiting+' waiting · '+counts.riding+' riding · '+simulation.completed()+' rides completed';}}
+function draw(){ctx.clearRect(0,0,width,height);for(const g of simulation.guests){const [x,y]=simulation.position(g);ctx.beginPath();ctx.arc(x/100*width,y/100*height,Math.max(1.8,Math.min(3,width/450)),0,Math.PI*2);ctx.fillStyle='#e32935';ctx.fill();ctx.lineWidth=.8;ctx.strokeStyle='#fff';ctx.stroke();}}
+function tick(now){frame=requestAnimationFrame(tick);if(document.hidden||!visible){last=0;return;}if(last&&now-last<50)return;const delta=last?Math.min((now-last)/1000,.15):0;last=now;if(!paused)simulation.advance(delta*Number(document.getElementById('guestSimulationSpeed').value),[...document.querySelectorAll('.loop-buggy')].map(b=>({route:Number(b.dataset.route),point:[parseFloat(b.style.left),parseFloat(b.style.top)]})));draw();if(now-statsAt>1000){statsAt=now;const counts={walking:0,waiting:0,riding:0,dining:0};simulation.guests.forEach(g=>counts[g.state==='dining'?'dining':g.state.startsWith('riding')?'riding':g.state.startsWith('waiting')?'waiting':'walking']++);stats.textContent=counts.walking+' walking · '+counts.waiting+' waiting · '+counts.riding+' riding · '+counts.dining+' at restaurants · '+simulation.restaurantVisits()+' restaurant visits';}}
 new ResizeObserver(resize).observe(map);document.addEventListener('visibilitychange',()=>{last=0;});window.addEventListener('pagehide',()=>cancelAnimationFrame(frame));window.addEventListener('pageshow',()=>{cancelAnimationFrame(frame);last=0;frame=requestAnimationFrame(tick);});resize();frame=requestAnimationFrame(tick);
 })();
 </script></body></html>
